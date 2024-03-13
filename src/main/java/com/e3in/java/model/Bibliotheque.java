@@ -8,10 +8,6 @@ import java.util.List;
 @XmlRootElement(name = "bibliotheque")
 public class Bibliotheque {
     private List<Livre> livres;
-
-    // public void addLivre(Livre livre) {
-    //     this.livres.add(livre);
-    // }
     
     @XmlElement(name = "livre")
     public List<Livre> getLivres() {

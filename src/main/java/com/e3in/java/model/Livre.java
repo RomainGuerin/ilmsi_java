@@ -2,8 +2,10 @@ package com.e3in.java.model;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "livre")
+@XmlType(propOrder = {"titre", "auteur", "presentation", "parution", "colonne", "rangee"})
 public class Livre {
     private String titre;
     private Auteur auteur;
@@ -24,11 +26,6 @@ public class Livre {
     @XmlElement
     public Auteur getAuteur() {
         return auteur;
-    }
-
-    @XmlElement
-    public String getAuteurString() {
-        return auteur.getNom() + " " + auteur.getPrenom();
     }
 
     public void setAuteur(Auteur auteur) {

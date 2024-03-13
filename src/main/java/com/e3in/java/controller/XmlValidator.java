@@ -11,7 +11,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class XmlValidator {
-    private static String xsdFilePath = XmlValidator.class.getClass().getResource("/Biblio.xsd").getPath();
+    private static String xsdFilePath = XmlValidator.class.getResource("/Biblio.xsd").getPath();
+
     public static boolean validateXml(String xmlFilePath) {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -24,6 +25,7 @@ public class XmlValidator {
             return true;
         } catch (SAXException | IOException e) {
             System.err.println("Erreur de validation XML : " + e.getMessage());
+            MainViewController.showErrorAlert("Erreur", "Erreur de validation XML : " + e.getMessage());
             return false;
         }
     }

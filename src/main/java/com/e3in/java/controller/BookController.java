@@ -1,55 +1,55 @@
 package com.e3in.java.controller;
 
-import com.e3in.java.model.Author;
-import com.e3in.java.model.Book;
+import com.e3in.java.model.Auteur;
+import com.e3in.java.model.Livre;
 
 public class BookController {
-    private Book book;
-    public String getTitle() {
-        return this.book.getTitle();
+    private Livre livre;
+    public String getTitre() {
+        return this.livre.getTitre();
     }
 
-    public void setTitle(String title) {
-        this.book.setTitle(title);
+    public void setTitre(String title) {
+        this.livre.setTitre(title);
     }
 
-    public Author getAuthor() {
-        return this.getAuthor();
+    public Auteur getAuteur() {
+        return this.getAuteur();
     }
 
-    public void setAuthor(Author author) {
-        this.book.setAuthor(author);
+    public void setAuteur(Auteur auteur) {
+        this.livre.setAuteur(auteur);
     }
 
-    public String getDescription() {
-        return this.book.getDescription();
+    public String getPresentation() {
+        return this.livre.getPresentation();
     }
 
-    public void setDescription(String description) {
-        this.book.setDescription(description);
+    public void setPresentation(String presentation) {
+        this.livre.setPresentation(presentation);
     }
 
-    public String getPublication() {
-        return this.book.getPublication();
+    public int getParution() {
+        return this.livre.getParution();
     }
 
-    public void setPublication(String publication) {
-        this.book.setPublication(publication);
+    public void setParution(int parution) {
+        this.livre.setParution(parution);
     }
 
-    public short getColumn() {
-        return this.book.getColumn();
+    public int getColonne() {
+        return this.livre.getColonne();
     }
 
-    public void setColumn(short column) {
-        this.book.setColumn(column);
+    public void setColonne(int colonne) {
+        this.livre.setColonne(colonne);
     }
 
-    public short getRow() {
-        return this.book.getRow();
+    public int getRangee() {
+        return this.livre.getRangee();
     }
 
-    public void setRow(short row) {
-        this.book.setRow(row);
+    public void setRangee(int rangee) {
+        this.livre.setRangee(rangee);
     }
 }

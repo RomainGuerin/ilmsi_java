@@ -6,7 +6,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import com.e3in.java.model.Library;
+import com.e3in.java.model.Bibliotheque;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -33,13 +33,13 @@ public class XmlUtils {
         }
     }
 
-    public static Library buildLibraryFromXML(String xmlFilePath) {
+    public static Bibliotheque buildLibraryFromXML(String xmlFilePath) {
         try {
             File file = new File(xmlFilePath);
-            JAXBContext jaxbContext = JAXBContext.newInstance(Library.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(Bibliotheque.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-            return (Library) jaxbUnmarshaller.unmarshal(file);
+            return (Bibliotheque) jaxbUnmarshaller.unmarshal(file);
         } catch (JAXBException e) {
             e.printStackTrace();
             return null;

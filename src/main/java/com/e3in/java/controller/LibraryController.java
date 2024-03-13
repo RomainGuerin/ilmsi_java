@@ -1,10 +1,10 @@
 package com.e3in.java.controller;
 
-import com.e3in.java.model.Library;
+import com.e3in.java.model.Bibliotheque;
 
 public class LibraryController {
-    private Library library;
+    private Bibliotheque bibliotheque;
     public LibraryController (String xmlFilePath) {
-        this.library = XmlUtils.buildLibraryFromXML(xmlFilePath);
+        this.bibliotheque = XmlUtils.buildLibraryFromXML(xmlFilePath);
     }
 }

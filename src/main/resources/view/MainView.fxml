@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.e3in.java.controller.MainViewController">
+    <top>
+        <MenuBar>
+            <Menu text="Fichier">
+                <MenuItem text="Ouvrir" onAction="#handleLoadFile"/>
+                <MenuItem text="Quitter" onAction="#handleUnloadFile"/>
+            </Menu>
+            <Menu text="Edition">
+                <MenuItem text="Sauvegarder" onAction="#handleSave"/>
+                <MenuItem text="Sauegarder sous" onAction="#handleSaveAs"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <TableView fx:id="tableView">
+            <columns>
+                <TableColumn text="Titre" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="titre"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Auteur" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="auteur"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Présentation" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="presentation"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Parution" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="parution"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Colonne" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="colonne"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Rangée" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="rangee"/>
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
+
+    </center>
+</BorderPane>

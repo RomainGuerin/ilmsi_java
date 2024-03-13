@@ -18,6 +18,11 @@
                 <MenuItem text="Sauvegarder" onAction="#handleSave"/>
                 <MenuItem text="Sauegarder sous" onAction="#handleSaveAs"/>
             </Menu>
+            <Menu text="About">
+                <items>
+                    <MenuItem text="Infos" onAction="#handleInfos"/>
+                </items>
+            </Menu>
         </MenuBar>
     </top>
     <center>

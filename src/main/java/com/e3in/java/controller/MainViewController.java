@@ -3,8 +3,11 @@ package com.e3in.java.controller;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -59,7 +62,7 @@ public class MainViewController {
         String xmlFilePath = "";
         xmlFilePath = chooseFile();
         if (xmlFilePath == null || xmlFilePath.isEmpty()) {
-            // Error
+            showErrorAlert("Erreur", "Aucun fichier sélectionné");
             return;
         }
 
@@ -76,6 +79,22 @@ public class MainViewController {
         tableView.getItems().clear();
         tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
     }
+
+    @FXML
+    private void handleInfos() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AboutView.fxml"));
+            VBox content = fxmlLoader.load();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("About");
+            alert.setHeaderText(null);
+            alert.getDialogPane().setContent(content);
+            alert.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private String chooseFile() {
         FileChooser fileChooser = new FileChooser();
@@ -122,5 +141,13 @@ public class MainViewController {
     
     private Stage getStage() {
         return (Stage) tableView.getScene().getWindow();
+    }
+
+    protected static void showErrorAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

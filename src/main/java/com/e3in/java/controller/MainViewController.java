@@ -22,8 +22,9 @@ public class MainViewController {
             return;
         }
 
-        XmlValidator.validateXml(xmlFilePath);
+        XmlUtils.validateXml(xmlFilePath);
         this.xmlFilePath = xmlFilePath;
+        LibraryController lib = new LibraryController(xmlFilePath);
     }
     private String chooseFile() {
         FileChooser fileChooser = new FileChooser();

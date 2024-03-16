@@ -2,17 +2,20 @@ package com.e3in.java.controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
@@ -23,43 +26,83 @@ public class MainViewController {
     
     @FXML
     private TableView<Livre> tableView;
-    private TableColumn<Livre, String> titreColumn;
-    private TableColumn<Livre, String> auteurColumn;
-    private TableColumn<Livre, String> presentationColumn;
-    private TableColumn<Livre, Integer> parutionColumn;
-    private TableColumn<Livre, Integer> colonneColumn;
-    private TableColumn<Livre, Integer> rangeeColumn;
-    
+    @FXML
+    private TextField textFieldTitre;
+    @FXML
+    private TextField textFieldAuteur;
+    @FXML
+    private TextField textFieldPresentation;
+    @FXML
+    private TextField textFieldParution;
+    @FXML
+    private Spinner spinnerColonne;
+    @FXML
+    private Spinner spinnerRangee;
+    @FXML
+    private Button buttonModify;
+    private Livre selectedBook;
     public MainViewController() { }
 
     @FXML
     public void initialize() {
-        // Initialiser les colonnes dans la méthode initialize
-        titreColumn = new TableColumn<>("Titre");
-        titreColumn.setCellValueFactory(new PropertyValueFactory<>("titre"));
+        tableView.setRowFactory(tv -> {
+            TableRow<Livre> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                    fillForm(row);
+                }
+                else if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                    removeTabRow(row);
+                }
+            });
 
-        auteurColumn = new TableColumn<>("Auteur");
-        auteurColumn.setCellValueFactory(new PropertyValueFactory<>("auteur"));
+            UnaryOperator<TextFormatter.Change> filter = change -> {
+                if (change.getControlNewText().isEmpty() || change.getControlNewText().matches("\\d+")) {
+                    return change;
+                }
+                return null;
+            };
 
-        presentationColumn = new TableColumn<>("Présentation");
-        presentationColumn.setCellValueFactory(new PropertyValueFactory<>("presentation"));
+            TextFormatter<String> textFormatter = new TextFormatter<>(filter);
 
-        parutionColumn = new TableColumn<>("Parution");
-        parutionColumn.setCellValueFactory(new PropertyValueFactory<>("parution"));
+            textFieldParution.setTextFormatter(textFormatter);
 
-        colonneColumn = new TableColumn<>("Colonne");
-        colonneColumn.setCellValueFactory(new PropertyValueFactory<>("colonne"));
+            int currentYear = LocalDate.now().getYear();
+            textFieldParution.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (!newValue.matches("\\d*")) {
+                    textFieldParution.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+                if (!newValue.isEmpty() && Integer.parseInt(newValue) > currentYear) {
+                    textFieldParution.setText(String.valueOf(currentYear));
+                }
+            });
 
-        rangeeColumn = new TableColumn<>("Rangée");
-        rangeeColumn.setCellValueFactory(new PropertyValueFactory<>("rangee"));
-
-        // Ajouter les colonnes à la TableView
-        tableView.getColumns().addAll(List.of(titreColumn, auteurColumn, presentationColumn, parutionColumn, colonneColumn, rangeeColumn));
+            return row;
+        });
     }
 
+    private void removeTabRow(TableRow<Livre> row) {
+        Livre livre = row.getItem();
+        if (livre != null) {
+            tableView.getItems().remove(livre);
+        }
+    }
+
+    private void fillForm(TableRow<Livre> row) {
+        Livre livre = row.getItem();
+        this.textFieldTitre.setText(livre.getTitre());
+        this.textFieldAuteur.setText(livre.getAuteur().toString());
+        this.textFieldPresentation.setText(livre.getPresentation());
+        this.textFieldParution.setText(String.valueOf(livre.getParution()));
+        this.spinnerColonne.getValueFactory().setValue(livre.getColonne());
+        this.spinnerRangee.getValueFactory().setValue(livre.getRangee());
+        System.out.println(livre);
+        this.selectedBook = livre;
+        this.buttonModify.setText("Modifier");
+    }
     @FXML
     private void handleLoadFile() {
-        String xmlFilePath = "";
+        String xmlFilePath;
         xmlFilePath = chooseFile();
         if (xmlFilePath == null || xmlFilePath.isEmpty()) {
             showErrorAlert("Erreur", "Aucun fichier sélectionné");
@@ -77,7 +120,9 @@ public class MainViewController {
         Bibliotheque library = XmlUtils.buildLibraryFromXML(xmlFilePath);
         
         tableView.getItems().clear();
-        tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
+        if (library != null) {
+            tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
+        }
     }
 
     @FXML
@@ -95,6 +140,75 @@ public class MainViewController {
         }
     }
 
+    @FXML
+    private void handleModify() {
+        if (this.buttonModify.getText().equals("Modifier")) {
+            modifyClick();
+        } else if (this.buttonModify.getText().equals("Ajouter")) {
+            addClick();
+        }
+    }
+    private boolean estLivreUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
+        for (Livre livre : listeLivres) {
+            if (livre.getTitre().equals(titre) && livre.getAuteur().toString().equals(auteur) && livre.getParution() == parution) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private void modifyClick(){
+        if(selectedBook != null) {
+            String titre = textFieldTitre.getText().strip();
+            String auteur = textFieldAuteur.getText().strip();
+            int parution = Integer.parseInt(textFieldParution.getText().strip());
+
+            if (!estLivreUnique(titre, auteur, parution, tableView.getItems())) {
+                showErrorAlert("Erreur", "Un livre avec le meme auteur/titre/parution existe.");
+                return;
+            }
+
+            System.out.println("spin = " + spinnerColonne.getValue() + spinnerColonne.getPromptText());
+            System.out.println("spin2 = " +  spinnerColonne.getValue().getClass() + spinnerColonne.getPromptText().getClass());
+            this.selectedBook.setTitre(textFieldTitre.getText().strip());
+            this.selectedBook.setAuteur(textFieldAuteur.getText().strip());
+            this.selectedBook.setPresentation(textFieldPresentation.getText().strip());
+            this.selectedBook.setParution(Integer.parseInt(textFieldParution.getText().strip()));
+            if(spinnerColonne.getValue() instanceof Integer && spinnerRangee.getValue() instanceof Integer) {
+                this.selectedBook.setColonne((int) spinnerColonne.getValue());
+                this.selectedBook.setRangee((int) spinnerRangee.getValue());
+            }
+            tableView.refresh();
+            clearField();
+        }
+    }
+    private void addClick(){
+        Livre livre = new Livre();
+        livre.setTitre(textFieldTitre.getText().strip());
+        livre.setAuteur(textFieldAuteur.getText().strip());
+        livre.setPresentation(textFieldPresentation.getText().strip());
+        livre.setParution(Integer.parseInt(textFieldParution.getText().strip()));
+        livre.setColonne(Integer.parseInt((String) spinnerColonne.getValue()));
+        livre.setRangee(Integer.parseInt((String) spinnerRangee.getValue()));
+
+        tableView.getItems().add(livre);
+        tableView.refresh();
+    }
+
+    @FXML
+    private void handleCancel() {
+        this.selectedBook = null;
+        clearField();
+    }
+
+    private void clearField() {
+        this.textFieldTitre.setText("");
+        this.textFieldAuteur.setText("");
+        this.textFieldPresentation.setText("");
+        this.textFieldParution.setText("");
+        this.spinnerColonne.getValueFactory().setValue(0);
+        this.spinnerRangee.getValueFactory().setValue(1);
+        this.buttonModify.setText("Ajouter");
+    }
 
     private String chooseFile() {
         FileChooser fileChooser = new FileChooser();
@@ -111,6 +225,7 @@ public class MainViewController {
     @FXML
     private void handleUnloadFile() {
         tableView.getItems().clear();
+        selectedBook = null;
     }
 
     @FXML

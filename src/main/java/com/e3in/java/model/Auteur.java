@@ -30,4 +30,11 @@ public class Auteur {
     public String toString() {
         return this.prenom + " " + this.nom;
     }
+    public String toXml() {
+        String myStr = "<Auteur>\n";
+        myStr += "<nom>" + this.nom + "</nom>\n";
+        myStr += "<prenom>" + this.prenom + "</prenom>\n";
+        myStr += "</Auteur>\n";
+        return myStr;
+    }
 }

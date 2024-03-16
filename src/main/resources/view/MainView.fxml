@@ -1,65 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.e3in.java.controller.MainViewController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.MainViewController">
     <top>
         <MenuBar>
             <Menu text="Fichier">
-                <MenuItem text="Ouvrir" onAction="#handleLoadFile"/>
-                <MenuItem text="Quitter" onAction="#handleUnloadFile"/>
+                <MenuItem onAction="#handleLoadFile" text="Ouvrir" />
+                <MenuItem onAction="#handleUnloadFile" text="Quitter" />
             </Menu>
             <Menu text="Edition">
-                <MenuItem text="Sauvegarder" onAction="#handleSave"/>
-                <MenuItem text="Sauegarder sous" onAction="#handleSaveAs"/>
+                <MenuItem onAction="#handleSave" text="Sauvegarder" />
+                <MenuItem onAction="#handleSaveAs" text="Sauegarder sous" />
             </Menu>
             <Menu text="About">
                 <items>
-                    <MenuItem text="Infos" onAction="#handleInfos"/>
+                    <MenuItem onAction="#handleInfos" text="Infos" />
                 </items>
             </Menu>
         </MenuBar>
     </top>
-    <center>
-        <TableView fx:id="tableView">
-            <columns>
-                <TableColumn text="Titre" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="titre"/>
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Auteur" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="auteur"/>
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Présentation" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="presentation"/>
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Parution" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="parution"/>
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Colonne" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="colonne"/>
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Rangée" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="rangee"/>
-                    </cellValueFactory>
-                </TableColumn>
-            </columns>
-        </TableView>
-
-    </center>
+   <center>
+      <TableView fx:id="tableView" prefHeight="654.0" prefWidth="608.0">
+          <columns>
+              <TableColumn prefWidth="100" text="Titre">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="titre" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn prefWidth="100" text="Auteur">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="auteur" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn prefWidth="100" text="Présentation">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="presentation" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn prefWidth="100" text="Parution">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="parution" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn prefWidth="100" text="Colonne">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="colonne" />
+                  </cellValueFactory>
+              </TableColumn>
+              <TableColumn prefWidth="100" text="Rangée">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="rangee" />
+                  </cellValueFactory>
+              </TableColumn>
+          </columns>
+      </TableView>
+   </center>
+   <right>
+         <VBox alignment="TOP_CENTER" prefHeight="654.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+            <children>
+               <Label alignment="CENTER" text="Edition" />
+               <HBox alignment="CENTER" prefHeight="51.0" prefWidth="250.0">
+                  <children>
+                     <Label prefHeight="17.0" prefWidth="82.0" text="Titre" />
+                     <TextField fx:id="textFieldTitre"/>
+                  </children>
+               </HBox>
+               <Separator prefWidth="200.0" />
+               <HBox alignment="CENTER" layoutX="10.0" layoutY="27.0" prefHeight="51.0" prefWidth="250.0">
+                  <children>
+                     <Label prefHeight="17.0" prefWidth="82.0" text="Auteur" />
+                     <TextField fx:id="textFieldAuteur"/>
+                  </children>
+               </HBox>
+               <Separator layoutX="10.0" layoutY="78.0" prefWidth="200.0" />
+               <HBox alignment="CENTER" layoutX="10.0" layoutY="81.0" prefHeight="51.0" prefWidth="250.0">
+                  <children>
+                     <Label prefHeight="17.0" prefWidth="82.0" text="Présentation" />
+                     <TextField fx:id="textFieldPresentation"/>
+                  </children>
+               </HBox>
+               <Separator layoutX="10.0" layoutY="132.0" prefWidth="200.0" />
+               <HBox alignment="CENTER" layoutX="10.0" layoutY="135.0" prefHeight="51.0" prefWidth="250.0">
+                  <children>
+                     <Label prefHeight="17.0" prefWidth="82.0" text="Parution" />
+                     <TextField fx:id="textFieldParution"/>
+                  </children>
+               </HBox>
+               <Separator layoutX="10.0" layoutY="186.0" prefWidth="200.0" />
+               <HBox alignment="CENTER" layoutX="10.0" layoutY="189.0" prefHeight="51.0" prefWidth="250.0">
+                  <children>
+                     <Label prefHeight="17.0" prefWidth="82.0" text="Colonne" />
+                     <Spinner fx:id="spinnerColonne" min="0" max="7" initialValue="1" />
+                  </children>
+               </HBox>
+               <Separator layoutX="10.0" layoutY="240.0" prefWidth="200.0" />
+               <HBox alignment="CENTER" layoutX="10.0" layoutY="243.0" prefHeight="51.0" prefWidth="250.0">
+                  <children>
+                     <Label prefHeight="17.0" prefWidth="82.0" text="Rangée" />
+                      <Spinner fx:id="spinnerRangee" min="1" max="5" initialValue="1" />
+                  </children>
+               </HBox>
+               <Separator layoutX="10.0" layoutY="294.0" prefWidth="200.0" />
+               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <children>
+                     <Button layoutX="100.0" layoutY="50.0" text="Annuler" onAction="#handleCancel" />
+                     <Button layoutX="100.0" layoutY="50.0" text="Modify" fx:id="buttonModify" onAction="#handleModify" />
+                  </children>
+               </HBox>
+            </children>
+         </VBox>
+   </right>
 </BorderPane>

@@ -14,7 +14,7 @@ public class BookController {
     }
 
     public Auteur getAuteur() {
-        return this.getAuteur();
+        return this.livre.getAuteur();
     }
 
     public void setAuteur(Auteur auteur) {

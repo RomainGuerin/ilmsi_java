@@ -18,9 +18,10 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public class XmlUtils {
-    private static String xsdFilePath = XmlUtils.class.getResource("/Biblio.xsd").getPath();
+    private static final String xsdFilePath = Objects.requireNonNull(XmlUtils.class.getResource("/Biblio.xsd")).getPath();
     public static boolean validateXml(String xmlFilePath) {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -45,7 +46,7 @@ public class XmlUtils {
 
             return (Bibliotheque) jaxbUnmarshaller.unmarshal(file);
         } catch (JAXBException e) {
-            e.printStackTrace();
+            System.err.println("Erreur de chargement du XML : " + e.getMessage());
             return null;
         }
     }
@@ -61,7 +62,7 @@ public class XmlUtils {
 
             marshaller.marshal(library, new File(filePath));
         } catch (JAXBException e) {
-            e.printStackTrace();
+            System.err.println("Erreur d'enregistrement du XML : " + e.getMessage());
         }
     }
 }

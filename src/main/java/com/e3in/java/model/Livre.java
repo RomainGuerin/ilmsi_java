@@ -31,6 +31,18 @@ public class Livre {
     public void setAuteur(Auteur auteur) {
         this.auteur = auteur;
     }
+    public void setAuteur(String auteur) {
+        String[] temp = auteur.split(" ");
+        if(temp.length < 1) {
+            //error
+        } else if(temp.length > 1) {
+            this.auteur.setPrenom(temp[0].strip());
+            this.auteur.setNom(temp[1].strip());
+        } else {
+            this.auteur.setPrenom(temp[0].strip());
+            this.auteur.setNom(temp[0].strip());
+        }
+    }
 
     @XmlElement
     public String getPresentation() {
@@ -66,5 +78,21 @@ public class Livre {
 
     public void setRangee(int rangee) {
         this.rangee = rangee;
+    }
+
+
+    @Override
+    public String toString() {
+        return this.toXml();
+    }
+    public String toXml() {
+        String myStr = "<Livre>\n";
+        myStr += "<Titre>"+this.getTitre()+"</Titre>\n";
+        myStr += this.getAuteur().toXml();
+        myStr += "<Presentation>"+this.getPresentation()+"</Presentation>\n";
+        myStr += "<Parution>"+this.getParution()+"</Parution>\n";
+        myStr += "<Colonne>"+this.getColonne()+"</Colonne>\n";
+        myStr += "</Livre>\n";
+        return myStr;
     }
 }

@@ -10,9 +10,9 @@ Cette commande créera un dossier "target", qui contient le fichier .jar du proj
 ## Javadoc pour le projet
 Pour créer le javadoc pour le projet :
 ```bash
-javadoc -d docs -sourcepath src/main/java -subpackages .
+mvn javadoc:javadoc
 ```
-Cette commande créera un dossier "docs", qui contient le javadoc du projet.
+La javadoc sera créée dans le dossier "target/site/apidocs". Pour la consulter, ouvrir le fichier "index.html" dans un navigateur.
 
 ## Ouvrir le .jar
 Pour ouvrir le fichier `.jar` du projet :

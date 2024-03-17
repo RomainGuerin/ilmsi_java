@@ -13,6 +13,20 @@ public class Bibliotheque {
     private List<Livre> livres;
 
     /**
+     * Constructeur par défaut de la bibliothèque.
+     */
+    public Bibliotheque() { }
+
+    /**
+     * Constructeur de la bibliothèque avec la liste des livres.
+     * 
+     * @param livres La liste des livres.
+     */
+    public Bibliotheque(List<Livre> livres) {
+        this.livres = livres;
+    }
+
+    /**
      * Récupère la liste des livres.
      * 
      * @return La liste des livres.

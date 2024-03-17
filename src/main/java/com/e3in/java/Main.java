@@ -22,6 +22,11 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Point d'entrée de l'application.
+     * 
+     * @param args Les arguments pour lancer l'application.
+     */
     public static void main(String[] args) {
         launch(args);
     }

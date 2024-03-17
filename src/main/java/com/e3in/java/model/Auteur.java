@@ -12,6 +12,22 @@ public class Auteur {
     private String prenom;
 
     /**
+     * Constructeur par défaut de l'auteur.
+     */
+    public Auteur() { }
+
+    /**
+     * Constructeur de l'auteur avec son nom et son prénom.
+     *
+     * @param nom    Le nom de l'auteur.
+     * @param prenom Le prénom de l'auteur.
+     */
+    public Auteur(String nom, String prenom) {
+        this.nom = nom;
+        this.prenom = prenom;
+    }
+
+    /**
      * Récupère le nom de l'auteur.
      *
      * @return Le nom de l'auteur.

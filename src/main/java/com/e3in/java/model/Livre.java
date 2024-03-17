@@ -19,6 +19,32 @@ public class Livre {
     private int rangee;
 
     /**
+     * Constructeur par défaut du livre.
+     */
+    public Livre() { }
+
+    /**
+     * Constructeur du livre avec ses attributs.
+     * 
+     * @param titre        Le titre du livre.
+     * @param auteur       L'auteur du livre.
+     * @param presentation La présentation du livre.
+     * @param jaquette     La jaquette du livre.
+     * @param parution     L'année de parution du livre.
+     * @param colonne      Le numéro de colonne du livre.
+     * @param rangee       Le numéro de la rangée du livre.
+     */
+    public Livre(String titre, Auteur auteur, String presentation, String jaquette, int parution, int colonne, int rangee) {
+        this.titre = titre;
+        this.auteur = auteur;
+        this.presentation = presentation;
+        this.jaquette = jaquette;
+        this.parution = parution;
+        this.colonne = colonne;
+        this.rangee = rangee;
+    }
+
+    /**
      * Récupère le titre du livre.
      * 
      * @return Le titre du livre.

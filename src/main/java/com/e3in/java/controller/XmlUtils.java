@@ -34,6 +34,7 @@ public class XmlUtils {
             return true;
         } catch (SAXException | IOException e) {
             System.err.println("Erreur de validation XML : " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

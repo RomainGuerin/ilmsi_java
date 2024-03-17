@@ -1,18 +1,18 @@
 package com.e3in.java.controller;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -33,6 +33,8 @@ public class MainViewController {
     @FXML
     private TextField textFieldPresentation;
     @FXML
+    private TextField textFieldJaquette;
+    @FXML
     private TextField textFieldParution;
     @FXML
     private Spinner spinnerColonne;
@@ -48,9 +50,11 @@ public class MainViewController {
         tableView.setRowFactory(tv -> {
             TableRow<Livre> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
+                // Un click alors on modifie
                 if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                     fillForm(row);
                 }
+                // Double click alors on supprime
                 else if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     removeTabRow(row);
                 }
@@ -76,9 +80,19 @@ public class MainViewController {
                     textFieldParution.setText(String.valueOf(currentYear));
                 }
             });
-
             return row;
         });
+        TableColumn<Livre, ImageView> jaquetteColumn = new TableColumn<>("Image Jaquette");
+        jaquetteColumn.setCellValueFactory(cellData -> {
+            Livre livre = cellData.getValue();
+            String imageUrl = livre.getJaquette();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                return new SimpleObjectProperty<>(createImageViewFromURL(imageUrl));
+            } else {
+                return null;
+            }
+        });
+        tableView.getColumns().add(jaquetteColumn);
     }
 
     private void removeTabRow(TableRow<Livre> row) {
@@ -93,6 +107,7 @@ public class MainViewController {
         this.textFieldTitre.setText(livre.getTitre());
         this.textFieldAuteur.setText(livre.getAuteur().toString());
         this.textFieldPresentation.setText(livre.getPresentation());
+        this.textFieldJaquette.setText(livre.getJaquette());
         this.textFieldParution.setText(String.valueOf(livre.getParution()));
         this.spinnerColonne.getValueFactory().setValue(livre.getColonne());
         this.spinnerRangee.getValueFactory().setValue(livre.getRangee());
@@ -111,7 +126,7 @@ public class MainViewController {
 
         boolean isValid = XmlUtils.validateXml(xmlFilePath);
         if (!isValid) {
-            // Handle invalid XML
+            showErrorAlert("Erreur", "XML non valide");
             return;
         }
 
@@ -136,8 +151,12 @@ public class MainViewController {
             alert.getDialogPane().setContent(content);
             alert.showAndWait();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Erreur de chargement de la page About: " + e.getMessage());
         }
+    }
+    @FXML
+    private void handleQuitApp() {
+        getStage().close();
     }
 
     @FXML
@@ -172,6 +191,7 @@ public class MainViewController {
             this.selectedBook.setTitre(textFieldTitre.getText().strip());
             this.selectedBook.setAuteur(textFieldAuteur.getText().strip());
             this.selectedBook.setPresentation(textFieldPresentation.getText().strip());
+            this.selectedBook.setJaquette(textFieldJaquette.getText().strip());
             this.selectedBook.setParution(Integer.parseInt(textFieldParution.getText().strip()));
             if(spinnerColonne.getValue() instanceof Integer && spinnerRangee.getValue() instanceof Integer) {
                 this.selectedBook.setColonne((int) spinnerColonne.getValue());
@@ -186,6 +206,7 @@ public class MainViewController {
         livre.setTitre(textFieldTitre.getText().strip());
         livre.setAuteur(textFieldAuteur.getText().strip());
         livre.setPresentation(textFieldPresentation.getText().strip());
+        livre.setJaquette(textFieldJaquette.getText().strip());
         livre.setParution(Integer.parseInt(textFieldParution.getText().strip()));
         livre.setColonne(Integer.parseInt((String) spinnerColonne.getValue()));
         livre.setRangee(Integer.parseInt((String) spinnerRangee.getValue()));
@@ -204,6 +225,7 @@ public class MainViewController {
         this.textFieldTitre.setText("");
         this.textFieldAuteur.setText("");
         this.textFieldPresentation.setText("");
+        this.textFieldJaquette.setText("");
         this.textFieldParution.setText("");
         this.spinnerColonne.getValueFactory().setValue(0);
         this.spinnerRangee.getValueFactory().setValue(1);
@@ -264,5 +286,26 @@ public class MainViewController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    private ImageView createImageViewFromURL(String imageUrl) {
+        ImageView imageView = new ImageView();
+        try {
+            // on vérifie que la jaquette soit un fichier ou un url pour la charger correctement
+            if (imageUrl.startsWith("http")) {
+                Image image = new Image(imageUrl);
+                imageView.setImage(image);
+            } else {
+                File file = new File(imageUrl);
+                Image image = new Image(file.toURI().toString());
+                imageView.setImage(image);
+            }
+
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(100);
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erreur lors du chargement de l'image : " + e.getMessage());
+        }
+        return imageView;
     }
 }

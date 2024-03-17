@@ -17,6 +17,7 @@
                 </xs:complexType>
               </xs:element>
               <xs:element name="presentation" type="xs:string" />
+              <xs:element name="jaquette" type="xs:string" />
               <xs:element name="parution" type="xs:unsignedShort" />
               <xs:element name="colonne" type="xs:unsignedByte" />
               <xs:element name="rangee" type="xs:unsignedByte" />

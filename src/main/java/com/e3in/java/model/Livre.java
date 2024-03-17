@@ -5,7 +5,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "livre")
-@XmlType(propOrder = {"titre", "auteur", "presentation", "parution", "colonne", "rangee"})
+@XmlType(propOrder = {"titre", "auteur", "presentation", "parution", "colonne", "rangee", "jaquette"})
 public class Livre {
     private String titre;
     private Auteur auteur;
@@ -13,10 +13,11 @@ public class Livre {
     private int parution;
     private int colonne;
     private int rangee;
+    private String jaquette;
 
     @XmlElement
     public String getTitre() {
-        return titre;
+        return this.titre;
     }
 
     public void setTitre(String titre) {
@@ -25,7 +26,7 @@ public class Livre {
 
     @XmlElement
     public Auteur getAuteur() {
-        return auteur;
+        return this.auteur;
     }
 
     public void setAuteur(Auteur auteur) {
@@ -46,7 +47,7 @@ public class Livre {
 
     @XmlElement
     public String getPresentation() {
-        return presentation;
+        return this.presentation;
     }
 
     public void setPresentation(String presentation) {
@@ -55,7 +56,7 @@ public class Livre {
 
     @XmlElement
     public int getParution() {
-        return parution;
+        return this.parution;
     }
 
     public void setParution(int parution) {
@@ -64,7 +65,7 @@ public class Livre {
 
     @XmlElement
     public int getColonne() {
-        return colonne;
+        return this.colonne;
     }
 
     public void setColonne(int colonne) {
@@ -73,13 +74,20 @@ public class Livre {
 
     @XmlElement
     public int getRangee() {
-        return rangee;
+        return this.rangee;
     }
 
     public void setRangee(int rangee) {
         this.rangee = rangee;
     }
+    @XmlElement
+    public String getJaquette() {
+        return this.jaquette;
+    }
 
+    public void setJaquette(String jaquette) {
+        this.jaquette = jaquette;
+    }
 
     @Override
     public String toString() {

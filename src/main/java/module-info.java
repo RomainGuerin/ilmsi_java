@@ -1,4 +1,4 @@
-module com.example.java {
+module com.e3in.java {
     requires javafx.controls;
     requires javafx.fxml;
     requires jakarta.xml.bind;

@@ -8,13 +8,16 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
+/**
+ * Classe principale de l'application
+ */
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/MainView.fxml")));
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 1100, 500);
 
-        primaryStage.setTitle("Java FX Bibliothéque");
+        primaryStage.setTitle("Java FX Bibliothèque");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

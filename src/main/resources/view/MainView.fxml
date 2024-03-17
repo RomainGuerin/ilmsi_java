@@ -14,7 +14,7 @@
             </Menu>
             <Menu text="Edition">
                 <MenuItem onAction="#handleSave" text="Sauvegarder"/>
-                <MenuItem onAction="#handleSaveAs" text="Sauegarder sous"/>
+                <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous"/>
             </Menu>
             <Menu text="A propos">
                 <MenuItem onAction="#handleInfos" text="Informations"/>
@@ -118,7 +118,8 @@
                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                   <children>
                      <Button layoutX="100.0" layoutY="50.0" text="Annuler" onAction="#handleCancel" />
-                     <Button layoutX="100.0" layoutY="50.0" text="Modify" fx:id="buttonModify" onAction="#handleModify" />
+                     <Button layoutX="125.0" layoutY="75.0" text="Supprimer" fx:id="buttonRemove" onAction="#handleRemove" />
+                     <Button layoutX="100.0" layoutY="50.0" text="Ajouter" fx:id="buttonModify" onAction="#handleModify" />
                   </children>
                </HBox>
             </children>

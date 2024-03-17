@@ -390,7 +390,12 @@ public class MainViewController {
         return imageView;
     }
 
-    // Méthode pour afficher une alerte d'erreur
+    /** 
+     * Méthode pour afficher une alerte d'erreur
+     * 
+     * @param title Le titre de l'alerte.
+     * @param content Le contenu de l'alerte.
+     */
     protected static void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

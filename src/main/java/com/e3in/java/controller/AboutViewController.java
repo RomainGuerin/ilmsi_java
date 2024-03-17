@@ -7,6 +7,9 @@ import java.io.InputStreamReader;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
+/**
+ * Contrôleur de la vue À propos
+ */
 public class AboutViewController {
     @FXML
     private Label versionLabel;
@@ -23,8 +26,16 @@ public class AboutViewController {
     @FXML
     private Label osVersionLabel;
 
+    /**
+     * Constructeur par défaut de la classe AboutViewController.
+     */
     public AboutViewController() { }
     
+    /**
+     * Initialise la vue À propos.
+     * Récupère les informations sur la version, le commit, la date de version,
+     * la version de Java et la version de l'OS, puis les affiche dans la vue.
+     */
     public void initialize() {
         // Récupérer la version Git
         String gitVersion = executeCommand("git describe --tags --abbrev=0");
@@ -41,7 +52,7 @@ public class AboutViewController {
         // Version de l'OS
         String osVersion = System.getProperty("os.version") + " (" + System.getProperty("os.name") + ")";
 
-        // Mettre à jour les étiquettes dans le FXML
+        // Mise à jour des étiquettes dans le FXML
         versionLabel.setText("Version: " + gitVersion);
         commitLabel.setText("Commit: " + commit);
         dateLabel.setText("Date de version: " + versionDate);
@@ -49,6 +60,12 @@ public class AboutViewController {
         osVersionLabel.setText("Version de l'OS: " + osVersion);
     }
     
+    /**
+     * Exécute une commande système et renvoie le résultat.
+     *
+     * @param command La commande à exécuter.
+     * @return Le résultat de l'exécution de la commande.
+     */
     private String executeCommand(String command) {
         try {
             Process process = Runtime.getRuntime().exec(command);

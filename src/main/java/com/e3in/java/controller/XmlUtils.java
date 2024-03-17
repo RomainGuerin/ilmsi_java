@@ -1,4 +1,5 @@
 package com.e3in.java.controller;
+
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -20,8 +21,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Classe utilitaire pour la manipulation d'XML.
+ */
 public class XmlUtils {
+    // Chemin vers le fichier XSD utilisé pour la validation XML
     private static final String xsdFilePath = Objects.requireNonNull(XmlUtils.class.getResource("/Biblio.xsd")).getPath();
+
+    /**
+     * Valide un fichier XML par rapport à un schéma XSD.
+     *
+     * @param xmlFilePath Chemin vers le fichier XML à valider.
+     * @return True si le fichier XML est valide, sinon False.
+     */
     public static boolean validateXml(String xmlFilePath) {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -39,6 +51,12 @@ public class XmlUtils {
         }
     }
 
+    /**
+     * Construit une bibliothèque de livres à partir d'un fichier XML.
+     *
+     * @param xmlFilePath Chemin vers le fichier XML contenant la bibliothèque.
+     * @return La bibliothèque de livres construite à partir du fichier XML.
+     */
     public static Bibliotheque buildLibraryFromXML(String xmlFilePath) {
         try {
             File file = new File(xmlFilePath);
@@ -52,6 +70,12 @@ public class XmlUtils {
         }
     }
 
+    /**
+     * Enregistre une liste de livres dans un fichier XML.
+     *
+     * @param livres   Liste des livres à enregistrer.
+     * @param filePath Chemin vers le fichier XML de sortie.
+     */
     public static void saveLibraryToXml(List<Livre> livres, String filePath) {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Bibliotheque.class);

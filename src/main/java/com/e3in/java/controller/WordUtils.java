@@ -21,6 +21,9 @@ import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
@@ -33,7 +36,7 @@ public class WordUtils {
 
     public WordUtils (String pathFile) throws FileNotFoundException {
         document = new XWPFDocument();
-        path = pathFile + ".docx";
+        path = pathFile;
         file = new FileOutputStream(path);
     }
 
@@ -44,7 +47,8 @@ public class WordUtils {
             XWPFParagraph headerParagraph = header.createParagraph();
             XWPFRun headerRun = headerParagraph.createRun();
             String date = getCurrentDateTime();
-            String headerText = "Export Bibliothèque - Fichier : " + path + " - " + date;
+            String pathName = path.substring(path.lastIndexOf("\\") + 1);
+            String headerText = "Export Bibliothèque - Fichier : " + pathName + " - " + date;
             headerRun.setText(headerText);
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,6 +159,29 @@ public class WordUtils {
                 buildAndAddParagraph("Le livre est " + (book.getEmprunte() ? "emprunté": "à la bibliothèque"), document);
                 if (books.indexOf(book) != books.size()-1) {
                     document.createParagraph().setPageBreak(true);
+                }
+            }
+
+            document.createParagraph().setPageBreak(true);
+
+            // Title Tableau des livres de la bibliothèque empruntés
+            XWPFParagraph titleEmprunt = document.createParagraph();
+            titleEmprunt.setAlignment(ParagraphAlignment.CENTER);
+
+            XWPFRun titleRunEmprunt = titleEmprunt.createRun();
+            titleRunEmprunt.setText("Les livres de la bibliothèque empruntés");
+            titleRunEmprunt.setColor("000000");
+            titleRunEmprunt.setBold(true);
+            titleRunEmprunt.setFontFamily("Courier");
+            titleRunEmprunt.setFontSize(20);
+
+            XWPFParagraph subTitleEmprunt = document.createParagraph();
+            subTitleEmprunt.setAlignment(ParagraphAlignment.CENTER);
+
+            for (Livre book : books) {
+                if (book.getEmprunte()) {
+                    String livreEmprunt = "- " + book.getTitre() + ", " + book.getAuteur().toString() + " - " + String.valueOf(book.getParution());
+                    buildAndAddParagraph(livreEmprunt, document);
                 }
             }
 

@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -228,12 +229,36 @@ public class MainViewController {
     // Exporter les données vers un word (using Apache POI)
     @FXML
     private void handleExport() throws InvalidFormatException, URISyntaxException, IOException {
-        WordUtils word = new WordUtils("docs");
-        word.createHeader();
-        word.createCoverPage();
-        word.wordContent(tableView.getItems());
-        word.createFooter();
-        word.closeDocument();
+        try {
+            String path = chooseSaveLocation(getStage());
+            if (path == null) {
+                throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
+            }
+            WordUtils word = new WordUtils(path);
+            word.createHeader();
+            word.createCoverPage();
+            word.wordContent(tableView.getItems());
+            word.createFooter();
+            word.closeDocument();
+        } catch (Exception e) {
+            showErrorAlert("Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
+        }
+    }
+
+    public static String chooseSaveLocation(Stage primaryStage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Sélectionner un emplacement de sauvegarde");
+        
+        // Création du filtre pour les fichiers .docx
+        ExtensionFilter docxFilter = new ExtensionFilter("Fichiers DOCX (*.docx)", "*.docx");
+        fileChooser.getExtensionFilters().add(docxFilter);
+
+        // Affichage de la boîte de dialogue de sélection de fichiers
+        File file = fileChooser.showSaveDialog(primaryStage);
+        if (file != null) {
+            return file.getAbsolutePath();
+        }
+        return null;
     }
 
     /**

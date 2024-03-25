@@ -101,7 +101,7 @@ public class MainViewController {
             int currentYear = LocalDate.now().getYear();
             textFieldParution.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (!newValue.matches("\\d*")) {
-                    textFieldParution.setText(newValue.replaceAll("[^\\d]", ""));
+                    textFieldParution.setText(newValue.replaceAll("\\D", ""));
                 }
                 if (!newValue.isEmpty() && Integer.parseInt(newValue) > currentYear) {
                     textFieldParution.setText(String.valueOf(currentYear));
@@ -134,13 +134,13 @@ public class MainViewController {
         String xmlFilePath;
         xmlFilePath = chooseFile();
         if (xmlFilePath == null || xmlFilePath.isEmpty()) {
-            showErrorAlert("Erreur", "Aucun fichier sélectionné");
+            showErrorAlert("Erreur fichier", "Aucun fichier sélectionné");
             return;
         }
 
         boolean isValid = XmlUtils.validateXml(xmlFilePath);
         if (!isValid) {
-            showErrorAlert("Erreur", "XML non valide");
+            showErrorAlert("Erreur XML", "XML non valide");
             return;
         }
 
@@ -229,7 +229,7 @@ public class MainViewController {
     @FXML
     private void handleExport() throws InvalidFormatException, URISyntaxException, IOException {
         WordUtils word = new WordUtils("docs");
-        word.WordTest();
+        word.WordTest(tableView.getItems());
         word.createHeader();
         word.closeDocument();
     }
@@ -277,13 +277,10 @@ public class MainViewController {
                 int parution = Integer.parseInt(textFieldParution.getText().strip());
 
                 if (!estLivreUnique(titre, auteur, parution, tableView.getItems())) {
-                    showErrorAlert("Erreur", "Un livre avec le meme auteur/titre/parution existe.");
+                    showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                     return;
                 }
 
-                System.out.println("spin = " + spinnerColonne.getValue() + spinnerColonne.getPromptText());
-                System.out.println(
-                        "spin2 = " + spinnerColonne.getValue().getClass() + spinnerColonne.getPromptText().getClass());
                 this.selectedBook.setTitre(textFieldTitre.getText().strip());
                 this.selectedBook.setAuteur(textFieldAuteur.getText().strip());
                 this.selectedBook.setPresentation(textFieldPresentation.getText().strip());
@@ -297,8 +294,7 @@ public class MainViewController {
                 tableView.refresh();
                 clearField();
             } catch (Exception e) {
-                showErrorAlert("Erreur", "Erreur lors de la modification du livre : " + e.getMessage());
-                return;
+                showErrorAlert("Erreur modification", "Erreur lors de la modification du livre : " + e.getMessage());
             }
         }
     }
@@ -314,19 +310,11 @@ public class MainViewController {
     // Méthode pour ajouter un livre
     private void addClick() {
         try {
-            Livre livre = new Livre();
-            livre.setTitre(textFieldTitre.getText().strip());
-            livre.setAuteur(textFieldAuteur.getText().strip());
-            livre.setPresentation(textFieldPresentation.getText().strip());
-            livre.setJaquette(textFieldJaquette.getText().strip());
-            livre.setParution(Integer.parseInt(textFieldParution.getText().strip()));
-            livre.setColonne((int) spinnerColonne.getValue());
-            livre.setRangee((int) spinnerRangee.getValue());
-            livre.setEmprunte(getBorrowRadio());
+            Livre livre = getUserBook();
 
             if (!estLivreUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
                     tableView.getItems())) {
-                showErrorAlert("Erreur", "Un livre avec le meme auteur/titre/parution existe.");
+                showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                 return;
             }
 
@@ -335,9 +323,21 @@ public class MainViewController {
 
             clearField();
         } catch (Exception e) {
-            showErrorAlert("Erreur", "Erreur lors de l'ajout du livre : " + e.getMessage());
-            return;
+            showErrorAlert("Erreur Ajout", "Erreur lors de l'ajout du livre : " + e.getMessage());
         }
+    }
+
+    private Livre getUserBook() {
+        Livre livre = new Livre();
+        livre.setTitre(textFieldTitre.getText().strip());
+        livre.setAuteur(textFieldAuteur.getText().strip());
+        livre.setPresentation(textFieldPresentation.getText().strip());
+        livre.setJaquette(textFieldJaquette.getText().strip());
+        livre.setParution(Integer.parseInt(textFieldParution.getText().strip()));
+        livre.setColonne((int) spinnerColonne.getValue());
+        livre.setRangee((int) spinnerRangee.getValue());
+        livre.setEmprunte(getBorrowRadio());
+        return livre;
     }
 
     // Méthode pour vérifier si un livre est unique

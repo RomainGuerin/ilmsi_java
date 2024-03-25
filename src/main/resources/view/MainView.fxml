@@ -4,20 +4,21 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.Group?>
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.MainViewController">
     <top>
         <MenuBar>
             <Menu text="Fichier">
-                <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
-                <MenuItem onAction="#handleUnloadFile" text="Décharqer le fichier"/>
-                <MenuItem onAction="#handleQuitApp" text="Quitter"/>
+                <MenuItem onAction="#handleLoadFile" text="Ouvrir" />
+                <MenuItem onAction="#handleUnloadFile" text="Décharqer le fichier" />
+                <MenuItem onAction="#handleQuitApp" text="Quitter" />
             </Menu>
             <Menu text="Edition">
-                <MenuItem onAction="#handleSave" text="Sauvegarder"/>
-                <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous"/>
+                <MenuItem onAction="#handleSave" text="Sauvegarder" />
+                <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous" />
             </Menu>
             <Menu text="A propos">
-                <MenuItem onAction="#handleInfos" text="Informations"/>
+                <MenuItem onAction="#handleInfos" text="Informations" />
             </Menu>
         </MenuBar>
     </top>
@@ -59,6 +60,11 @@
                       <PropertyValueFactory property="rangee" />
                   </cellValueFactory>
               </TableColumn>
+              <TableColumn prefWidth="100" text="Emprunte">
+                  <cellValueFactory>
+                      <PropertyValueFactory property="emprunte" />
+                  </cellValueFactory>
+              </TableColumn>
           </columns>
       </TableView>
    </center>
@@ -69,57 +75,66 @@
                <HBox alignment="CENTER" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Titre" />
-                     <TextField fx:id="textFieldTitre"/>
+                     <TextField fx:id="textFieldTitre" />
                   </children>
                </HBox>
                <Separator prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="27.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Auteur" />
-                     <TextField fx:id="textFieldAuteur"/>
+                     <TextField fx:id="textFieldAuteur" />
                   </children>
                </HBox>
                <Separator layoutX="10.0" layoutY="78.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="81.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Présentation" />
-                     <TextField fx:id="textFieldPresentation"/>
+                     <TextField fx:id="textFieldPresentation" />
                   </children>
                </HBox>
                 <Separator layoutX="10.0" layoutY="78.0" prefWidth="200.0" />
                 <HBox alignment="CENTER" layoutX="10.0" layoutY="81.0" prefHeight="51.0" prefWidth="250.0">
                     <children>
                         <Label prefHeight="17.0" prefWidth="82.0" text="Jaquette" />
-                        <TextField fx:id="textFieldJaquette"/>
+                        <TextField fx:id="textFieldJaquette" />
                     </children>
                 </HBox>
                <Separator layoutX="10.0" layoutY="132.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="135.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Parution" />
-                     <TextField fx:id="textFieldParution"/>
+                     <TextField fx:id="textFieldParution" />
                   </children>
                </HBox>
                <Separator layoutX="10.0" layoutY="186.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="189.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Colonne" />
-                     <Spinner fx:id="spinnerColonne" min="0" max="7" initialValue="1" />
+                     <Spinner fx:id="spinnerColonne" initialValue="1" max="7" min="0" />
                   </children>
                </HBox>
                <Separator layoutX="10.0" layoutY="240.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="243.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Rangée" />
-                      <Spinner fx:id="spinnerRangee" min="1" max="5" initialValue="1" />
+                      <Spinner fx:id="spinnerRangee" initialValue="1" max="5" min="1" />
                   </children>
                </HBox>
+                <HBox alignment="CENTER" layoutX="10.0" layoutY="243.0" prefHeight="51.0" prefWidth="250.0">
+                    <fx:define>
+                        <ToggleGroup fx:id="borrowGroup" />
+                    </fx:define>
+                    <children>
+                      <RadioButton fx:id="radioBorrow" mnemonicParsing="false" text="Emprunté" toggleGroup="$borrowGroup"/>
+                      <RadioButton fx:id="radioNoBorrow" mnemonicParsing="false" text="En Rayon" toggleGroup="$borrowGroup"/>
+                    </children>
+                </HBox>
                <Separator layoutX="10.0" layoutY="294.0" prefWidth="200.0" />
                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                   <children>
-                     <Button layoutX="100.0" layoutY="50.0" text="Annuler" onAction="#handleCancel" />
-                     <Button layoutX="125.0" layoutY="75.0" text="Supprimer" fx:id="buttonRemove" onAction="#handleRemove" />
-                     <Button layoutX="100.0" layoutY="50.0" text="Ajouter" fx:id="buttonModify" onAction="#handleModify" />
+                     <Button layoutX="100.0" layoutY="50.0" onAction="#handleCancel" text="Annuler" />
+                     <Button fx:id="buttonRemove" layoutX="125.0" layoutY="75.0" onAction="#handleRemove" text="Supprimer" />
+                     <Button fx:id="buttonModify" layoutX="100.0" layoutY="50.0" onAction="#handleModify" text="Ajouter" />
                   </children>
                </HBox>
             </children>

@@ -13,9 +13,15 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.UnaryOperator;
+
+// Apache POI
+import org.apache.poi.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
@@ -212,6 +218,15 @@ public class MainViewController {
             saveData(filePath);
             xmlFilePath = filePath;
         }
+    }
+
+    // Exporter les données vers un word (using Apache POI)
+    @FXML
+    private void handleExport() throws InvalidFormatException, URISyntaxException, IOException {
+        WordUtils word = new WordUtils("docs");
+        word.WordTest();
+        word.createHeader();
+        word.closeDocument();
     }
 
     /**

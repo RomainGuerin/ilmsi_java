@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -12,11 +13,15 @@ import java.util.List;
 
 import com.e3in.java.model.Livre;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.TOC;
+import org.apache.poi.xwpf.usermodel.TextAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
@@ -38,23 +43,94 @@ public class WordUtils {
 
             XWPFParagraph headerParagraph = header.createParagraph();
             XWPFRun headerRun = headerParagraph.createRun();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            String date = formatter.format(LocalDateTime.now());
-            String headerText = "Export - Fichier : " + path + " - " + date;
+            String date = getCurrentDateTime();
+            String headerText = "Export Bibliothèque - Fichier : " + path + " - " + date;
             headerRun.setText(headerText);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void WordTest(List<Livre> books) throws URISyntaxException, InvalidFormatException, IOException {
+    public void createFooter() {
+        try {
+            // Création du pied de page pour le document
+            XWPFFooter footer = document.createFooter(HeaderFooterType.DEFAULT);
+            
+            // Paragraphe pour les informations sur les auteurs
+            XWPFParagraph footerParagraph = footer.createParagraph();
+            XWPFRun footerRun = footerParagraph.createRun();
+            footerRun.setText("Réalisé par Romain GUERIN, Nicolas DROESCH");
+            
+            // Paragraphe pour le numéro de page
+            XWPFParagraph pageNumberParagraph = footer.createParagraph();
+            pageNumberParagraph.setAlignment(ParagraphAlignment.RIGHT);
+
+            // Ajout du texte "Page"
+            XWPFRun pageNumberRun = pageNumberParagraph.createRun();
+            pageNumberRun.setText("Page ");
+            pageNumberRun.setFontSize(12);
+
+            // Ajout du champ pour le numéro de page
+            pageNumberParagraph.getCTP().addNewFldSimple().setInstr("PAGE \\* MERGEFORMAT");
+
+            // Ajout du texte " sur "
+            XWPFRun pageNumberSeparatorRun = pageNumberParagraph.createRun();
+            pageNumberSeparatorRun.setText(" sur ");
+            pageNumberSeparatorRun.setFontSize(12);
+
+            // Ajout du champ pour le nombre total de pages
+            pageNumberParagraph.getCTP().addNewFldSimple().setInstr("NUMPAGES \\* MERGEFORMAT");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createCoverPage() {
+        try {
+            for (int i = 0; i < 7; i++) {
+                document.createParagraph().createRun().addBreak();
+            }
+
+            // Titre centré sur la page
+            XWPFParagraph title = document.createParagraph();
+            title.setAlignment(ParagraphAlignment.CENTER);
+            title.setVerticalAlignment(TextAlignment.CENTER);
+
+            XWPFRun titleRun = title.createRun();
+            titleRun.setText("Rapport de la bibliothèque");
+            titleRun.setColor("000000");
+            titleRun.setBold(true);
+            titleRun.setFontFamily("Courier");
+            titleRun.setFontSize(20);
+
+            // Sous-titre centré sur la page
+            XWPFParagraph subTitle = document.createParagraph();
+            subTitle.setAlignment(ParagraphAlignment.CENTER);
+            XWPFRun subTitleRun = subTitle.createRun();
+            subTitleRun.setText("Rapport généré le " + getCurrentDateTime());
+            subTitleRun.setColor("262626");
+            subTitleRun.setFontFamily("Courier");
+            subTitleRun.setFontSize(12);
+            subTitleRun.setTextPosition(20);
+            document.createParagraph().setPageBreak(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private String getCurrentDateTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return formatter.format(LocalDateTime.now()).replace(" ", " à ");
+    }
+
+    public void wordContent(List<Livre> books) throws URISyntaxException, InvalidFormatException, IOException {
         try {
             XWPFParagraph title = document.createParagraph();
             title.setAlignment(ParagraphAlignment.CENTER);
 
             XWPFRun titleRun = title.createRun();
-            titleRun.setText("titre");
-            titleRun.setColor("009933");
+            titleRun.setText("Liste des livres de la bibliothèque");
+            titleRun.setColor("000000");
             titleRun.setBold(true);
             titleRun.setFontFamily("Courier");
             titleRun.setFontSize(20);
@@ -68,16 +144,18 @@ public class WordUtils {
                 image.setAlignment(ParagraphAlignment.CENTER);
                 XWPFRun imageRun = image.createRun();
                 imageRun.setTextPosition(20);
-                URL imageUrl = new URL(book.getJaquette());
-                InputStream imageStream = imageUrl.openStream();
+                URI imageUrl = new URI(book.getJaquette());
+                InputStream imageStream = imageUrl.toURL().openStream();
                 imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(200), Units.toEMU(200));
 
                 buildAndAddParagraph("Auteur : " + book.getAuteur(), document);
                 buildAndAddParagraph(book.getPresentation(), document);
-                buildAndAddParagraph("Date de parution: " + book.getParution(), document);
-                buildAndAddParagraph("Emplacement dans la bibliothéque : Colonne(" + book.getColonne()+"), Rangee("+book.getRangee()+")", document);
-                buildAndAddParagraph("Le livre est " + (book.getEmprunte() ? "emprunté": "à la bibliotèque"), document);
-                document.createParagraph().setPageBreak(true);
+                buildAndAddParagraph("Date de parution : " + book.getParution(), document);
+                buildAndAddParagraph("Emplacement dans la bibliothèque : Colonne (" + book.getColonne()+"), Rangée ("+book.getRangee()+")", document);
+                buildAndAddParagraph("Le livre est " + (book.getEmprunte() ? "emprunté": "à la bibliothèque"), document);
+                if (books.indexOf(book) != books.size()-1) {
+                    document.createParagraph().setPageBreak(true);
+                }
             }
 
         } catch (Exception e) {
@@ -96,13 +174,12 @@ public class WordUtils {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun subTitleRun = paragraph.createRun();
         subTitleRun.setText(subTitle);
-        subTitleRun.setColor("00CC44");
+        subTitleRun.setColor("262626");
         subTitleRun.setFontFamily("Courier");
         subTitleRun.setFontSize(16);
         subTitleRun.setTextPosition(20);
         subTitleRun.setUnderline(UnderlinePatterns.DOT_DOT_DASH);
     }
-
 
     public void closeDocument() {
         try {

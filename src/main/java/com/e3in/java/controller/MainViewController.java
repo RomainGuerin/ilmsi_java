@@ -229,8 +229,10 @@ public class MainViewController {
     @FXML
     private void handleExport() throws InvalidFormatException, URISyntaxException, IOException {
         WordUtils word = new WordUtils("docs");
-        word.WordTest(tableView.getItems());
         word.createHeader();
+        word.createCoverPage();
+        word.wordContent(tableView.getItems());
+        word.createFooter();
         word.closeDocument();
     }
 

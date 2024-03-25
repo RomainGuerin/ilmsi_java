@@ -9,13 +9,14 @@
     <top>
         <MenuBar>
             <Menu text="Fichier">
-                <MenuItem onAction="#handleLoadFile" text="Ouvrir" />
-                <MenuItem onAction="#handleUnloadFile" text="Décharqer le fichier" />
-                <MenuItem onAction="#handleQuitApp" text="Quitter" />
+                <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
+                <MenuItem onAction="#handleExport" text="Exporter"/>
+                <MenuItem onAction="#handleUnloadFile" text="Décharger le fichier"/>
+                <MenuItem onAction="#handleQuitApp" text="Quitter"/>
             </Menu>
             <Menu text="Edition">
-                <MenuItem onAction="#handleSave" text="Sauvegarder" />
-                <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous" />
+                <MenuItem onAction="#handleSave" text="Sauvegarder"/>
+                <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous..."/>
             </Menu>
             <Menu text="A propos">
                 <MenuItem onAction="#handleInfos" text="Informations" />

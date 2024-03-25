@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * Représente un livre avec ses attributs tels que le titre, l'auteur, la présentation, etc.
  */
 @XmlRootElement(name = "livre")
-@XmlType(propOrder = { "titre", "auteur", "presentation", "jaquette", "parution", "colonne", "rangee" })
+@XmlType(propOrder = { "titre", "auteur", "presentation", "jaquette", "parution", "colonne", "rangee", "emprunte"})
 public class Livre {
     private String titre;
     private Auteur auteur;
@@ -17,6 +17,7 @@ public class Livre {
     private int parution;
     private int colonne;
     private int rangee;
+    private boolean emprunte;
 
     /**
      * Constructeur par défaut du livre.
@@ -203,6 +204,20 @@ public class Livre {
         this.rangee = rangee;
     }
 
+    @XmlElement
+    public boolean getEmprunte() {
+        return this.emprunte;
+    }
+
+    /**
+     * Définit l'état d'emprunt du livre.
+     *
+     * @param emprunte L'état d'emprunt du livre.
+     */
+    public void setEmprunte(boolean emprunte) {
+        this.emprunte= emprunte;
+    }
+
     /**
      * Retourne une représentation XML du livre.
      * 
@@ -226,6 +241,7 @@ public class Livre {
         myStr += "<Jaquette>" + this.getJaquette() + "</Jaquette>\n";
         myStr += "<Parution>" + this.getParution() + "</Parution>\n";
         myStr += "<Colonne>" + this.getColonne() + "</Colonne>\n";
+        myStr += "<Emprunte>" + this.getEmprunte() + "</Emprunte>\n";
         myStr += "</Livre>\n";
         return myStr;
     }

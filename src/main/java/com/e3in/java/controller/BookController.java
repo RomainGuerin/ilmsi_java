@@ -52,4 +52,11 @@ public class BookController {
     public void setRangee(int rangee) {
         this.livre.setRangee(rangee);
     }
+    public boolean getEmprunte() {
+        return this.livre.getEmprunte();
+    }
+
+    public void setEmprunte(boolean emprunte) {
+        this.livre.setEmprunte(emprunte);
+    }
 }

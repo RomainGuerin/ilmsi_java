@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 // Apache POI
@@ -51,6 +52,10 @@ public class MainViewController {
     private Spinner spinnerColonne;
     @FXML
     private Spinner spinnerRangee;
+    @FXML
+    private RadioButton radioBorrow;
+    @FXML
+    private RadioButton radioNoBorrow;
     @FXML
     private Button buttonModify;
     @FXML
@@ -256,6 +261,7 @@ public class MainViewController {
         this.textFieldParution.setText(String.valueOf(livre.getParution()));
         this.spinnerColonne.getValueFactory().setValue(livre.getColonne());
         this.spinnerRangee.getValueFactory().setValue(livre.getRangee());
+        setBorrowRadio(livre.getEmprunte());
         System.out.println(livre);
         this.selectedBook = livre;
         this.buttonModify.setText("Modifier");
@@ -287,6 +293,7 @@ public class MainViewController {
                     this.selectedBook.setColonne((int) spinnerColonne.getValue());
                     this.selectedBook.setRangee((int) spinnerRangee.getValue());
                 }
+                this.selectedBook.setEmprunte(getBorrowRadio());
                 tableView.refresh();
                 clearField();
             } catch (Exception e) {
@@ -294,6 +301,14 @@ public class MainViewController {
                 return;
             }
         }
+    }
+
+    private void setBorrowRadio(boolean emprunte) {
+        this.radioBorrow.setSelected(emprunte);
+        this.radioNoBorrow.setSelected(!emprunte);
+    }
+    private boolean getBorrowRadio() {
+        return this.radioBorrow.isSelected();
     }
 
     // Méthode pour ajouter un livre
@@ -307,6 +322,7 @@ public class MainViewController {
             livre.setParution(Integer.parseInt(textFieldParution.getText().strip()));
             livre.setColonne((int) spinnerColonne.getValue());
             livre.setRangee((int) spinnerRangee.getValue());
+            livre.setEmprunte(getBorrowRadio());
 
             if (!estLivreUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
                     tableView.getItems())) {
@@ -327,6 +343,9 @@ public class MainViewController {
     // Méthode pour vérifier si un livre est unique
     private boolean estLivreUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
         for (Livre livre : listeLivres) {
+            if(livre == this.selectedBook) {
+                continue;
+            }
             if (livre.getTitre().equals(titre) && livre.getAuteur().toString().equals(auteur)
                     && livre.getParution() == parution) {
                 return false;
@@ -414,6 +433,9 @@ public class MainViewController {
     protected static void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        Image icon = new Image(Objects.requireNonNull(MainViewController.class.getResourceAsStream("/alert.png")));
+        stage.getIcons().add(icon);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();

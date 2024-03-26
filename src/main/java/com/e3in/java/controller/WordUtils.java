@@ -21,9 +21,6 @@ import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
-import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
@@ -129,6 +126,10 @@ public class WordUtils {
 
     public void wordContent(List<Livre> books) throws URISyntaxException, InvalidFormatException, IOException {
         try {
+            CTSdtBlock block = document.getDocument().getBody().addNewSdt();
+            TOC toc = new TOC(block);
+            document.createParagraph().setPageBreak(true);
+
             XWPFParagraph title = document.createParagraph();
             title.setAlignment(ParagraphAlignment.CENTER);
 
@@ -139,11 +140,14 @@ public class WordUtils {
             titleRun.setFontFamily("Courier");
             titleRun.setFontSize(20);
 
-            XWPFParagraph subTitle = document.createParagraph();
-            subTitle.setAlignment(ParagraphAlignment.CENTER);
-
-            for(Livre book : books) {
+            for(int i = 0; i < books.size(); i++) {
+                Livre book = books.get(i);
+                XWPFParagraph subTitle = document.createParagraph();
+                subTitle.setAlignment(ParagraphAlignment.CENTER);
                 buildAndAddSubTitle(book.getTitre(), document);
+    
+                toc.addRow(1, book.getTitre(), i+3, book.getTitre());
+
                 XWPFParagraph image = document.createParagraph();
                 image.setAlignment(ParagraphAlignment.CENTER);
                 XWPFRun imageRun = image.createRun();
@@ -161,6 +165,8 @@ public class WordUtils {
                     document.createParagraph().setPageBreak(true);
                 }
             }
+
+            // document.enforceUpdateFields();
 
             document.createParagraph().setPageBreak(true);
 
@@ -201,6 +207,7 @@ public class WordUtils {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun subTitleRun = paragraph.createRun();
         subTitleRun.setText(subTitle);
+        subTitleRun.setStyle(subTitle);
         subTitleRun.setColor("262626");
         subTitleRun.setFontFamily("Courier");
         subTitleRun.setFontSize(16);

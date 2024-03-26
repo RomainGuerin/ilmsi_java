@@ -61,11 +61,6 @@
                       <PropertyValueFactory property="rangee" />
                   </cellValueFactory>
               </TableColumn>
-              <TableColumn prefWidth="100" text="Emprunte">
-                  <cellValueFactory>
-                      <PropertyValueFactory property="emprunte" />
-                  </cellValueFactory>
-              </TableColumn>
           </columns>
       </TableView>
    </center>

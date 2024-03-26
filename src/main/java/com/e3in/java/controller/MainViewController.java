@@ -1,6 +1,7 @@
 package com.e3in.java.controller;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -75,6 +76,16 @@ public class MainViewController {
     @FXML
     public void initialize() {
         buttonRemove.setDisable(true);
+        
+        // Créer une nouvelle colonne pour l'état de l'emprunt
+        TableColumn<Livre, String> empruntColumn = new TableColumn<>("Emprunt");
+        empruntColumn.setCellValueFactory(cellData -> {
+            Livre livre = cellData.getValue();
+            String etatEmprunt = livre.getEmprunte() ? "Emprunté" : "Disponible";
+            return new SimpleStringProperty(etatEmprunt);
+        });
+        tableView.getColumns().add(empruntColumn);
+
         tableView.setRowFactory(tv -> {
             TableRow<Livre> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -125,6 +136,12 @@ public class MainViewController {
                 });
                 column.getColumns().add(jaquetteColumn);
                 jaquetteColumn.setPrefWidth(150);
+            }
+            if (column.getText().equals("Présentation")) {
+                column.setPrefWidth(250);
+            }
+            if (column.getText().equals("Parution") || column.getText().equals("Colonne") || column.getText().equals("Rangée")) {
+                column.setPrefWidth(75);
             }
         });
     }

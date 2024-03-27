@@ -16,7 +16,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/MainView.fxml")));
-        Scene scene = new Scene(root, 1100, 500);
+        Scene scene = new Scene(root, 1200, 600);
         Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png")));
         primaryStage.setTitle("Java FX Bibliothèque");
         primaryStage.getIcons().add(icon);

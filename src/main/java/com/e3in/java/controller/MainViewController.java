@@ -1,6 +1,7 @@
 package com.e3in.java.controller;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -74,6 +76,16 @@ public class MainViewController {
     @FXML
     public void initialize() {
         buttonRemove.setDisable(true);
+        
+        // Créer une nouvelle colonne pour l'état de l'emprunt
+        TableColumn<Livre, String> empruntColumn = new TableColumn<>("Emprunt");
+        empruntColumn.setCellValueFactory(cellData -> {
+            Livre livre = cellData.getValue();
+            String etatEmprunt = livre.getEmprunte() ? "Emprunté" : "Disponible";
+            return new SimpleStringProperty(etatEmprunt);
+        });
+        tableView.getColumns().add(empruntColumn);
+
         tableView.setRowFactory(tv -> {
             TableRow<Livre> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -124,6 +136,13 @@ public class MainViewController {
                 });
                 column.getColumns().add(jaquetteColumn);
                 jaquetteColumn.setPrefWidth(150);
+                jaquetteColumn.styleProperty().set("-fx-alignment: CENTER;");
+            }
+            if (column.getText().equals("Présentation")) {
+                column.setPrefWidth(250);
+            }
+            if (column.getText().equals("Parution") || column.getText().equals("Colonne") || column.getText().equals("Rangée")) {
+                column.setPrefWidth(75);
             }
         });
     }
@@ -207,6 +226,7 @@ public class MainViewController {
     private void handleUnloadFile() {
         tableView.getItems().clear();
         selectedBook = null;
+        clearField();
     }
 
     // Sauvegarde les données dans le fichier XML actuel.
@@ -228,10 +248,36 @@ public class MainViewController {
     // Exporter les données vers un word (using Apache POI)
     @FXML
     private void handleExport() throws InvalidFormatException, URISyntaxException, IOException {
-        WordUtils word = new WordUtils("docs");
-        word.WordTest(tableView.getItems());
-        word.createHeader();
-        word.closeDocument();
+        try {
+            String path = chooseSaveLocation(getStage());
+            if (path == null) {
+                throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
+            }
+            WordUtils word = new WordUtils(path);
+            word.createHeader();
+            word.createCoverPage();
+            word.wordContent(tableView.getItems());
+            word.createFooter();
+            word.closeDocument();
+        } catch (Exception e) {
+            showErrorAlert("Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
+        }
+    }
+
+    public static String chooseSaveLocation(Stage primaryStage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Sélectionner un emplacement de sauvegarde");
+        
+        // Création du filtre pour les fichiers .docx
+        ExtensionFilter docxFilter = new ExtensionFilter("Fichiers DOCX (*.docx)", "*.docx");
+        fileChooser.getExtensionFilters().add(docxFilter);
+
+        // Affichage de la boîte de dialogue de sélection de fichiers
+        File file = fileChooser.showSaveDialog(primaryStage);
+        if (file != null) {
+            return file.getAbsolutePath();
+        }
+        return null;
     }
 
     /**

@@ -1,0 +1,101 @@
+/* styles.css */
+
+/* Style général */
+.body {
+    -fx-font-family: Arial, sans-serif;
+}
+
+/* Style pour les boutons */
+.button {
+    -fx-font-size: 8pt;
+    -fx-pref-width: 75px;
+    -fx-pref-height: 25px;
+    -fx-background-color: #88daf5;
+    -fx-text-fill: #333333;
+    -fx-background-radius: 5px;
+    -fx-margin: 2px; 
+    -fx-padding: 5px;
+    -fx-transition: background-color 0.8s;
+    -fx-font-weight: bold;
+}
+
+/* Style pour les boutons au survol */
+.button:hover {
+    -fx-transition: background-color 0.8s;
+    -fx-text-fill: #fff;
+    -fx-background-color: #6EB8F0;
+}
+
+/* Style pour les boutons bleus clairs */
+.button.blue {
+    -fx-background-color: #ADD8E6;
+    -fx-margin: 2px;
+}
+
+
+/* Style pour les spinners */
+.spinner {
+    -fx-font-size: 8pt;
+    -fx-pref-width: 80px;
+}
+
+/* Style pour les RadioButtons */
+.radio-button {
+    -fx-font-size: 8pt; 
+}
+
+/* Style pour le MenuBar */
+.menu-bar {
+    -fx-background-color: #3d3d3d; 
+}
+
+/* Style pour les Menu */
+.menu .label {
+    -fx-text-fill: #f5f5f5; 
+}
+
+/* Style pour les MenuItem */
+.menu-item .label {
+    -fx-text-fill: #333333; 
+}
+.menu-item:hover .label, .menu-item:focused .label {
+    -fx-text-fill: #f5f5f5; 
+}
+
+/* Style pour le TableView */
+.table-view {
+    -fx-font-size: 10pt;
+}
+
+/* Style pour les colonnes du TableView */
+.table-column {
+    -fx-font-size: 9pt;
+    -fx-alignment: CENTER;
+}
+
+.table-column .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+/* Style pour les lignes impaires du TableView */
+.table-row-cell:odd {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #e0e0e0;
+}
+
+.table-row-cell:even {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+}
+
+/* Style pour les lignes impaires du TableView*/
+.table-row-cell:selected, .table-row-cell:odd:selected, .table-row-cell:even:selected {
+    -fx-background-color: #4d90fe;
+    -fx-text-fill: white;
+}
+
+/* Style pour les radio button */
+.radio-button {
+    -fx-padding: 5px;
+}

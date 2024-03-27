@@ -24,9 +24,9 @@ import java.util.Objects;
 /**
  * Classe utilitaire pour la manipulation d'XML.
  */
-public class XmlUtils {
+public class Xml{
     // Chemin vers le fichier XSD utilisé pour la validation XML
-    private static final String xsdFilePath = Objects.requireNonNull(XmlUtils.class.getResource("/Biblio.xsd")).getPath();
+    private static final String xsdFilePath = Objects.requireNonNull(Xml.class.getResource("/Biblio.xsd")).getPath();
 
     /**
      * Valide un fichier XML par rapport à un schéma XSD.
@@ -37,7 +37,7 @@ public class XmlUtils {
     public static boolean validateXml(String xmlFilePath) {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(new File(XmlUtils.xsdFilePath));
+            Schema schema = factory.newSchema(new File(Xml.xsdFilePath));
             Validator validator = schema.newValidator();
 
             Source source = new StreamSource(new File(xmlFilePath));

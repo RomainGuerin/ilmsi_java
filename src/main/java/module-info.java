@@ -16,4 +16,6 @@ module com.e3in.java {
     exports com.e3in.java;
     exports com.e3in.java.controller;
     exports com.e3in.java.model;
+    exports com.e3in.java.utils;
+    opens com.e3in.java.utils to jakarta.xml.bind, javafx.fxml;
 }

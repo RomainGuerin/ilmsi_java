@@ -1,32 +1,7 @@
-package com.e3in.java.controller;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import com.e3in.java.model.Livre;
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.TOC;
-import org.apache.poi.xwpf.usermodel.TextAlignment;
-import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFFooter;
-import org.apache.poi.xwpf.usermodel.XWPFHeader;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.Units;
-import org.apache.poi.wp.usermodel.HeaderFooterType;
+package com.e3in.java.utils;
 
 public class WordUtils {
+/*
     public XWPFDocument document;
     public FileOutputStream file;
     public String path;
@@ -37,7 +12,7 @@ public class WordUtils {
         file = new FileOutputStream(path);
     }
 
-    public void createHeader() {
+    public void buildAndAddHeader(XWPFDocument document) {
         try {
             XWPFHeader header = document.createHeader(HeaderFooterType.DEFAULT);
 
@@ -56,12 +31,12 @@ public class WordUtils {
         try {
             // Création du pied de page pour le document
             XWPFFooter footer = document.createFooter(HeaderFooterType.DEFAULT);
-            
+
             // Paragraphe pour les informations sur les auteurs
             XWPFParagraph footerParagraph = footer.createParagraph();
             XWPFRun footerRun = footerParagraph.createRun();
             footerRun.setText("Réalisé par Romain GUERIN, Nicolas DROESCH");
-            
+
             // Paragraphe pour le numéro de page
             XWPFParagraph pageNumberParagraph = footer.createParagraph();
             pageNumberParagraph.setAlignment(ParagraphAlignment.RIGHT);
@@ -118,7 +93,7 @@ public class WordUtils {
             e.printStackTrace();
         }
     }
-    
+
     private String getCurrentDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return formatter.format(LocalDateTime.now()).replace(" ", " à ");
@@ -127,7 +102,6 @@ public class WordUtils {
     public void wordContent(List<Livre> books) throws URISyntaxException, InvalidFormatException, IOException {
         try {
             CTSdtBlock block = document.getDocument().getBody().addNewSdt();
-            TOC toc = new TOC(block);
             document.createParagraph().setPageBreak(true);
 
             XWPFParagraph title = document.createParagraph();
@@ -142,11 +116,9 @@ public class WordUtils {
 
             for(int i = 0; i < books.size(); i++) {
                 Livre book = books.get(i);
-                XWPFParagraph subTitle = document.createParagraph();
-                subTitle.setAlignment(ParagraphAlignment.CENTER);
+//                XWPFParagraph subTitle = document.createParagraph();
+//                subTitle.setAlignment(ParagraphAlignment.CENTER);
                 buildAndAddSubTitle(book.getTitre(), document);
-    
-                toc.addRow(1, book.getTitre(), i+3, book.getTitre());
 
                 XWPFParagraph image = document.createParagraph();
                 image.setAlignment(ParagraphAlignment.CENTER);
@@ -207,12 +179,17 @@ public class WordUtils {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun subTitleRun = paragraph.createRun();
         subTitleRun.setText(subTitle);
-        subTitleRun.setStyle(subTitle);
+//        subTitleRun.setStyle(subTitle);
+        subTitleRun.setStyle("heading 1");
         subTitleRun.setColor("262626");
         subTitleRun.setFontFamily("Courier");
         subTitleRun.setFontSize(16);
         subTitleRun.setTextPosition(20);
         subTitleRun.setUnderline(UnderlinePatterns.DOT_DOT_DASH);
+        CTP ctp = paragraph.getCTP();
+        CTSimpleField toc = ctp.addNewFldSimple();
+        toc.setInstr("TOC \\h");
+        toc.setDirty(STOnOff.Factory.newInstance());
     }
 
     public void closeDocument() {
@@ -224,4 +201,5 @@ public class WordUtils {
             e.printStackTrace();
         }
     }
+*/
 }

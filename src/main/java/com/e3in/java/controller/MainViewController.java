@@ -1,5 +1,7 @@
 package com.e3in.java.controller;
 
+import com.e3in.java.utils.WordUtils;
+import com.e3in.java.utils.XmlUtils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,7 +25,6 @@ import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 // Apache POI
-import org.apache.poi.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.e3in.java.model.Bibliotheque;

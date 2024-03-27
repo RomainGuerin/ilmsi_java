@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -88,7 +87,7 @@ public class WordUtils {
 
     public void createCoverPage() {
         try {
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 5; i++) {
                 document.createParagraph().createRun().addBreak();
             }
 
@@ -113,6 +112,15 @@ public class WordUtils {
             subTitleRun.setFontFamily("Courier");
             subTitleRun.setFontSize(12);
             subTitleRun.setTextPosition(20);
+
+            XWPFParagraph image = document.createParagraph();
+            image.setAlignment(ParagraphAlignment.CENTER);
+            XWPFRun imageRun = image.createRun();
+            imageRun.setTextPosition(20);
+            URI imageUrl = new URI("https://images.emojiterra.com/google/noto-emoji/unicode-15/bw/512px/1f4d6.png");
+            InputStream imageStream = imageUrl.toURL().openStream();
+            imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(200), Units.toEMU(200));
+
             document.createParagraph().setPageBreak(true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,7 +137,7 @@ public class WordUtils {
             CTSdtBlock block = document.getDocument().getBody().addNewSdt();
             TOC toc = new TOC(block);
             document.createParagraph().setPageBreak(true);
-
+            
             XWPFParagraph title = document.createParagraph();
             title.setAlignment(ParagraphAlignment.CENTER);
 
@@ -140,13 +148,14 @@ public class WordUtils {
             titleRun.setFontFamily("Courier");
             titleRun.setFontSize(20);
 
+            XWPFParagraph subTitle = document.createParagraph();
+            subTitle.setAlignment(ParagraphAlignment.CENTER);
+
             for(int i = 0; i < books.size(); i++) {
                 Livre book = books.get(i);
-                XWPFParagraph subTitle = document.createParagraph();
-                subTitle.setAlignment(ParagraphAlignment.CENTER);
-                buildAndAddSubTitle(book.getTitre(), document);
+                buildAndAddSubTitle(book.getTitre(), i, document);
     
-                toc.addRow(1, book.getTitre(), i+3, book.getTitre());
+                toc.addRow(1, book.getTitre(), i+3, "Heading" + i);
 
                 XWPFParagraph image = document.createParagraph();
                 image.setAlignment(ParagraphAlignment.CENTER);
@@ -154,7 +163,7 @@ public class WordUtils {
                 imageRun.setTextPosition(20);
                 URI imageUrl = new URI(book.getJaquette());
                 InputStream imageStream = imageUrl.toURL().openStream();
-                imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(200), Units.toEMU(200));
+                imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(175), Units.toEMU(200));
 
                 buildAndAddParagraph("Auteur : " + book.getAuteur(), document);
                 buildAndAddParagraph(book.getPresentation(), document);
@@ -165,6 +174,8 @@ public class WordUtils {
                     document.createParagraph().setPageBreak(true);
                 }
             }
+
+            isDataEmpty(books);
 
             // document.enforceUpdateFields();
 
@@ -181,15 +192,14 @@ public class WordUtils {
             titleRunEmprunt.setFontFamily("Courier");
             titleRunEmprunt.setFontSize(20);
 
-            XWPFParagraph subTitleEmprunt = document.createParagraph();
-            subTitleEmprunt.setAlignment(ParagraphAlignment.CENTER);
-
             for (Livre book : books) {
                 if (book.getEmprunte()) {
                     String livreEmprunt = "- " + book.getTitre() + ", " + book.getAuteur().toString() + " - " + String.valueOf(book.getParution());
                     buildAndAddParagraph(livreEmprunt, document);
                 }
             }
+
+            isDataEmpty(books);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -203,16 +213,24 @@ public class WordUtils {
         para1Run.setText(monText);
     }
 
-    private void buildAndAddSubTitle(String subTitle, XWPFDocument document) {
+    private void buildAndAddSubTitle(String subTitle, int index, XWPFDocument document) {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun subTitleRun = paragraph.createRun();
         subTitleRun.setText(subTitle);
-        subTitleRun.setStyle(subTitle);
+        subTitleRun.setStyle("Heading" + index);
         subTitleRun.setColor("262626");
         subTitleRun.setFontFamily("Courier");
         subTitleRun.setFontSize(16);
         subTitleRun.setTextPosition(20);
         subTitleRun.setUnderline(UnderlinePatterns.DOT_DOT_DASH);
+    }
+
+    private void isDataEmpty(List<Livre> books) {
+        if (books.isEmpty()) {
+            XWPFParagraph empty = document.createParagraph();
+            XWPFRun emptyRun = empty.createRun();
+            emptyRun.setText("Aucun livre n'a été trouvé dans la bibliothèque.");
+        }
     }
 
     public void closeDocument() {

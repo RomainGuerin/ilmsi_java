@@ -1,5 +1,6 @@
 package com.e3in.java.controller;
 
+import com.e3in.java.utils.Xml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,7 +24,6 @@ import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 // Apache POI
-import org.apache.poi.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.e3in.java.model.Bibliotheque;
@@ -157,7 +157,7 @@ public class MainViewController {
             return;
         }
 
-        boolean isValid = XmlUtils.validateXml(xmlFilePath);
+        boolean isValid = Xml.validateXml(xmlFilePath);
         if (!isValid) {
             showErrorAlert("Erreur XML", "XML non valide");
             return;
@@ -165,7 +165,7 @@ public class MainViewController {
 
         this.xmlFilePath = xmlFilePath;
 
-        Bibliotheque library = XmlUtils.buildLibraryFromXML(xmlFilePath);
+        Bibliotheque library = Xml.buildLibraryFromXML(xmlFilePath);
 
         tableView.getItems().clear();
         if (library != null) {
@@ -247,20 +247,27 @@ public class MainViewController {
 
     // Exporter les données vers un word (using Apache POI)
     @FXML
-    private void handleExport() throws InvalidFormatException, URISyntaxException, IOException {
+    private void handleExport() throws IllegalArgumentException {
         try {
             String path = chooseSaveLocation(getStage());
+//            String path = "C:\\Users\\Atlas\\Documents\\Et. cas Medtra - Informations initiales.docx";
             if (path == null) {
                 throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
             }
-            WordUtils word = new WordUtils(path);
-            word.createHeader();
-            word.createCoverPage();
-            word.wordContent(tableView.getItems());
-            word.createFooter();
-            word.closeDocument();
+
+            WordController word = new WordController(path);
+            word.addHeader();
+            word.addFooter();
+            word.addCoverPage();
+            word.addTableOfContent();
+            word.addBooks(this.tableView.getItems());
+            word.addBorrowedBooks(this.tableView.getItems());
+            word.saveDocument();
+
         } catch (Exception e) {
             showErrorAlert("Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
+            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -428,7 +435,7 @@ public class MainViewController {
 
     // Méthode pour sauvegarder les données dans un fichier XML
     private void saveData(String filePath) {
-        XmlUtils.saveLibraryToXml(tableView.getItems(), filePath);
+        Xml.saveLibraryToXml(tableView.getItems(), filePath);
     }
 
     // Méthode pour choisir l'emplacement de sauvegarde

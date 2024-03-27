@@ -1,12 +1,31 @@
 package com.e3in.java.utils;
 
-public class WordUtils {
-/*
+import com.e3in.java.model.Livre;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
+import org.apache.poi.xwpf.usermodel.*;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+public class Word{
     public XWPFDocument document;
     public FileOutputStream file;
     public String path;
 
-    public WordUtils (String pathFile) throws FileNotFoundException {
+    public Word(String pathFile) throws FileNotFoundException {
         document = new XWPFDocument();
         path = pathFile;
         file = new FileOutputStream(path);
@@ -96,7 +115,7 @@ public class WordUtils {
 
     private String getCurrentDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return formatter.format(LocalDateTime.now()).replace(" ", " à ");
+        return formatter.format(LocalDateTime.now());
     }
 
     public void wordContent(List<Livre> books) throws URISyntaxException, InvalidFormatException, IOException {
@@ -201,5 +220,4 @@ public class WordUtils {
             e.printStackTrace();
         }
     }
-*/
 }

@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.Group?>
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.MainViewController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.MainViewController" stylesheets="styles.css">
     <top>
         <MenuBar>
             <Menu text="Fichier">
@@ -14,11 +14,11 @@
                 <MenuItem onAction="#handleUnloadFile" text="Décharger le fichier"/>
                 <MenuItem onAction="#handleQuitApp" text="Quitter"/>
             </Menu>
-            <Menu text="Edition">
+            <Menu text="Édition">
                 <MenuItem onAction="#handleSave" text="Sauvegarder"/>
                 <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous..."/>
             </Menu>
-            <Menu text="A propos">
+            <Menu text="À propos">
                 <MenuItem onAction="#handleInfos" text="Informations" />
             </Menu>
         </MenuBar>
@@ -65,9 +65,9 @@
       </TableView>
    </center>
    <right>
-         <VBox alignment="TOP_CENTER" prefHeight="654.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" prefHeight="654.0" prefWidth="250.0" BorderPane.alignment="CENTER" style="-fx-padding: 10 0 0 0;">
             <children>
-               <Label alignment="CENTER" text="Edition" />
+               <Label alignment="CENTER" text="Édition" />
                <HBox alignment="CENTER" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Titre" />
@@ -116,6 +116,7 @@
                       <Spinner fx:id="spinnerRangee" initialValue="1" max="5" min="1" />
                   </children>
                </HBox>
+               <Separator layoutX="10.0" layoutY="240.0" prefWidth="200.0" />
                 <HBox alignment="CENTER" layoutX="10.0" layoutY="243.0" prefHeight="51.0" prefWidth="250.0">
                     <fx:define>
                         <ToggleGroup fx:id="borrowGroup" />
@@ -126,13 +127,13 @@
                     </children>
                 </HBox>
                <Separator layoutX="10.0" layoutY="294.0" prefWidth="200.0" />
-               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                  <children>
-                     <Button layoutX="100.0" layoutY="50.0" onAction="#handleCancel" text="Annuler" />
-                     <Button fx:id="buttonRemove" layoutX="125.0" layoutY="75.0" onAction="#handleRemove" text="Supprimer" />
-                     <Button fx:id="buttonModify" layoutX="100.0" layoutY="50.0" onAction="#handleModify" text="Ajouter" />
-                  </children>
-               </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                <children>
+                    <Button layoutX="100.0" layoutY="50.0" onAction="#handleCancel" text="Annuler" />
+                    <Button fx:id="buttonRemove" layoutX="125.0" layoutY="75.0" onAction="#handleRemove" text="Supprimer" />
+                    <Button fx:id="buttonModify" layoutX="100.0" layoutY="50.0" onAction="#handleModify" text="Ajouter" />
+                </children>
+            </HBox>
             </children>
          </VBox>
    </right>

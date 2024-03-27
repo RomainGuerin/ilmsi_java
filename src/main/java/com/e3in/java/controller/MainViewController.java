@@ -1,6 +1,5 @@
 package com.e3in.java.controller;
 
-import com.e3in.java.utils.Word;
 import com.e3in.java.utils.Xml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -137,6 +136,7 @@ public class MainViewController {
                 });
                 column.getColumns().add(jaquetteColumn);
                 jaquetteColumn.setPrefWidth(150);
+                jaquetteColumn.styleProperty().set("-fx-alignment: CENTER;");
             }
             if (column.getText().equals("Présentation")) {
                 column.setPrefWidth(250);
@@ -226,6 +226,7 @@ public class MainViewController {
     private void handleUnloadFile() {
         tableView.getItems().clear();
         selectedBook = null;
+        clearField();
     }
 
     // Sauvegarde les données dans le fichier XML actuel.

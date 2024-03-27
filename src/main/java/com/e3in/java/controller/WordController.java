@@ -48,7 +48,7 @@ public class WordController {
 
             XWPFParagraph footerParagraph = footer.createParagraph();
             XWPFRun footerRun = footerParagraph.createRun();
-            footerRun.setText("Réalisé par Romain GUERIN, Nicolas DROESCH");
+            footerRun.setText("Réalisé par Romain GUERIN et Nicolas DROESCH, avec la collaboration de Theo GINFRAY, Yoan RAZAFIMAHATRATRA");
 
             XWPFParagraph pageNumberParagraph = footer.createParagraph();
             pageNumberParagraph.setAlignment(ParagraphAlignment.RIGHT);
@@ -82,9 +82,10 @@ public class WordController {
         toc.setDirty(STOnOff1.ON);
         document.createParagraph().setPageBreak(true);
     }
+
     public void addCoverPage() {
         try {
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 5; i++) {
                 document.createParagraph().createRun().addBreak();
             }
 
@@ -107,6 +108,9 @@ public class WordController {
             subTitleRun.setFontFamily("Courier");
             subTitleRun.setFontSize(12);
             subTitleRun.setTextPosition(20);
+            
+            addImage("https://images.emojiterra.com/google/noto-emoji/unicode-15/bw/512px/1f4d6.png");
+
             document.createParagraph().setPageBreak(true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,7 +128,7 @@ public class WordController {
             } catch (Exception e) {
                 addParagraph("Le lien de la jaquette : " + book.getJaquette());
             }
-            addParagraph("Le livre à été écrit par  " + book.getAuteur()+".");
+            addParagraph("Le livre a été écrit par  " + book.getAuteur()+".");
             addParagraph(book.getPresentation());
             addParagraph("Le livre est paru le " + book.getParution()+".");
             addParagraph("Le livre est placé dans la colonne numéro "+book.getColonne()+" de la rangée "+book.getRangee()+".");
@@ -134,16 +138,19 @@ public class WordController {
                 document.createParagraph().setPageBreak(true);
             }
         }
+        isDataEmpty(books);
     }
 
     public void addBorrowedBooks(List<Livre> books) {
+        document.createParagraph().setPageBreak(true);
         addTitle("Livres empruntés");
         addParagraph("Les livres actuellement emprunté sont :");
         for(Livre book : books) {
             if(!book.getEmprunte())
                 continue;
-            addParagraph(book.getTitre()+" écrit par "+book.getAuteur()+" et paru le "+book.getParution()+".");
+            addParagraph("- " + book.getTitre()+" écrit par "+book.getAuteur()+" et paru le "+book.getParution()+".");
         }
+        isDataEmpty(books);
     }
 
     public void addTitle(String text) {
@@ -177,13 +184,20 @@ public class WordController {
         imageRun.setTextPosition(20);
         URI imageUrl = new URI(path);
         InputStream imageStream = imageUrl.toURL().openStream();
-        imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(200), Units.toEMU(200));
+        imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(175), Units.toEMU(200));
     }
     public void addParagraph(String text){
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun run = paragraph.createRun();
         paragraph.setAlignment(ParagraphAlignment.BOTH);
         run.setText(text);
+    }
+    private void isDataEmpty(List<Livre> books) {
+        if (books.isEmpty()) {
+            XWPFParagraph empty = document.createParagraph();
+            XWPFRun emptyRun = empty.createRun();
+            emptyRun.setText("Aucun livre n'a été trouvé dans la bibliothèque.");
+        }
     }
 
     public void saveDocument() {

@@ -3,8 +3,9 @@ package com.e3in.java.controller;
 import com.e3in.java.model.Auteur;
 import com.e3in.java.model.Livre;
 
-public class BookController {
+public class LivreController {
     private Livre livre;
+
     public String getTitre() {
         return this.livre.getTitre();
     }
@@ -52,6 +53,15 @@ public class BookController {
     public void setRangee(int rangee) {
         this.livre.setRangee(rangee);
     }
+
+    public String getJaquette() {
+        return this.livre.getJaquette();
+    }
+
+    public void setJaquette(String jaquette) {
+        this.livre.setJaquette(jaquette);
+    }
+
     public boolean getEmprunte() {
         return this.livre.getEmprunte();
     }

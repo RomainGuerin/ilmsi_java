@@ -4,12 +4,12 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.e3in.java.controller.AboutViewController"
-      alignment="TOP_LEFT" stylesheets="styles.css">
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.e3in.java.controller.AboutViewController"
+        alignment="TOP_LEFT" stylesheets="styles.css">
 
     <Label text="Informations sur l'application" style="-fx-font-size: 20px;" />
-    
+
     <Label text="Réalisé par : Romain GUERIN, Nicolas DROESCH" />
     <Label text="" />
     <Label fx:id="versionLabel" />

@@ -7,6 +7,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import com.e3in.java.controller.BibliothequeController;
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
 
@@ -48,25 +49,6 @@ public class Xml{
             System.err.println("Erreur de validation XML : " + e.getMessage());
             e.printStackTrace();
             return false;
-        }
-    }
-
-    /**
-     * Construit une bibliothèque de livres à partir d'un fichier XML.
-     *
-     * @param xmlFilePath Chemin vers le fichier XML contenant la bibliothèque.
-     * @return La bibliothèque de livres construite à partir du fichier XML.
-     */
-    public static Bibliotheque buildLibraryFromXML(String xmlFilePath) {
-        try {
-            File file = new File(xmlFilePath);
-            JAXBContext jaxbContext = JAXBContext.newInstance(Bibliotheque.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            return (Bibliotheque) jaxbUnmarshaller.unmarshal(file);
-        } catch (JAXBException e) {
-            System.err.println("Erreur de chargement du XML : " + e.getMessage());
-            return null;
         }
     }
 

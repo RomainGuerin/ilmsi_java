@@ -1,9 +1,5 @@
 package com.e3in.java.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -29,8 +25,8 @@ public class AboutViewController {
     /**
      * Constructeur par défaut de la classe AboutViewController.
      */
-    public AboutViewController() { }
-    
+    public AboutViewController() {}
+
     /**
      * Initialise la vue À propos.
      * Récupère les informations sur la version de l'application, la date de version,
@@ -41,7 +37,7 @@ public class AboutViewController {
         String gitVersion = "0.5";
 
         // Récupérer la date de version
-        String versionDate =  "25/03/2024";
+        String versionDate = "25/03/2024";
 
         // Version de Java
         String javaVersion = System.getProperty("java.version");
@@ -54,22 +50,5 @@ public class AboutViewController {
         dateLabel.setText("Date de version: " + versionDate);
         javaVersionLabel.setText("Version de Java: " + javaVersion);
         osVersionLabel.setText("Version de l'OS: " + osVersion);
-    }
-    
-    /**
-     * Exécute une commande système et renvoie le résultat.
-     *
-     * @param command La commande à exécuter.
-     * @return Le résultat de l'exécution de la commande.
-     */
-    private String executeCommand(String command) {
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            return reader.readLine().trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "N/A";
-        }
     }
 }

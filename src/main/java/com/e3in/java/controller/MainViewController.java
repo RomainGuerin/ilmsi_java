@@ -1,6 +1,10 @@
 package com.e3in.java.controller;
 
+import com.e3in.java.model.Bibliotheque;
+import com.e3in.java.model.Livre;
 import com.e3in.java.utils.Xml;
+import com.e3in.java.utils.Common;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -16,22 +20,14 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.UnaryOperator;
-
-// Apache POI
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-
-import com.e3in.java.model.Bibliotheque;
-import com.e3in.java.model.Livre;
 
 /**
  * Contrôleur de la vue principale de gestion de la bibliothèque
- * Cette classe gère l'affichage des livres dans un tableau, permet l'ajout, la modification et la suppression de livres,
+ * Cette classe gère l'affichage des livres dans un tableau, permet l'ajout, la
+ * modification et la suppression de livres,
  * ainsi que le chargement et la sauvegarde des données depuis/vers un fichier XML.
  */
 public class MainViewController {
@@ -39,7 +35,7 @@ public class MainViewController {
     private String xmlFilePath = "";
 
     @FXML
-    private TableView<Livre> tableView;
+    private TableView<LivreController> tableView;
     @FXML
     private TextField textFieldTitre;
     @FXML
@@ -62,32 +58,33 @@ public class MainViewController {
     private Button buttonModify;
     @FXML
     private Button buttonRemove;
-    private Livre selectedBook;
+    private LivreController selectedBook;
 
     /**
      * Constructeur par défaut de la classe MainViewController.
      */
-    public MainViewController() { }
+    public MainViewController() {}
 
     /**
      * Initialise la vue principale.
-     * Configure les événements sur les lignes de la table, la vérification et le formatage des champs.
+     * Configure les événements sur les lignes de la table, la vérification et le
+     * formatage des champs.
      */
     @FXML
     public void initialize() {
         buttonRemove.setDisable(true);
-        
+
         // Créer une nouvelle colonne pour l'état de l'emprunt
-        TableColumn<Livre, String> empruntColumn = new TableColumn<>("Emprunt");
+        TableColumn<LivreController, String> empruntColumn = new TableColumn<>("Emprunt");
         empruntColumn.setCellValueFactory(cellData -> {
-            Livre livre = cellData.getValue();
+            LivreController livre = cellData.getValue();
             String etatEmprunt = livre.getEmprunte() ? "Emprunté" : "Disponible";
             return new SimpleStringProperty(etatEmprunt);
         });
         tableView.getColumns().add(empruntColumn);
 
         tableView.setRowFactory(tv -> {
-            TableRow<Livre> row = new TableRow<>();
+            TableRow<LivreController> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 // Un click alors on modifie
                 if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
@@ -124,9 +121,9 @@ public class MainViewController {
 
         tableView.getColumns().forEach(column -> {
             if (column.getText().equals("Jaquette")) {
-                TableColumn<Livre, ImageView> jaquetteColumn = new TableColumn<>("Image Jaquette");
+                TableColumn<LivreController, ImageView> jaquetteColumn = new TableColumn<>("Image Jaquette");
                 jaquetteColumn.setCellValueFactory(cellData -> {
-                    Livre livre = cellData.getValue();
+                    LivreController livre = cellData.getValue();
                     String imageUrl = livre.getJaquette();
                     if (imageUrl != null && !imageUrl.isEmpty()) {
                         return new SimpleObjectProperty<>(createImageViewFromURL(imageUrl));
@@ -141,35 +138,36 @@ public class MainViewController {
             if (column.getText().equals("Présentation")) {
                 column.setPrefWidth(250);
             }
-            if (column.getText().equals("Parution") || column.getText().equals("Colonne") || column.getText().equals("Rangée")) {
+            if (column.getText().equals("Parution") || column.getText().equals("Colonne")
+                    || column.getText().equals("Rangée")) {
                 column.setPrefWidth(75);
             }
         });
     }
-    
+
     // Charge un fichier XML et le transforme en une liste de livres.
     @FXML
     private void handleLoadFile() {
         String xmlFilePath;
-        xmlFilePath = chooseFile();
+        xmlFilePath = Common.getPathFile("xml", getStage());
         if (xmlFilePath == null || xmlFilePath.isEmpty()) {
-            showErrorAlert("Erreur fichier", "Aucun fichier sélectionné");
+            Common.showErrorAlert("Erreur fichier", "Aucun fichier sélectionné");
             return;
         }
 
         boolean isValid = Xml.validateXml(xmlFilePath);
         if (!isValid) {
-            showErrorAlert("Erreur XML", "XML non valide");
+            Common.showErrorAlert("Erreur XML", "XML non valide");
             return;
         }
 
         this.xmlFilePath = xmlFilePath;
 
-        Bibliotheque library = Xml.buildLibraryFromXML(xmlFilePath);
+        BibliothequeController library = new BibliothequeController(xmlFilePath);
 
         tableView.getItems().clear();
         if (library != null) {
-            tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
+            tableView.setItems(FXCollections.observableArrayList(library.getBibliotheque()));
         }
     }
 
@@ -232,15 +230,15 @@ public class MainViewController {
     // Sauvegarde les données dans le fichier XML actuel.
     @FXML
     private void handleSave() {
-        saveData(xmlFilePath);
+        Xml.saveLibraryToXml(tableView.getItems(), xmlFilePath);
     }
 
     // Sauvegarde les données dans un nouveau fichier XML.
     @FXML
     private void handleSaveAs() {
-        String filePath = chooseSaveLocation();
+        String filePath = Common.getPathFile("xml", getStage());
         if (filePath != null) {
-            saveData(filePath);
+            Xml.saveLibraryToXml(tableView.getItems(), xmlFilePath);
             xmlFilePath = filePath;
         }
     }
@@ -249,8 +247,7 @@ public class MainViewController {
     @FXML
     private void handleExport() throws IllegalArgumentException {
         try {
-            String path = chooseSaveLocation(getStage());
-//            String path = "C:\\Users\\Atlas\\Documents\\Et. cas Medtra - Informations initiales.docx";
+            String path = Common.getPathFile("docx", getStage());
             if (path == null) {
                 throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
             }
@@ -265,26 +262,10 @@ public class MainViewController {
             word.saveDocument();
 
         } catch (Exception e) {
-            showErrorAlert("Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
+            Common.showErrorAlert("Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
             System.err.println(e);
             e.printStackTrace();
         }
-    }
-
-    public static String chooseSaveLocation(Stage primaryStage) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Sélectionner un emplacement de sauvegarde");
-        
-        // Création du filtre pour les fichiers .docx
-        ExtensionFilter docxFilter = new ExtensionFilter("Fichiers DOCX (*.docx)", "*.docx");
-        fileChooser.getExtensionFilters().add(docxFilter);
-
-        // Affichage de la boîte de dialogue de sélection de fichiers
-        File file = fileChooser.showSaveDialog(primaryStage);
-        if (file != null) {
-            return file.getAbsolutePath();
-        }
-        return null;
     }
 
     /**
@@ -292,8 +273,8 @@ public class MainViewController {
      * 
      * @param row La ligne à supprimer.
      */
-    private void removeTabRow(TableRow<Livre> row) {
-        Livre livre = row.getItem();
+    private void removeTabRow(TableRow<LivreController> row) {
+        LivreController livre = row.getItem();
         if (livre != null) {
             tableView.getItems().remove(livre);
             clearField();
@@ -305,8 +286,8 @@ public class MainViewController {
      * 
      * @param row Données de la ligne sélectionnée.
      */
-    private void fillForm(TableRow<Livre> row) {
-        Livre livre = row.getItem();
+    private void fillForm(TableRow<LivreController> row) {
+        LivreController livre = row.getItem();
         this.textFieldTitre.setText(livre.getTitre());
         this.textFieldAuteur.setText(livre.getAuteur().toString());
         this.textFieldPresentation.setText(livre.getPresentation());
@@ -330,7 +311,7 @@ public class MainViewController {
                 int parution = Integer.parseInt(textFieldParution.getText().strip());
 
                 if (!estLivreUnique(titre, auteur, parution, tableView.getItems())) {
-                    showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
+                    Common.showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                     return;
                 }
 
@@ -347,15 +328,18 @@ public class MainViewController {
                 tableView.refresh();
                 clearField();
             } catch (Exception e) {
-                showErrorAlert("Erreur modification", "Erreur lors de la modification du livre : " + e.getMessage());
+                Common.showErrorAlert("Erreur modification", "Erreur lors de la modification du livre : " + e.getMessage());
             }
         }
     }
 
+    // Méthode pour définir l'état de l'emprunt
     private void setBorrowRadio(boolean emprunte) {
         this.radioBorrow.setSelected(emprunte);
         this.radioNoBorrow.setSelected(!emprunte);
     }
+
+    // Méthode pour récupérer l'état de l'emprunt
     private boolean getBorrowRadio() {
         return this.radioBorrow.isSelected();
     }
@@ -367,7 +351,7 @@ public class MainViewController {
 
             if (!estLivreUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
                     tableView.getItems())) {
-                showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
+                Common.showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                 return;
             }
 
@@ -376,10 +360,11 @@ public class MainViewController {
 
             clearField();
         } catch (Exception e) {
-            showErrorAlert("Erreur Ajout", "Erreur lors de l'ajout du livre : " + e.getMessage());
+            Common.showErrorAlert("Erreur Ajout", "Erreur lors de l'ajout du livre : " + e.getMessage());
         }
     }
 
+    // Méthode pour récupérer les données du formulaire
     private Livre getUserBook() {
         Livre livre = new Livre();
         livre.setTitre(textFieldTitre.getText().strip());
@@ -396,7 +381,7 @@ public class MainViewController {
     // Méthode pour vérifier si un livre est unique
     private boolean estLivreUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
         for (Livre livre : listeLivres) {
-            if(livre == this.selectedBook) {
+            if (livre == this.selectedBook) {
                 continue;
             }
             if (livre.getTitre().equals(titre) && livre.getAuteur().toString().equals(auteur)
@@ -418,33 +403,6 @@ public class MainViewController {
         this.spinnerRangee.getValueFactory().setValue(1);
         this.buttonModify.setText("Ajouter");
         buttonRemove.setDisable(true);
-    }
-
-    // Méthode pour choisir un fichier XML
-    private String chooseFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open XML File");
-        String extension = "*.xml";
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("XML files (" + extension + ")", extension);
-        fileChooser.getExtensionFilters().add(filter);
-
-        File selectedFile = fileChooser.showOpenDialog(getStage());
-
-        return selectedFile == null ? null : selectedFile.getAbsolutePath();
-    }
-
-    // Méthode pour sauvegarder les données dans un fichier XML
-    private void saveData(String filePath) {
-        Xml.saveLibraryToXml(tableView.getItems(), filePath);
-    }
-
-    // Méthode pour choisir l'emplacement de sauvegarde
-    private String chooseSaveLocation() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save XML File");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml"));
-        File file = fileChooser.showSaveDialog(getStage());
-        return file != null ? file.getAbsolutePath() : null;
     }
 
     // Méthode pour créer une image à partir d'une URL
@@ -475,23 +433,6 @@ public class MainViewController {
             System.err.println("Erreur lors du chargement de l'image : " + e.getMessage());
         }
         return imageView;
-    }
-
-    /** 
-     * Méthode pour afficher une alerte d'erreur
-     * 
-     * @param title Le titre de l'alerte.
-     * @param content Le contenu de l'alerte.
-     */
-    protected static void showErrorAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        Image icon = new Image(Objects.requireNonNull(MainViewController.class.getResourceAsStream("/alert.png")));
-        stage.getIcons().add(icon);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 
     // Méthode pour récupérer la fenêtre principale

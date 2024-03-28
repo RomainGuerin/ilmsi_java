@@ -209,14 +209,6 @@ public class Livre {
         return this.emprunte;
     }
 
-    public String getEmprunteString() {
-        if (this.emprunte) {
-            return "Emprunté";
-        } else {
-            return "Disponible";
-        }
-    }
-
     /**
      * Définit l'état d'emprunt du livre.
      *

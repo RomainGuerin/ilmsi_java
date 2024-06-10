@@ -1,5 +1,6 @@
 package com.e3in.java.controller;
 
+import com.e3in.java.DAO.BaseSQL;
 import com.e3in.java.utils.Xml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,6 +24,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
@@ -81,7 +84,6 @@ public class MainViewController {
      */
     @FXML
     public void initialize() {
-
         buttonRemove.setDisable(true);
         
         // Créer une nouvelle colonne pour l'état de l'emprunt

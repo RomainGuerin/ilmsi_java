@@ -84,9 +84,6 @@ public class MainViewController {
      */
     @FXML
     public void initialize() {
-        UserController userController = new UserController();
-        userController.signIn("admin", "admin");
-
         buttonRemove.setDisable(true);
         
         // Créer une nouvelle colonne pour l'état de l'emprunt

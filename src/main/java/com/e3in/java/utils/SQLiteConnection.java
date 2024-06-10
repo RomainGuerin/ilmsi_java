@@ -31,7 +31,7 @@ public final class SQLiteConnection {
             Class.forName("org.sqlite.JDBC");
 
             // Chemin de la base de données
-            URL res = SQLiteConnection.class.getClassLoader().getResource("javaLibrary.db");
+            URL res = SQLiteConnection.class.getClassLoader().getResource("javaLibrary2.db");
             if (res == null) {
                 throw new SQLException("Impossible de trouver le fichier de base de données");
             }

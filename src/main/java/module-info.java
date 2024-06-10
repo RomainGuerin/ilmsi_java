@@ -10,6 +10,7 @@ module com.e3in.java {
     requires org.apache.poi.ooxml.schemas;
     requires java.sql;
     requires org.xerial.sqlitejdbc;
+    requires jbcrypt;
 
     opens com.e3in.java to javafx.fxml, jakarta.xml.bind;
     opens com.e3in.java.controller to javafx.fxml, jakarta.xml.bind;

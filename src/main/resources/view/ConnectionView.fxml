@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.ConnectionViewController">
+   <children>
+      <VBox alignment="TOP_CENTER" layoutX="282.0" layoutY="186.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="707.0" text="Connection Page" textAlignment="CENTER" />
+            <Separator prefWidth="200.0" />
+            <TextField fx:id="textFieldLogin" promptText="Enter your login" tooltip="Enter your login"/>
+            <PasswordField fx:id="passwordField" promptText="Enter your password" tooltip="Enter your password"/>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" text="Cancel" onAction="#handleCancel"/>
+                  <Button mnemonicParsing="false" text="Register" onAction="#handleRegister"/>
+                  <Button mnemonicParsing="false" text="Connnection" onAction="#handleConnection" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

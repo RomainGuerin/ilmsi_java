@@ -18,6 +18,10 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +32,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
+
+import com.e3in.java.utils.SQLiteConnection;
 
 /**
  * Contrôleur de la vue principale de gestion de la bibliothèque
@@ -75,6 +81,7 @@ public class MainViewController {
      */
     @FXML
     public void initialize() {
+
         buttonRemove.setDisable(true);
         
         // Créer une nouvelle colonne pour l'état de l'emprunt

@@ -52,6 +52,10 @@ public final class SQLiteConnection {
         }
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
     @SuppressWarnings("removal")
     protected void finalize() {
         close();

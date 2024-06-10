@@ -4,9 +4,17 @@ public class User {
     private String login;
     private String password;
     private boolean isAdmin;
-    public User (String email, String password) {
 
+    public User() {
+        this.login = "";
+        this.isAdmin = false;
     }
+
+    public User (String email, boolean isAdmin) {
+        this.login = email;
+        this.isAdmin = isAdmin;
+    }
+
     public boolean isAdmin() {
         return this.isAdmin;
     }

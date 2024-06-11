@@ -1,4 +1,4 @@
-package com.e3in.java.DAO;
+package com.e3in.java.dao;
 
 import com.e3in.java.utils.SQLiteConnection;
 
@@ -15,26 +15,100 @@ public class BaseSQL {
         connection = SQLiteConnection.getInstance();
     }
 
-    public List<Object> getElements(String nomTable, List<String> nomColonnes, HashMap<String, String> valeursWhere) {
-        List<Object> elements = new ArrayList<>();
-        Connection conn = connection.getConnection();
-        try {
-            //String colonnes = !nomColonnes.isEmpty() ? String.join(", ", nomColonnes) : "*";
-            //String where = !valeursWhere.isEmpty() ? " WHERE " + String.join(" AND ", valeursWhere.keySet() + " = " + valeursWhere.values()) : "";
-            Statement stmt = conn.createStatement();
-            String query = "SELECT * FROM livre";
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                rs.getRow();
-                elements.add(rs.getString("titre"));
-                System.out.println(rs.getString("titre"));
+    public HashMap<String, String> get(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
+        HashMap<String, String> result = new HashMap<>();
+        Connection connection = SQLiteConnection.getInstance().getConnection();
+
+        StringBuilder query = new StringBuilder("SELECT ");
+        for (int i = 0; i < columnNames.size(); i++) {
+            query.append(columnNames.get(i));
+            if (i < columnNames.size() - 1) {
+                query.append(", ");
             }
-            System.out.println(elements);
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération des éléments de la table " + nomTable + ".");
-        } finally {
-            SQLiteConnection.close();
         }
-        return elements;
+        query.append(" FROM ").append(tableName).append(" WHERE ");
+
+        int whereClauseSize = whereClause.size();
+        int index = 0;
+        for (String key : whereClause.keySet()) {
+            query.append(key).append(" = ?");
+            if (index < whereClauseSize - 1) {
+                query.append(" AND ");
+            }
+            index++;
+        }
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query.toString())) {
+            index = 1;
+            for (String key : whereClause.keySet()) {
+                pstmt.setString(index, whereClause.get(key));
+                index++;
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    for (String column : columnNames) {
+                        result.put(column, rs.getString(column));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public HashMap<String, String> set(String tableName, HashMap<String, String> columnAndValue, HashMap<String, String> whereClause) {
+        Connection connection = SQLiteConnection.getInstance().getConnection();
+        HashMap<String, String> result = new HashMap<>();
+
+        StringBuilder query = new StringBuilder("UPDATE ");
+        query.append(tableName).append(" SET ");
+
+        int setSize = columnAndValue.size();
+        int index = 0;
+        for (String key : columnAndValue.keySet()) {
+            query.append(key).append(" = ?");
+            if (index < setSize - 1) {
+                query.append(", ");
+            }
+            index++;
+        }
+
+        query.append(" WHERE ");
+        int whereClauseSize = whereClause.size();
+        index = 0;
+        for (String key : whereClause.keySet()) {
+            query.append(key).append(" = ?");
+            if (index < whereClauseSize - 1) {
+                query.append(" AND ");
+            }
+            index++;
+        }
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query.toString())) {
+            index = 1;
+            for (String key : columnAndValue.keySet()) {
+                pstmt.setString(index, columnAndValue.get(key));
+                index++;
+            }
+            for (String key : whereClause.keySet()) {
+                pstmt.setString(index, whereClause.get(key));
+                index++;
+            }
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                result.put("status", "success");
+            } else {
+                result.put("status", "failure");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result.put("status", "error");
+        }
+
+        return result;
     }
 }

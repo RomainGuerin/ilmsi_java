@@ -1,53 +1,62 @@
 package com.e3in.java.controller;
 
-import com.e3in.java.utils.Xml;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
+import com.e3in.java.AppConfig;
+import com.e3in.java.dao.UserDAO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.UnaryOperator;
-
-// Apache POI
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-
-import com.e3in.java.model.Bibliotheque;
-import com.e3in.java.model.Livre;
+import java.util.HashMap;
 
 /**
  * Controller de la vue Connexion
  */
 public class ConnectionViewController {
+    private final UserController userController = new UserController(AppConfig.createUserDAO());
 
-   @FXML
+
+    @FXML
     private TextField textFieldLogin;
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
+
     @FXML
     public void handleConnection() {
-        System.out.println("Je me connecte en tant que : " + this.textFieldLogin.getText() + " avec " + this.passwordField.getText() + " en tant que mot de passe");
+        String email = textFieldLogin.getText();
+        String password = passwordField.getText();
+
+        HashMap<String, String> user = userController.getUserByEmailPassword(email, password);
+        if (!user.isEmpty()) {
+            System.out.println("Connexion réussie ! Bienvenue " + user.get("email") + user);
+        } else {
+            System.out.println("Échec de la connexion. Veuillez vérifier vos identifiants.");
+        }
     }
+
     @FXML
     public void handleCancel() {
-        System.out.print("J'annule mon action");
+        System.out.println("Action annulée");
     }
+
     @FXML
-    public void handleRegister() {
-        System.out.print("Je souhaite m'inscrire, donc redirection vers la page d'inscription");
+    public void handleRegister(ActionEvent event) {
+        System.out.println("Redirection vers la page d'inscription");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/RegisterView.fxml"));
+        try {
+            Parent registerView = loader.load();
+            Scene registerScene = new Scene(registerView);
+            Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            primaryStage.setScene(registerScene);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

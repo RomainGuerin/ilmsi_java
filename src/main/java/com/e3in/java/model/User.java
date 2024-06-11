@@ -10,6 +10,7 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.isAdmin = false;
     }
 
     public User(String email, String password, boolean isAdmin) {

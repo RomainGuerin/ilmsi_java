@@ -1,6 +1,6 @@
 package com.e3in.java.controller;
 
-import com.e3in.java.DAO.BaseSQL;
+import com.e3in.java.dao.BaseSQL;
 import com.e3in.java.utils.Xml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;

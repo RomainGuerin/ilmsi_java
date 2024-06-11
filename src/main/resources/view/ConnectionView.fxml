@@ -10,8 +10,8 @@
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="707.0" text="Connection Page" textAlignment="CENTER" />
             <Separator prefWidth="200.0" />
-            <TextField fx:id="textFieldLogin" promptText="Enter your login" tooltip="Enter your login"/>
-            <PasswordField fx:id="passwordField" promptText="Enter your password" tooltip="Enter your password"/>
+            <TextField fx:id="textFieldLogin" promptText="Enter your login"/>
+            <PasswordField fx:id="passwordField" promptText="Enter your password"/>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
                   <Button mnemonicParsing="false" text="Cancel" onAction="#handleCancel"/>

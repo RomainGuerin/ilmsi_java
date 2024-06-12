@@ -30,11 +30,10 @@ public class DAOManager implements DAO {
     }
 
     @Override
-    public HashMap<String, String> get(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
-        // Appeler les deux DAOs et retourner le résultat de l'un d'eux, ou fusionner les résultats si nécessaire
-        HashMap<String, String> result = sqliteDAO.get(tableName, columnNames, whereClause);
+    public HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
+        HashMap<String, String> result = sqliteDAO.select(tableName, columnNames, whereClause);
         if (result.isEmpty()) {
-            result = xmlDAO.get(tableName, columnNames, whereClause);
+            result = xmlDAO.select(tableName, columnNames, whereClause);
         }
         return result;
     }

@@ -1,6 +1,5 @@
 package com.e3in.java.controller;
 
-import com.e3in.java.dao.BaseSQL;
 import com.e3in.java.utils.Xml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,26 +16,15 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 // Apache POI
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
-
-import com.e3in.java.utils.SQLiteConnection;
 
 /**
  * Contrôleur de la vue principale de gestion de la bibliothèque

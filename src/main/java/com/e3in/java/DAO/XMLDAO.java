@@ -18,7 +18,7 @@ public class XMLDAO implements DAO {
     }
 
     @Override
-    public HashMap<String, String> get(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
+    public HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         HashMap<String, String> result = new HashMap<>();
 
         try {

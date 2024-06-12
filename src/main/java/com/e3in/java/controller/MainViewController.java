@@ -1,5 +1,6 @@
 package com.e3in.java.controller;
 
+import com.e3in.java.utils.Common;
 import com.e3in.java.utils.Xml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -153,13 +154,13 @@ public class MainViewController {
         String xmlFilePath;
         xmlFilePath = chooseFile();
         if (xmlFilePath == null || xmlFilePath.isEmpty()) {
-            showErrorAlert("Erreur fichier", "Aucun fichier sélectionné");
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur fichier", "Aucun fichier sélectionné");
             return;
         }
 
         boolean isValid = Xml.validateXml(xmlFilePath);
         if (!isValid) {
-            showErrorAlert("Erreur XML", "XML non valide");
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur XML", "XML non valide");
             return;
         }
 
@@ -176,23 +177,13 @@ public class MainViewController {
     // Affiche une fenêtre d'informations sur l'application.
     @FXML
     private void handleInfos() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AboutView.fxml"));
-            VBox content = fxmlLoader.load();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("About");
-            alert.setHeaderText(null);
-            alert.getDialogPane().setContent(content);
-            alert.showAndWait();
-        } catch (Exception e) {
-            System.err.println("Erreur de chargement de la page About: " + e.getMessage());
-        }
+        Common.showAboutPage();
     }
 
     // Ferme l'application.
     @FXML
     private void handleQuitApp() {
-        getStage().close();
+        Common.closeApp(getStage());
     }
 
     // Gère l'ajout ou la modification d'un livre.
@@ -265,7 +256,7 @@ public class MainViewController {
             word.saveDocument();
 
         } catch (Exception e) {
-            showErrorAlert("Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
             System.err.println(e);
             e.printStackTrace();
         }
@@ -330,7 +321,7 @@ public class MainViewController {
                 int parution = Integer.parseInt(textFieldParution.getText().strip());
 
                 if (!estLivreUnique(titre, auteur, parution, tableView.getItems())) {
-                    showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
+                    Common.showAlert(Alert.AlertType.ERROR, "Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                     return;
                 }
 
@@ -347,7 +338,7 @@ public class MainViewController {
                 tableView.refresh();
                 clearField();
             } catch (Exception e) {
-                showErrorAlert("Erreur modification", "Erreur lors de la modification du livre : " + e.getMessage());
+                Common.showAlert(Alert.AlertType.ERROR, "Erreur modification", "Erreur lors de la modification du livre : " + e.getMessage());
             }
         }
     }
@@ -367,7 +358,7 @@ public class MainViewController {
 
             if (!estLivreUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
                     tableView.getItems())) {
-                showErrorAlert("Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
+                Common.showAlert(Alert.AlertType.ERROR, "Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                 return;
             }
 
@@ -376,7 +367,7 @@ public class MainViewController {
 
             clearField();
         } catch (Exception e) {
-            showErrorAlert("Erreur Ajout", "Erreur lors de l'ajout du livre : " + e.getMessage());
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur Ajout", "Erreur lors de l'ajout du livre : " + e.getMessage());
         }
     }
 
@@ -475,23 +466,6 @@ public class MainViewController {
             System.err.println("Erreur lors du chargement de l'image : " + e.getMessage());
         }
         return imageView;
-    }
-
-    /** 
-     * Méthode pour afficher une alerte d'erreur
-     * 
-     * @param title Le titre de l'alerte.
-     * @param content Le contenu de l'alerte.
-     */
-    protected static void showErrorAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        Image icon = new Image(Objects.requireNonNull(MainViewController.class.getResourceAsStream("/alert.png")));
-        stage.getIcons().add(icon);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 
     // Méthode pour récupérer la fenêtre principale

@@ -13,14 +13,14 @@ public class UserDAO {
     public HashMap<String, String> getUserById(String userId) {
         HashMap<String, String> whereClause = new HashMap<>();
         whereClause.put("id", userId);
-        return daoManager.get("user", List.of("id", "email", "password","type"), whereClause);
+        return daoManager.select("user", List.of("id", "email", "password","type"), whereClause);
     }
 
     public HashMap<String, String> getUserByEmailPassword(String email, String password) {
         HashMap<String, String> whereClause = new HashMap<>();
         whereClause.put("email", email);
         whereClause.put("password", password);
-        return daoManager.get("user", List.of("id", "email", "password", "type"), whereClause);
+        return daoManager.select("user", List.of("id", "email", "password", "type"), whereClause);
     }
 
     public HashMap<String, String> createUser(HashMap<String, String> userData) {

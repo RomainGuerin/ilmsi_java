@@ -1,21 +1,18 @@
 package com.e3in.java.controller;
 
+import com.e3in.java.AppConfig;
 import com.e3in.java.model.User;
 import com.e3in.java.utils.Common;
-import com.e3in.java.utils.SQLiteConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 
 public class RegisterViewController {
+
+    private final UserController userController = new UserController(AppConfig.createUserDAO());
 
     @FXML
     private TextField textFieldLogin;
@@ -31,56 +28,34 @@ public class RegisterViewController {
         Common.switchScene("ConnectionView", getStage());
     }
 
-    @FXML
     public void handleRegister() {
-        User user = new User();
-        String login = textFieldLogin.getText();
+        String email = textFieldLogin.getText();
         String password = passwordField.getText();
         String passwordEnsure = passwordFieldEnsure.getText();
-        if (checkRegisterValidity(login, password, passwordEnsure)) {
-            user.setEmail(login);
-            user.setPassword(password);
-            boolean userInserted = insertNewUser(user);
+
+        if(!password.equals(passwordEnsure)) {
+            Common.showAlert(Alert.AlertType.ERROR, "Les mots de passe ne correspondent pas", "Les mots de passe doivent être identiques.");
+            return;
+        }
+
+        User user = new User(email, password, false);
+        if (UserController.checkValidity(user)) {
+            boolean userInserted = userController.createUser(user);
             if (userInserted) {
+                System.out.println("Connexion réussie ! Bienvenue " + user.getEmail());
                 Common.switchScene("ConnectionView", getStage());
+            } else {
+                System.out.println("Échec d'inscription. Veuillez vérifier les informations.");
             }
         }
+        this.resetFields();
     }
 
-    public static boolean checkRegisterValidity(String email, String password, String passwordEnsure) {
-        if (email == null || !email.contains("@")) {
-            Common.showAlert(Alert.AlertType.ERROR, "Email invalide", "Insérer une adresse email valide.");
-            return false;
-        }
-        if (password == null || password.isEmpty()) {
-            Common.showAlert(Alert.AlertType.ERROR, "Mot de passe invalide", "Le mot de passe ne peut pas être vide.");
-            return false;
-        }
-        if (!password.equals(passwordEnsure)) {
-            Common.showAlert(Alert.AlertType.ERROR, "Les mots de passe ne correspondent pas", "Les mots de passe doivent être identiques.");
-            return false;
-        }
-        return true;
+    public void resetFields() {
+        textFieldLogin.setText("");
+        passwordField.setText("");
+        passwordFieldEnsure.setText("");
     }
-
-    public static boolean insertNewUser(User user) {
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-
-        String sql = "INSERT INTO user (email, password) VALUES (?, ?)";
-        try (Connection conn = SQLiteConnection.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, user.getEmail());
-            pstmt.setString(2, hashedPassword);
-            pstmt.executeUpdate();
-            Common.showAlert(Alert.AlertType.INFORMATION, "Inscription réussie", "Utilisateur enregistré.");
-            return true;
-        } catch (SQLException e) {
-            Common.showAlert(Alert.AlertType.ERROR, "Erreur de base de données", "Connexion impossible. Veuillez réessayer."); //TODO: déconnexion de la bdd en cas d'erreur ?
-            e.printStackTrace();
-        }
-        return false;
-    }
-
 
     // Ferme l'application.
     @FXML
@@ -91,7 +66,7 @@ public class RegisterViewController {
     // Affiche une fenêtre d'informations sur l'application.
     @FXML
     private void handleInfos() {
-        Common.showAboutPage();
+        Common.showAboutPopup();
     }
 
     // Méthode pour récupérer la fenêtre principale

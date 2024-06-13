@@ -19,7 +19,7 @@ public class Common {
         stage.close();
     }
 
-    public static void showAboutPage() {
+    public static void showAboutPopup() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Common.class.getResource("/view/AboutView.fxml"));
             VBox content = fxmlLoader.load();

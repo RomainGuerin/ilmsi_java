@@ -13,7 +13,6 @@
     <Label text="Réalisé par : Romain GUERIN, Nicolas DROESCH" />
     <Label text="" />
     <Label fx:id="versionLabel" />
-    <Label fx:id="commitLabel" />
     <Label fx:id="dateLabel" />
     <Label fx:id="javaVersionLabel" />
     <Label fx:id="osVersionLabel" />

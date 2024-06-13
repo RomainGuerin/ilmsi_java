@@ -99,3 +99,42 @@
 .radio-button {
     -fx-padding: 5px;
 }
+
+
+/* CSS for VBox */
+.loginBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 0);
+}
+
+/* CSS for Label */
+.loginBox .label {
+    -fx-font-size: 24px;
+    -fx-text-fill: #333333;
+}
+
+/* CSS for Separator */
+.loginBox .separator {
+    -fx-background-color: #cccccc;
+    -fx-pref-height: 2px;
+}
+
+/* CSS for TextField and PasswordField */
+.loginBox .text-field, .loginBox .password-field {
+    -fx-pref-width: 260px;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+}
+
+.loginBox .hbox {
+    -fx-spacing: 5px;
+    -fx-alignment: center;
+}

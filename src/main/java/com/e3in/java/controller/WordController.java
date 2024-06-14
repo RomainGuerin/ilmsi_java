@@ -8,6 +8,7 @@ import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +20,8 @@ import java.util.List;
 import static com.e3in.java.utils.Common.getCurrentDateTime;
 
 public class WordController {
-    private XWPFDocument document;
-    private String path;
+    private final XWPFDocument document;
+    private final String path;
 
     public WordController(String path) {
         this.document = new XWPFDocument();
@@ -182,8 +183,7 @@ public class WordController {
         image.setAlignment(ParagraphAlignment.CENTER);
         XWPFRun imageRun = image.createRun();
         imageRun.setTextPosition(20);
-        URI imageUrl = new URI(path);
-        InputStream imageStream = imageUrl.toURL().openStream();
+        InputStream imageStream = path.startsWith("http") ? new URI(path).toURL().openStream() : new FileInputStream(path);
         imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(175), Units.toEMU(200));
     }
     public void addParagraph(String text){

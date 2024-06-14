@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -31,10 +32,28 @@ import java.util.function.UnaryOperator;
  */
 public class MainViewController implements UserAwareController {
 
+    private final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.createBibliothequeDAO());
+
+    private User connectedUser;
+
+    private boolean isOnline = false;
+
     private String xmlFilePath = "";
+
+    private Livre selectedBook;
+
+    @FXML
+    private Menu xmlMenu;
+    @FXML
+    private Menu bddMenu;
+    @FXML
+    private MenuItem connectionBDD;
+    @FXML
+    private Menu editionMenu;
 
     @FXML
     private TableView<Livre> tableView;
+
     @FXML
     private TextField textFieldTitre;
     @FXML
@@ -54,12 +73,11 @@ public class MainViewController implements UserAwareController {
     @FXML
     private RadioButton radioNoBorrow;
     @FXML
+    private HBox containerEditionLivre;
+    @FXML
     private Button buttonModify;
     @FXML
     private Button buttonRemove;
-    private Livre selectedBook;
-
-    private User connectedUser;
 
     @FXML
     private Label userTypeChip;
@@ -68,34 +86,10 @@ public class MainViewController implements UserAwareController {
     @FXML
     private Label lastEditDateChip;
 
-    private boolean isOnline = false;
-
-    private final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.createBibliothequeDAO());
-
-    @Override
-    public void setUser(User user) {
-        this.connectedUser = user;
-        System.out.println("User set in MainViewController: " + user.getEmail());
-        updateStatusBox();
-    }
-
-    private void updateStatusBox() {
-        if (connectedUser != null) {
-            userTypeChip.setText(connectedUser.isAdmin() ? "Admin" : "User");
-            userTypeChip.getStyleClass().setAll(connectedUser.isAdmin() ? "chip-admin" : "chip");
-        }
-        connectionTypeChip.setText("Status : " + (isOnline ? "En ligne" : "Hors ligne"));
-        lastEditDateChip.setText("Dernière mise à jour : " + Common.getCurrentDateTime());
-    }
-
-    public User getConnectedUser() {
-        return connectedUser;
-    }
-
     /**
      * Constructeur par défaut de la classe MainViewController.
      */
-    public MainViewController() { }
+    public MainViewController() {}
 
     /**
      * Initialise la vue principale.
@@ -104,16 +98,13 @@ public class MainViewController implements UserAwareController {
     @FXML
     public void initialize() {
         buttonRemove.setDisable(true);
-        
-        // Créer une nouvelle colonne pour l'état de l'emprunt
-        TableColumn<Livre, String> empruntColumn = new TableColumn<>("Emprunt");
-        empruntColumn.setCellValueFactory(cellData -> {
-            Livre livre = cellData.getValue();
-            String etatEmprunt = livre.getEmprunte() ? "Emprunté" : "Disponible";
-            return new SimpleStringProperty(etatEmprunt);
-        });
-        tableView.getColumns().add(empruntColumn);
 
+        configureTableRows();
+        configureTableColumns();
+        configureTableColumnEmprunt();
+    }
+
+    private void configureTableRows() {
         tableView.setRowFactory(tv -> {
             TableRow<Livre> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -127,29 +118,35 @@ public class MainViewController implements UserAwareController {
                 }
             });
 
-            UnaryOperator<TextFormatter.Change> filter = change -> {
-                if (change.getControlNewText().isEmpty() || change.getControlNewText().matches("\\d+")) {
-                    return change;
-                }
-                return null;
-            };
-
-            TextFormatter<String> textFormatter = new TextFormatter<>(filter);
-
-            textFieldParution.setTextFormatter(textFormatter);
-
-            int currentYear = LocalDate.now().getYear();
-            textFieldParution.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (!newValue.matches("\\d*")) {
-                    textFieldParution.setText(newValue.replaceAll("\\D", ""));
-                }
-                if (!newValue.isEmpty() && Integer.parseInt(newValue) > currentYear) {
-                    textFieldParution.setText(String.valueOf(currentYear));
-                }
-            });
+            configureTextFieldParution();
             return row;
         });
+    }
 
+    private void configureTextFieldParution() {
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            if (change.getControlNewText().isEmpty() || change.getControlNewText().matches("\\d+")) {
+                return change;
+            }
+            return null;
+        };
+
+        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+
+        textFieldParution.setTextFormatter(textFormatter);
+
+        int currentYear = LocalDate.now().getYear();
+        textFieldParution.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                textFieldParution.setText(newValue.replaceAll("\\D", ""));
+            }
+            if (!newValue.isEmpty() && Integer.parseInt(newValue) > currentYear) {
+                textFieldParution.setText(String.valueOf(currentYear));
+            }
+        });
+    }
+
+    private void configureTableColumns() {
         tableView.getColumns().forEach(column -> {
             if (column.getText().equals("Jaquette")) {
                 TableColumn<Livre, ImageView> jaquetteColumn = new TableColumn<>("Image Jaquette");
@@ -174,48 +171,89 @@ public class MainViewController implements UserAwareController {
             }
         });
     }
-    
+
+    private void configureTableColumnEmprunt() {
+        // Créer une nouvelle colonne pour l'état de l'emprunt
+        TableColumn<Livre, String> empruntColumn = new TableColumn<>("Emprunt");
+        empruntColumn.setCellValueFactory(cellData -> {
+            Livre livre = cellData.getValue();
+            String etatEmprunt = livre.getEmprunte() ? "Emprunté" : "Disponible";
+            return new SimpleStringProperty(etatEmprunt);
+        });
+        tableView.getColumns().add(empruntColumn);
+    }
+
+    @Override
+    public void setUser(User user) {
+        connectedUser = user;
+        updateStatusBox();
+        allowEditOnTable(connectedUser.isAdmin());
+        if (!connectedUser.isAdmin()) {
+            handleConnectionBDD();
+        }
+    }
+
+    private void updateStatusBox() {
+        if (connectedUser != null) {
+            userTypeChip.setText(connectedUser.isAdmin() ? "Admin" : "User");
+            userTypeChip.getStyleClass().setAll(connectedUser.isAdmin() ? "chip-admin" : "chip");
+        }
+        connectionTypeChip.setText("Status : " + (isOnline ? "En ligne" : "Hors ligne"));
+        lastEditDateChip.setText("Dernière mise à jour : " + Common.getCurrentDateTime());
+    }
+
+    private void allowEditOnTable(boolean isAdmin) {
+        this.textFieldTitre.setDisable(!isAdmin);
+        this.textFieldAuteur.setDisable(!isAdmin);
+        this.textFieldPresentation.setDisable(!isAdmin);
+        this.textFieldJaquette.setDisable(!isAdmin);
+        this.textFieldParution.setDisable(!isAdmin);
+        this.spinnerColonne.setDisable(!isAdmin);
+        this.spinnerRangee.setDisable(!isAdmin);
+        this.radioBorrow.setDisable(!isAdmin);
+        this.radioNoBorrow.setDisable(!isAdmin);
+
+        containerEditionLivre.setVisible(isAdmin);
+        xmlMenu.setVisible(isAdmin);
+        editionMenu.setVisible(isAdmin);
+    }
+
     // Charge un fichier XML et le transforme en une liste de livres.
     @FXML
     private void handleLoadFile() {
         handleUnloadFile();
-        isOnline = false;
-        updateStatusBox();
 
-        String xmlFilePath;
-        xmlFilePath = chooseFile();
+        String xmlFilePath = chooseLocation("open", getStage(), "xml");
         if (xmlFilePath == null || xmlFilePath.isEmpty()) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur fichier", "Aucun fichier sélectionné");
             return;
         }
 
-        boolean isValid = Xml.validateXml(xmlFilePath);
-        if (!isValid) {
+        if (!Xml.validateXml(xmlFilePath)) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur XML", "XML non valide");
             return;
         }
 
         this.xmlFilePath = xmlFilePath;
 
-        Bibliotheque library = Xml.buildLibraryFromXML(xmlFilePath);
-
-        if (library != null) {
-            tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
-        }
+        insertLibraryInTableView(Xml.buildLibraryFromXML(xmlFilePath));
     }
 
     @FXML
     private void handleConnectionBDD() {
         handleUnloadFile();
+        connectionBDD.setText("Rafraîchir");
         isOnline = true;
         updateStatusBox();
 
-        Bibliotheque library = bibliothequeController.getAllBibliotheque();
+        insertLibraryInTableView(bibliothequeController.getAllBibliotheque());
+    }
 
+    private void insertLibraryInTableView(Bibliotheque library) {
         if (library != null) {
             tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
         } else {
-            Common.showAlert(Alert.AlertType.ERROR, "Erreur de connexion", "Erreur lors de la connexion avec la BDD");
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur de chargement", "Erreur lors du chargement de la bibliothèque.");
         }
     }
 
@@ -253,7 +291,10 @@ public class MainViewController implements UserAwareController {
     private void handleRemove() {
         if (selectedBook != null) {
             if (isOnline) {
-                bibliothequeController.removeLivreBibliotheque(selectedBook);
+                if (!bibliothequeController.removeLivreBibliotheque(selectedBook)) {
+                    Common.showAlert(Alert.AlertType.ERROR, "Erreur de la suppression", "Impossible de supprimer le livre, merci de ré-essayer");
+                    return;
+                }
             }
             tableView.getItems().remove(selectedBook);
             clearField();
@@ -263,9 +304,16 @@ public class MainViewController implements UserAwareController {
     // Vide la table et le fichier XML actuel.
     @FXML
     private void handleUnloadFile() {
-        tableView.getItems().clear();
+        connectionBDD.setText("Connexion");
+
+        isOnline = false;
+        updateStatusBox();
+
         selectedBook = null;
         clearField();
+        tableView.getItems().clear();
+
+        xmlFilePath = "";
     }
 
     // Sauvegarde les données dans le fichier XML actuel.
@@ -277,7 +325,7 @@ public class MainViewController implements UserAwareController {
     // Sauvegarde les données dans un nouveau fichier XML.
     @FXML
     private void handleSaveAs() {
-        String filePath = chooseSaveLocation();
+        String filePath = chooseLocation("save", getStage(), "xml");
         if (filePath != null) {
             saveData(filePath);
             xmlFilePath = filePath;
@@ -288,8 +336,7 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleExport() throws IllegalArgumentException {
         try {
-            String path = chooseSaveLocation(getStage());
-//            String path = "C:\\Users\\Atlas\\Documents\\Et. cas Medtra - Informations initiales.docx";
+            String path = chooseLocation("save", getStage(), "docx");
             if (path == null) {
                 throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
             }
@@ -302,28 +349,11 @@ public class MainViewController implements UserAwareController {
             word.addBooks(this.tableView.getItems());
             word.addBorrowedBooks(this.tableView.getItems());
             word.saveDocument();
-
         } catch (Exception e) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
             System.err.println(e);
             e.printStackTrace();
         }
-    }
-
-    public static String chooseSaveLocation(Stage primaryStage) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Sélectionner un emplacement de sauvegarde");
-        
-        // Création du filtre pour les fichiers .docx
-        ExtensionFilter docxFilter = new ExtensionFilter("Fichiers DOCX (*.docx)", "*.docx");
-        fileChooser.getExtensionFilters().add(docxFilter);
-
-        // Affichage de la boîte de dialogue de sélection de fichiers
-        File file = fileChooser.showSaveDialog(primaryStage);
-        if (file != null) {
-            return file.getAbsolutePath();
-        }
-        return null;
     }
 
     /**
@@ -346,18 +376,30 @@ public class MainViewController implements UserAwareController {
      */
     private void fillForm(TableRow<Livre> row) {
         Livre livre = row.getItem();
-        this.textFieldTitre.setText(livre.getTitre());
-        this.textFieldAuteur.setText(livre.getAuteur().toString());
-        this.textFieldPresentation.setText(livre.getPresentation());
-        this.textFieldJaquette.setText(livre.getJaquette());
-        this.textFieldParution.setText(String.valueOf(livre.getParution()));
-        this.spinnerColonne.getValueFactory().setValue(livre.getColonne());
-        this.spinnerRangee.getValueFactory().setValue(livre.getRangee());
+        setFormFields(livre);
         setBorrowRadio(livre.getEmprunte());
-//        System.out.println(livre);
-        this.selectedBook = livre;
-        this.buttonModify.setText("Modifier");
-        this.buttonRemove.setDisable(false);
+        selectedBook = livre;
+        buttonModify.setText("Modifier");
+        buttonRemove.setDisable(false);
+    }
+
+    // Méthode pour vider les champs du formulaire
+    private void clearField() {
+        setFormFields(null);
+        this.radioBorrow.setSelected(false);
+        this.radioNoBorrow.setSelected(false);
+        buttonModify.setText("Ajouter");
+        buttonRemove.setDisable(true);
+    }
+
+    private void setFormFields(Livre livre) {
+        textFieldTitre.setText(livre != null ? livre.getTitre() : "");
+        textFieldAuteur.setText(livre != null ? livre.getAuteur().toString() : "");
+        textFieldPresentation.setText(livre != null ? livre.getPresentation() : "");
+        textFieldJaquette.setText(livre != null ? livre.getJaquette() : "");
+        textFieldParution.setText(livre != null ? String.valueOf(livre.getParution()) : "");
+        spinnerColonne.getValueFactory().setValue(livre != null ? livre.getColonne() : 1);
+        spinnerRangee.getValueFactory().setValue(livre != null ? livre.getRangee() : 1);
     }
 
     // Méthode pour modifier un livre
@@ -385,7 +427,10 @@ public class MainViewController implements UserAwareController {
                 this.selectedBook.setEmprunte(getBorrowRadio());
 
                 if (isOnline) {
-                    bibliothequeController.updateLivreBibliotheque(selectedBook);
+                    if (!bibliothequeController.updateLivreBibliotheque(selectedBook)) {
+                        Common.showAlert(Alert.AlertType.ERROR, "Erreur de la mise à jour", "Impossible de mettre à jour le livre, merci de ré-essayer");
+                        return;
+                    }
                 }
 
                 tableView.refresh();
@@ -400,6 +445,7 @@ public class MainViewController implements UserAwareController {
         this.radioBorrow.setSelected(emprunte);
         this.radioNoBorrow.setSelected(!emprunte);
     }
+
     private boolean getBorrowRadio() {
         return this.radioBorrow.isSelected();
     }
@@ -419,12 +465,15 @@ public class MainViewController implements UserAwareController {
             tableView.refresh();
 
             if (isOnline) {
-                bibliothequeController.addLivreBibliotheque(livre);
+                if (!bibliothequeController.addLivreBibliotheque(livre)) {
+                    throw new Exception("Impossible d'ajouter le livre dans la BDD");
+                }
+
             }
 
             clearField();
         } catch (Exception e) {
-            Common.showAlert(Alert.AlertType.ERROR, "Erreur Ajout", "Erreur lors de l'ajout du livre : " + e.getMessage());
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur d'ajout", "Erreur lors de l'ajout du livre : " + e.getMessage());
         }
     }
 
@@ -455,73 +504,42 @@ public class MainViewController implements UserAwareController {
         return true;
     }
 
-    // Méthode pour vider les champs du formulaire
-    private void clearField() {
-        this.textFieldTitre.setText("");
-        this.textFieldAuteur.setText("");
-        this.textFieldPresentation.setText("");
-        this.textFieldJaquette.setText("");
-        this.textFieldParution.setText("");
-        this.spinnerColonne.getValueFactory().setValue(0);
-        this.spinnerRangee.getValueFactory().setValue(1);
-        this.buttonModify.setText("Ajouter");
-        buttonRemove.setDisable(true);
-    }
-
-    // Méthode pour choisir un fichier XML
-    private String chooseFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open XML File");
-        String extension = "*.xml";
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("XML files (" + extension + ")", extension);
-        fileChooser.getExtensionFilters().add(filter);
-
-        File selectedFile = fileChooser.showOpenDialog(getStage());
-
-        return selectedFile == null ? null : selectedFile.getAbsolutePath();
-    }
-
     // Méthode pour sauvegarder les données dans un fichier XML
     private void saveData(String filePath) {
         Xml.saveLibraryToXml(tableView.getItems(), filePath);
     }
 
-    // Méthode pour choisir l'emplacement de sauvegarde
-    private String chooseSaveLocation() {
+    // Méthode pour choisir l'emplacement de fichier
+    public static String chooseLocation(String typeLocation, Stage primaryStage, String extension) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save XML File");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml"));
-        File file = fileChooser.showSaveDialog(getStage());
+        fileChooser.setTitle("Sélectionner un emplacement de fichier");
+
+        // Création du filtre pour les fichiers avec l'extension spécifiée
+        ExtensionFilter fileFilter = new ExtensionFilter("Fichiers (" + extension + ")", "*." + extension);
+        fileChooser.getExtensionFilters().add(fileFilter);
+
+        // Affichage de la boîte de dialogue de sélection de fichiers
+        File file;
+        if (typeLocation.equals("save")) {
+            file = fileChooser.showSaveDialog(primaryStage);
+        } else {
+            file = fileChooser.showOpenDialog(primaryStage);
+        }
         return file != null ? file.getAbsolutePath() : null;
     }
 
-    // Méthode pour créer une image à partir d'une URL
-    private ImageView createImageViewFromURL(String imageUrl) {
+    // Méthode pour créer une image à partir d'une URL ou d'un chemin de fichier
+    private ImageView createImageViewFromURL(String imagePath) {
         ImageView imageView = new ImageView();
-        try {
-            // on vérifie que la jaquette soit un fichier ou un url pour la charger correctement
-            if (imageUrl.startsWith("http")) {
-                Image image = new Image(imageUrl);
-                imageView.setImage(image);
-            } else {
-                File file = new File(imageUrl);
-                Image image = new Image(file.toURI().toString());
-                imageView.setImage(image);
+        String url = imagePath.startsWith("http") ? imagePath : new File(imagePath).toURI().toString();
+        Image image = new Image(url, 100, 150, true, true, true);
+        image.errorProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                System.err.println("Erreur lors du chargement de l'image : " + image.getException().getMessage());
             }
-
-            imageView.setFitWidth(100);
-            imageView.setFitHeight(150);
-
-            imageView.setPreserveRatio(true);
-            imageView.setSmooth(true);
-            imageView.setCache(true);
-
-            if (imageView.getImage().isError()) {
-                throw new IllegalArgumentException("L'image n'a pas pu être chargée");
-            }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Erreur lors du chargement de l'image : " + e.getMessage());
-        }
+        });
+        imageView.setImage(image);
+        imageView.setCache(true);
         return imageView;
     }
 

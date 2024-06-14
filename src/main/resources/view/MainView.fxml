@@ -7,16 +7,15 @@
     <top>
         <MenuBar>
             <Menu text="Fichier">
-<!--                gestion de si on travail en local ou avec la bdd avec les menus -->
                 <!--            disponible pour qui ? admin only ou user aussi -->
-                <Menu text="XML">
+                <Menu fx:id="xmlMenu" text="XML">
                     <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
                     <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de notre fichier"/>-->
                     <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de la BDD avec notre fichier"/>-->
                 </Menu>
                 <!--            disponible pour qui ? admin only ou user aussi -->
-                <Menu text="BDD">
-                    <MenuItem onAction="#handleConnectionBDD" text="Connexion"/>
+                <Menu fx:id="bddMenu" text="BDD">
+                    <MenuItem fx:id="connectionBDD" onAction="#handleConnectionBDD" text="Connexion"/>
                     <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de notre tableau"/>-->
                     <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de la BDD avec notre tableau"/>-->
                 </Menu>
@@ -25,7 +24,7 @@
                 <MenuItem onAction="#handleQuitApp" text="Quitter l'application"/>
             </Menu>
             <!--            disponible pour qui ? admin only ou user aussi -->
-            <Menu text="Édition">
+            <Menu fx:id="editionMenu" text="Édition">
                 <MenuItem onAction="#handleSave" text="Sauvegarder"/>
                 <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous..."/>
             </Menu>
@@ -138,7 +137,7 @@
                     </children>
                 </HBox>
                <Separator layoutX="10.0" layoutY="294.0" prefWidth="200.0" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <HBox fx:id="containerEditionLivre" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                 <children>
                     <Button layoutX="100.0" layoutY="50.0" onAction="#handleCancel" text="Annuler" />
                     <Button fx:id="buttonRemove" layoutX="125.0" layoutY="75.0" onAction="#handleRemove" text="Supprimer" />

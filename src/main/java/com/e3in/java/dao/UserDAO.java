@@ -22,14 +22,7 @@ public class UserDAO {
         return daoManager.select("user", List.of("id", "email", "password","type"), whereClause);
     }
 
-    public HashMap<String, String> getUserByEmailPassword(String email, String password) {
-        HashMap<String, String> whereClause = new HashMap<>();
-        whereClause.put("email", email);
-        whereClause.put("password", password);
-        return daoManager.select("user", List.of("id", "email", "password", "type"), whereClause);
-    }
-
-    public User getUserByEmail(User user) {
+    public User getUserByEmailPassword(User user) {
         HashMap<String, String> whereClause = new HashMap<>();
         whereClause.put("email", user.getEmail());
 

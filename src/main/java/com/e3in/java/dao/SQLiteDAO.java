@@ -5,6 +5,7 @@ import com.e3in.java.utils.SQLiteConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +42,30 @@ public class SQLiteDAO extends BaseDAO {
         return result;
     }
 
+    private ArrayList<HashMap<String, String>> executeMultiResultQuery(String query, List<Object> parameters, List<String> columnNames) throws SQLException {
+        ArrayList<HashMap<String, String>> results = new ArrayList<>();
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            beginTransaction();
+            for (int i = 0; i < parameters.size(); i++) {
+                pstmt.setObject(i + 1, parameters.get(i));
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    HashMap<String, String> row = new HashMap<>();
+                    for (String column : columnNames) {
+                        row.put(column, rs.getString(column));
+                    }
+                    results.add(row);
+                }
+            }
+            commitTransaction();
+        } catch (SQLException e) {
+            rollbackTransaction();
+            throw e;
+        }
+        return results;
+    }
+
     private HashMap<String, String> executeUpdate(String query, List<Object> parameters) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -63,19 +88,40 @@ public class SQLiteDAO extends BaseDAO {
         return result;
     }
 
+    private String buildSelectQuery(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
+        StringBuilder query = new StringBuilder("SELECT");
+        query.append(" ").append(String.join(", ", columnNames));
+        query.append(" FROM ").append(tableName);
+        if (!whereClause.isEmpty()) {
+            query.append(" WHERE ");
+            query.append(String.join(" = ? AND ", whereClause.keySet())).append(" = ?");
+        }
+        return query.toString();
+    }
+
     @Override
     public HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
-        StringBuilder query = new StringBuilder("SELECT ");
-        query.append(String.join(", ", columnNames));
-        query.append(" FROM ").append(tableName).append(" WHERE ");
-        query.append(String.join(" = ? AND ", whereClause.keySet())).append(" = ?");
+        String query = buildSelectQuery(tableName, columnNames, whereClause);
+        List<Object> parameters = new ArrayList<>(whereClause.values());
 
-        List<Object> parameters = List.copyOf(whereClause.values());
         try {
-            return executeQuery(query.toString(), parameters, columnNames);
+            return executeQuery(query, parameters, columnNames);
         } catch (SQLException e) {
             e.printStackTrace();
             return new HashMap<>();
+        }
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
+        String query = buildSelectQuery(tableName, columnNames, whereClause);
+        List<Object> parameters = new ArrayList<>(whereClause.values());
+
+        try {
+            return executeMultiResultQuery(query, parameters, columnNames);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 
@@ -103,7 +149,7 @@ public class SQLiteDAO extends BaseDAO {
         query.append(String.join(" = ?, ", columnAndValue.keySet())).append(" = ? WHERE ");
         query.append(String.join(" = ? AND ", whereClause.keySet())).append(" = ?");
 
-        List<Object> parameters = List.copyOf(columnAndValue.values());
+        List<Object> parameters = new ArrayList<>(List.copyOf(columnAndValue.values()));
         parameters.addAll(whereClause.values());
 
         try {

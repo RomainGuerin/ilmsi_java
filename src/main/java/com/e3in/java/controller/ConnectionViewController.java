@@ -24,10 +24,10 @@ public class ConnectionViewController {
 
         User user = new User(email, password);
         if (UserController.checkValidity(user)) {
-            User userConnected = userController.getUserByEmail(user);
+            User userConnected = userController.getUserByEmailPassword(user);
             if (userConnected != null) {
                 System.out.println("Connexion réussie ! Bienvenue " + user.getEmail() + "!");
-                Common.switchScene("MainView", getStage());
+                Common.switchScene("MainView", getStage(), userConnected);
             } else {
                 System.out.println("Échec de la connexion. Veuillez vérifier vos identifiants.");
             }

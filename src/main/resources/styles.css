@@ -102,7 +102,7 @@
 
 
 /* CSS for VBox */
-.loginBox {
+.log-box {
     -fx-spacing: 10px;
     -fx-alignment: center;
     -fx-background-color: white;
@@ -114,19 +114,19 @@
 }
 
 /* CSS for Label */
-.loginBox .label {
+.log-box .label {
     -fx-font-size: 24px;
     -fx-text-fill: #333333;
 }
 
 /* CSS for Separator */
-.loginBox .separator {
+.log-box .separator {
     -fx-background-color: #cccccc;
     -fx-pref-height: 2px;
 }
 
 /* CSS for TextField and PasswordField */
-.loginBox .text-field, .loginBox .password-field {
+.log-box .text-field, .log-box .password-field {
     -fx-pref-width: 260px;
     -fx-font-size: 14px;
     -fx-padding: 10px;
@@ -134,7 +134,30 @@
     -fx-border-radius: 5px;
 }
 
-.loginBox .hbox {
+.log-box .hbox {
     -fx-spacing: 5px;
     -fx-alignment: center;
+}
+
+
+/* Chips */
+.chip, .chip-admin {
+    -fx-background-color: #e0e0e0;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #333;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 4, 0.0, 0, 2);
+}
+
+.chip-admin {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+}
+
+.chip-container {
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+    -fx-alignment: bottom-left;
 }

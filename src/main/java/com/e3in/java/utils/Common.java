@@ -1,6 +1,7 @@
 package com.e3in.java.utils;
 
 import com.e3in.java.controller.MainViewController;
+import com.e3in.java.model.User;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,10 +35,20 @@ public class Common {
     }
 
     public static void switchScene(String page, Stage stage) {
+        switchScene(page, stage, null);
+    }
+
+    public static void switchScene(String page, Stage stage, User user) {
         System.out.println("Redirection vers la page " + page);
         try {
             FXMLLoader loader = new FXMLLoader(Common.class.getResource("/view/"+page+".fxml"));
             Parent registerView = loader.load();
+
+            Object controller = loader.getController();
+            if (controller instanceof UserAwareController) {
+                ((UserAwareController) controller).setUser(user);
+            }
+
             Scene registerScene = new Scene(registerView, 1200, 600);
             stage.setScene(registerScene);
             stage.show();

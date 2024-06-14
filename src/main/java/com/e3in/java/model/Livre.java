@@ -35,7 +35,7 @@ public class Livre {
      * @param colonne      Le numéro de colonne du livre.
      * @param rangee       Le numéro de la rangée du livre.
      */
-    public Livre(String titre, Auteur auteur, String presentation, String jaquette, int parution, int colonne, int rangee) {
+    public Livre(String titre, Auteur auteur, String presentation, String jaquette, int parution, int colonne, int rangee, boolean emprunte) {
         this.titre = titre;
         this.auteur = auteur;
         this.presentation = presentation;
@@ -43,6 +43,7 @@ public class Livre {
         this.parution = parution;
         this.colonne = colonne;
         this.rangee = rangee;
+        this.emprunte = emprunte;
     }
 
     /**

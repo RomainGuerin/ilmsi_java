@@ -3,6 +3,7 @@ package com.e3in.java.model;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,9 @@ public class Bibliotheque {
     /**
      * Constructeur par défaut de la bibliothèque.
      */
-    public Bibliotheque() { }
+    public Bibliotheque() {
+        livres = new ArrayList<>();
+    }
 
     /**
      * Constructeur de la bibliothèque avec la liste des livres.

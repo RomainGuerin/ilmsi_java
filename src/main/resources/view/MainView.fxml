@@ -3,17 +3,28 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-
-<?import javafx.scene.Group?>
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.MainViewController" stylesheets="styles.css">
     <top>
         <MenuBar>
             <Menu text="Fichier">
-                <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
-                <MenuItem onAction="#handleExport" text="Exporter"/>
-                <MenuItem onAction="#handleUnloadFile" text="Décharger le fichier"/>
-                <MenuItem onAction="#handleQuitApp" text="Quitter"/>
+<!--                gestion de si on travail en local ou avec la bdd avec les menus -->
+                <!--            disponible pour qui ? admin only ou user aussi -->
+                <Menu text="XML">
+                    <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
+                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de notre fichier"/>-->
+                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de la BDD avec notre fichier"/>-->
+                </Menu>
+                <!--            disponible pour qui ? admin only ou user aussi -->
+                <Menu text="BDD">
+                    <MenuItem onAction="#handleConnectionBDD" text="Connexion"/>
+                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de notre tableau"/>-->
+                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de la BDD avec notre tableau"/>-->
+                </Menu>
+                <MenuItem onAction="#handleExport" text="Exporter le tableau"/>
+                <MenuItem onAction="#handleUnloadFile" text="Décharger le tableau"/>
+                <MenuItem onAction="#handleQuitApp" text="Quitter l'application"/>
             </Menu>
+            <!--            disponible pour qui ? admin only ou user aussi -->
             <Menu text="Édition">
                 <MenuItem onAction="#handleSave" text="Sauvegarder"/>
                 <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous..."/>
@@ -71,35 +82,35 @@
                <HBox alignment="CENTER" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Titre" />
-                     <TextField fx:id="textFieldTitre" />
+                     <TextField fx:id="textFieldTitre" promptText="Titre" />
                   </children>
                </HBox>
                <Separator prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="27.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
-                     <Label prefHeight="17.0" prefWidth="82.0" text="Auteur" />
-                     <TextField fx:id="textFieldAuteur" />
+                      <Label prefHeight="17.0" prefWidth="82.0" text="Auteur" />
+                      <TextField fx:id="textFieldAuteur" promptText="Prénom Nom"/>
                   </children>
                </HBox>
                <Separator layoutX="10.0" layoutY="78.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="81.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Présentation" />
-                     <TextField fx:id="textFieldPresentation" />
+                     <TextField fx:id="textFieldPresentation" promptText="Présentation" />
                   </children>
                </HBox>
                 <Separator layoutX="10.0" layoutY="78.0" prefWidth="200.0" />
                 <HBox alignment="CENTER" layoutX="10.0" layoutY="81.0" prefHeight="51.0" prefWidth="250.0">
                     <children>
                         <Label prefHeight="17.0" prefWidth="82.0" text="Jaquette" />
-                        <TextField fx:id="textFieldJaquette" />
+                        <TextField fx:id="textFieldJaquette" promptText="URL Jaquette" />
                     </children>
                 </HBox>
                <Separator layoutX="10.0" layoutY="132.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="135.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Parution" />
-                     <TextField fx:id="textFieldParution" />
+                     <TextField fx:id="textFieldParution" promptText="Date de parution" />
                   </children>
                </HBox>
                <Separator layoutX="10.0" layoutY="186.0" prefWidth="200.0" />
@@ -137,4 +148,11 @@
             </children>
          </VBox>
    </right>
+    <bottom>
+        <HBox spacing="10" alignment="BOTTOM_LEFT" styleClass="chip-container">
+            <Label fx:id="userTypeChip" styleClass="chip"/>
+            <Label fx:id="connectionTypeChip" styleClass="chip"/>
+            <Label fx:id="lastEditDateChip" styleClass="chip"/>
+        </HBox>
+    </bottom>
 </BorderPane>

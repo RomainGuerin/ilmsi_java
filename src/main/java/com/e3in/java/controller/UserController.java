@@ -30,12 +30,8 @@ public class UserController {
         return userDAO.getUserById(userId);
     }
 
-    public HashMap<String, String> getUserByEmailPassword(String email, String password) {
-        return userDAO.getUserByEmailPassword(email, password);
-    }
-
-    public User getUserByEmail(User user) {
-        return userDAO.getUserByEmail(user);
+    public User getUserByEmailPassword(User user) {
+        return userDAO.getUserByEmailPassword(user);
     }
 
     public boolean createUser(User user) {

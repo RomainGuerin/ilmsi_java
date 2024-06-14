@@ -3,7 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.RegisterViewController" stylesheets="styles.css">
     <top>
         <MenuBar>
@@ -17,7 +16,7 @@
     </top>
     <center>
         <AnchorPane prefHeight="400.0" prefWidth="600.0">
-            <VBox styleClass="loginBox" alignment="CENTER" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="100.0">
+            <VBox styleClass="log-box" alignment="CENTER" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="100.0">
                 <children>
                     <Label alignment="CENTER" contentDisplay="CENTER" text="Page d'inscription" textAlignment="CENTER" />
                     <Separator prefWidth="200.0" />

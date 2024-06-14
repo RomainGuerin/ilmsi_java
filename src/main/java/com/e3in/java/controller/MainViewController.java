@@ -1,8 +1,11 @@
 package com.e3in.java.controller;
 
+import com.e3in.java.AppConfig;
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
+import com.e3in.java.model.User;
 import com.e3in.java.utils.Common;
+import com.e3in.java.utils.UserAwareController;
 import com.e3in.java.utils.Xml;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,7 +29,7 @@ import java.util.function.UnaryOperator;
  * Cette classe gère l'affichage des livres dans un tableau, permet l'ajout, la modification et la suppression de livres,
  * ainsi que le chargement et la sauvegarde des données depuis/vers un fichier XML.
  */
-public class MainViewController {
+public class MainViewController implements UserAwareController {
 
     private String xmlFilePath = "";
 
@@ -55,6 +58,39 @@ public class MainViewController {
     @FXML
     private Button buttonRemove;
     private Livre selectedBook;
+
+    private User connectedUser;
+
+    @FXML
+    private Label userTypeChip;
+    @FXML
+    private Label connectionTypeChip;
+    @FXML
+    private Label lastEditDateChip;
+
+    private boolean isOnline = false;
+
+    private final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.createBibliothequeDAO());
+
+    @Override
+    public void setUser(User user) {
+        this.connectedUser = user;
+        System.out.println("User set in MainViewController: " + user.getEmail());
+        updateStatusBox();
+    }
+
+    private void updateStatusBox() {
+        if (connectedUser != null) {
+            userTypeChip.setText(connectedUser.isAdmin() ? "Admin" : "User");
+            userTypeChip.getStyleClass().setAll(connectedUser.isAdmin() ? "chip-admin" : "chip");
+        }
+        connectionTypeChip.setText("Status : " + (isOnline ? "En ligne" : "Hors ligne"));
+        lastEditDateChip.setText("Dernière mise à jour : " + Common.getCurrentDateTime());
+    }
+
+    public User getConnectedUser() {
+        return connectedUser;
+    }
 
     /**
      * Constructeur par défaut de la classe MainViewController.
@@ -142,6 +178,10 @@ public class MainViewController {
     // Charge un fichier XML et le transforme en une liste de livres.
     @FXML
     private void handleLoadFile() {
+        handleUnloadFile();
+        isOnline = false;
+        updateStatusBox();
+
         String xmlFilePath;
         xmlFilePath = chooseFile();
         if (xmlFilePath == null || xmlFilePath.isEmpty()) {
@@ -159,9 +199,23 @@ public class MainViewController {
 
         Bibliotheque library = Xml.buildLibraryFromXML(xmlFilePath);
 
-        tableView.getItems().clear();
         if (library != null) {
             tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
+        }
+    }
+
+    @FXML
+    private void handleConnectionBDD() {
+        handleUnloadFile();
+        isOnline = true;
+        updateStatusBox();
+
+        Bibliotheque library = bibliothequeController.getAllBibliotheque();
+
+        if (library != null) {
+            tableView.setItems(FXCollections.observableArrayList(library.getLivres()));
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur de connexion", "Erreur lors de la connexion avec la BDD");
         }
     }
 
@@ -190,7 +244,7 @@ public class MainViewController {
     // Quitte la ligne sélectionnée et vide le formulaire.
     @FXML
     private void handleCancel() {
-        this.selectedBook = null;
+        selectedBook = null;
         clearField();
     }
 
@@ -198,6 +252,9 @@ public class MainViewController {
     @FXML
     private void handleRemove() {
         if (selectedBook != null) {
+            if (isOnline) {
+                bibliothequeController.removeLivreBibliotheque(selectedBook);
+            }
             tableView.getItems().remove(selectedBook);
             clearField();
         }
@@ -297,7 +354,7 @@ public class MainViewController {
         this.spinnerColonne.getValueFactory().setValue(livre.getColonne());
         this.spinnerRangee.getValueFactory().setValue(livre.getRangee());
         setBorrowRadio(livre.getEmprunte());
-        System.out.println(livre);
+//        System.out.println(livre);
         this.selectedBook = livre;
         this.buttonModify.setText("Modifier");
         this.buttonRemove.setDisable(false);
@@ -326,6 +383,11 @@ public class MainViewController {
                     this.selectedBook.setRangee((int) spinnerRangee.getValue());
                 }
                 this.selectedBook.setEmprunte(getBorrowRadio());
+
+                if (isOnline) {
+                    bibliothequeController.updateLivreBibliotheque(selectedBook);
+                }
+
                 tableView.refresh();
                 clearField();
             } catch (Exception e) {
@@ -355,6 +417,10 @@ public class MainViewController {
 
             tableView.getItems().add(livre);
             tableView.refresh();
+
+            if (isOnline) {
+                bibliothequeController.addLivreBibliotheque(livre);
+            }
 
             clearField();
         } catch (Exception e) {
@@ -443,8 +509,8 @@ public class MainViewController {
                 imageView.setImage(image);
             }
 
-            imageView.setFitWidth(125);
-            imageView.setFitHeight(125);
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(150);
 
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);

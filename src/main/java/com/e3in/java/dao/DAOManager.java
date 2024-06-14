@@ -1,65 +1,53 @@
 package com.e3in.java.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class DAOManager implements DAO {
     private static DAOManager instance = null;
     private final DAO sqliteDAO;
-    private final DAO xmlDAO;
 
-    private DAOManager(DAO sqliteDAO, DAO xmlDAO) {
+    private DAOManager(DAO sqliteDAO) {
         this.sqliteDAO = sqliteDAO;
-        this.xmlDAO = xmlDAO;
     }
 
     public static synchronized DAOManager getInstance() {
         if (instance == null) {
-            instance = new DAOManager(new SQLiteDAO(), new XMLDAO("DefaultDB"));
+            instance = new DAOManager(new SQLiteDAO());
         }
         return instance;
     }
 
-    public static synchronized DAOManager getInstance(DAO sqliteDAO, DAO xmlDAO) {
+    public static synchronized DAOManager getInstance(DAO sqliteDAO) {
         if (instance == null) {
-            instance = new DAOManager(sqliteDAO, xmlDAO);
+            instance = new DAOManager(sqliteDAO);
         }
         return instance;
     }
 
     @Override
     public HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
-        HashMap<String, String> result = sqliteDAO.select(tableName, columnNames, whereClause);
-        if (result.isEmpty()) {
-            result = xmlDAO.select(tableName, columnNames, whereClause);
-        }
-        return result;
+        return sqliteDAO.select(tableName, columnNames, whereClause);
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
+        return sqliteDAO.selectAll(tableName, columnNames, whereClause);
     }
 
     @Override
     public HashMap<String, String> insert(String tableName, HashMap<String, String> columnAndValue) {
-        HashMap<String, String> result = sqliteDAO.insert(tableName, columnAndValue);
-        if ("success".equals(result.get("status"))) {
-            xmlDAO.insert(tableName, columnAndValue);
-        }
-        return result;
+        return sqliteDAO.insert(tableName, columnAndValue);
     }
 
     @Override
     public HashMap<String, String> update(String tableName, HashMap<String, String> columnAndValue, HashMap<String, String> whereClause) {
-        HashMap<String, String> result = sqliteDAO.update(tableName, columnAndValue, whereClause);
-        if ("success".equals(result.get("status"))) {
-            xmlDAO.update(tableName, columnAndValue, whereClause);
-        }
-        return result;
+        return sqliteDAO.update(tableName, columnAndValue, whereClause);
     }
 
     @Override
     public HashMap<String, String> delete(String tableName, HashMap<String, String> whereClause) {
-        HashMap<String, String> result = sqliteDAO.delete(tableName, whereClause);
-        if ("success".equals(result.get("status"))) {
-            xmlDAO.delete(tableName, whereClause);
-        }
-        return result;
+        return sqliteDAO.delete(tableName, whereClause);
     }
 }

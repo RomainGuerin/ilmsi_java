@@ -2,6 +2,7 @@ package com.e3in.java.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,6 +35,9 @@ public abstract class BaseDAO implements DAO {
 
     @Override
     public abstract HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause);
+
+    @Override
+    public abstract ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause);
 
     @Override
     public abstract HashMap<String, String> insert(String tableName, HashMap<String, String> columnAndValue);

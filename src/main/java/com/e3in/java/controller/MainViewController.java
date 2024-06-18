@@ -115,10 +115,6 @@ public class MainViewController implements UserAwareController {
                 if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                     fillForm(row);
                 }
-                // Double click alors on supprime
-                else if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                    removeTabRow(row);
-                }
             });
 
             configureTextFieldParution();
@@ -201,6 +197,7 @@ public class MainViewController implements UserAwareController {
             userTypeChip.setText(connectedUser.isAdmin() ? "Admin" : "User");
             userTypeChip.getStyleClass().setAll(connectedUser.isAdmin() ? "chip-admin" : "chip");
         }
+        editionMenu.setVisible(!isOnline);
         connectionTypeChip.setText("Status : " + (isOnline ? "En ligne" : "Hors ligne"));
         AppConfig.getDAOManager().setOnline(isOnline);
         lastEditDateChip.setText("Dernière mise à jour : " + Common.getCurrentDateTime());
@@ -279,6 +276,21 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleQuitApp() {
         Common.closeApp(getStage());
+    }
+
+    @FXML
+    private void handleUpdatePassword() {
+        Common.switchScene("UpdatePasswordView", getStage(), connectedUser);
+    }
+
+    @FXML
+    private void handleOnlineSync() {
+        // de xml vers BDD
+    }
+
+    @FXML
+    private void handleLocalSync() {
+        // de BDD vers xml
     }
 
     // Gère l'ajout ou la modification d'un livre.
@@ -366,19 +378,6 @@ public class MainViewController implements UserAwareController {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
             System.err.println(e);
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Supprime une ligne de la table.
-     * 
-     * @param row La ligne à supprimer.
-     */
-    private void removeTabRow(TableRow<Livre> row) {
-        Livre livre = row.getItem();
-        if (livre != null) {
-            tableView.getItems().remove(livre);
-            clearField();
         }
     }
 

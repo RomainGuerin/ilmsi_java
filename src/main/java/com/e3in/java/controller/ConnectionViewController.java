@@ -4,6 +4,7 @@ import com.e3in.java.AppConfig;
 import com.e3in.java.model.User;
 import com.e3in.java.utils.Common;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -26,7 +27,7 @@ public class ConnectionViewController {
         if (UserController.checkValidity(user)) {
             User userConnected = userController.getUserByEmailPassword(user);
             if (userConnected != null) {
-                System.out.println("Connexion réussie ! Bienvenue " + user.getEmail() + "!");
+                Common.showAlert(Alert.AlertType.INFORMATION, "Connexion réussie", "Bienvenue " + userConnected.getEmail());
                 Common.switchScene("MainView", getStage(), userConnected);
             } else {
                 System.out.println("Échec de la connexion. Veuillez vérifier vos identifiants.");

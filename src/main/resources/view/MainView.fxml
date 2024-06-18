@@ -7,26 +7,24 @@
     <top>
         <MenuBar>
             <Menu text="Fichier">
-                <!--            disponible pour qui ? admin only ou user aussi -->
                 <Menu fx:id="xmlMenu" text="XML">
                     <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
-                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de notre fichier"/>-->
-                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de la BDD avec notre fichier"/>-->
+                    <MenuItem onAction="#handleOnlineSync" text="Synchro XML vers BDD"/>
                 </Menu>
-                <!--            disponible pour qui ? admin only ou user aussi -->
                 <Menu fx:id="bddMenu" text="BDD">
                     <MenuItem fx:id="connectionBDD" onAction="#handleConnectionBDD" text="Connexion"/>
-                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de notre tableau"/>-->
-                    <!--                    <MenuItem onAction="#handleLocalSync" text="MAJ de la BDD avec notre tableau"/>-->
+                    <MenuItem onAction="#handleLocalSync" text="Synchro BDD vers XML"/>
                 </Menu>
                 <MenuItem onAction="#handleExport" text="Exporter le tableau"/>
                 <MenuItem onAction="#handleUnloadFile" text="Décharger le tableau"/>
                 <MenuItem onAction="#handleQuitApp" text="Quitter l'application"/>
             </Menu>
-            <!--            disponible pour qui ? admin only ou user aussi -->
             <Menu fx:id="editionMenu" text="Édition">
                 <MenuItem onAction="#handleSave" text="Sauvegarder"/>
                 <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous..."/>
+            </Menu>
+            <Menu text="Profil">
+                <MenuItem onAction="#handleUpdatePassword" text="Mettre à jour son mot de passe" />
             </Menu>
             <Menu text="À propos">
                 <MenuItem onAction="#handleInfos" text="Informations" />

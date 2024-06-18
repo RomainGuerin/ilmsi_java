@@ -32,7 +32,6 @@ public class UserDAO {
         if (!resultQuery.isEmpty()) {
             String hashedPassword = resultQuery.get("password");
             if (BCrypt.checkpw(user.getPassword(), hashedPassword)) {
-                Common.showAlert(Alert.AlertType.INFORMATION, "Connexion réussie", "Bienvenue " + user.getEmail());
                 boolean isAdmin = Objects.equals(resultQuery.get("type"), "admin");
                 return new User(Integer.parseInt(resultQuery.get("id")), resultQuery.get("email"), isAdmin);
             } else {
@@ -61,15 +60,15 @@ public class UserDAO {
         return false;
     }
 
-    public HashMap<String, String> updateUser(String userId, HashMap<String, String> userData) {
-        HashMap<String, String> whereClause = new HashMap<>();
-        whereClause.put("id", userId);
-        return daoManager.update("user", userData, whereClause);
-    }
+    public boolean updatePassword(User user) {
+        HashMap<String, String> userData = new HashMap<>();
+        userData.put("password", BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 
-    public HashMap<String, String> deleteUser(String userId) {
         HashMap<String, String> whereClause = new HashMap<>();
-        whereClause.put("id", userId);
-        return daoManager.delete("user", whereClause);
+        whereClause.put("email", user.getEmail());
+
+        HashMap<String, String> resultQuery =  daoManager.update("user", userData, whereClause);
+
+        return !resultQuery.isEmpty();
     }
 }

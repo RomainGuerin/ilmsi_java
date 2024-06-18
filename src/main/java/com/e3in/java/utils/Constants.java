@@ -1,6 +1,9 @@
 package com.e3in.java.utils;
 
 public class Constants {
+
+    private Constants() {}
+
     public static final String TABLE_LIVRE = "livre";
     public static final String TITRE = "titre";
     public static final String AUTEUR_NOM = "auteurNom";
@@ -16,4 +19,14 @@ public class Constants {
     public static final String SUCCESS = "success";
     public static final String FAILURE = "failure";
     public static final String ERROR = "error";
+
+    public static final String AND_QUERY = " = ? AND ";
+    public static final String AND_PARAMETER = " = ?";
+
+    public static final String USER = "user";
+    public static final String ID = "id";
+    public static final String EMAIL = "email";
+    public static final String PASSWORD = "password";
+    public static final String TYPE = "type";
+    public static final String ADMIN = "admin";
 }

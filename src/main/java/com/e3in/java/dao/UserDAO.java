@@ -2,6 +2,7 @@ package com.e3in.java.dao;
 
 import com.e3in.java.model.User;
 import com.e3in.java.utils.Common;
+import com.e3in.java.utils.Constants;
 import javafx.scene.control.Alert;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -19,15 +20,22 @@ public class UserDAO {
 
     public User getUserByEmailPassword(User user) {
         HashMap<String, String> whereClause = new HashMap<>();
-        whereClause.put("email", user.getEmail());
+        whereClause.put(Constants.EMAIL, user.getEmail());
 
-        HashMap<String, String> resultQuery = daoManager.select("user", List.of("id", "email", "password", "type"), whereClause);
+        List<String> columnNames = List.of(
+                Constants.ID,
+                Constants.EMAIL,
+                Constants.PASSWORD,
+                Constants.TYPE
+        );
+
+        HashMap<String, String> resultQuery = daoManager.select(Constants.USER, columnNames, whereClause);
 
         if (!resultQuery.isEmpty()) {
-            String hashedPassword = resultQuery.get("password");
+            String hashedPassword = resultQuery.get(Constants.PASSWORD);
             if (BCrypt.checkpw(user.getPassword(), hashedPassword)) {
-                boolean isAdmin = Objects.equals(resultQuery.get("type"), "admin");
-                return new User(Integer.parseInt(resultQuery.get("id")), resultQuery.get("email"), isAdmin);
+                boolean isAdmin = Objects.equals(resultQuery.get(Constants.TYPE), Constants.ADMIN);
+                return new User(Integer.parseInt(resultQuery.get(Constants.ID)), resultQuery.get(Constants.EMAIL), isAdmin);
             } else {
                 Common.showAlert(Alert.AlertType.ERROR, "Identifiants invalides", "Email ou mot de passe incorrect. Veuillez réessayer.");
             }
@@ -39,11 +47,11 @@ public class UserDAO {
 
     public boolean createUser(User user) {
         LinkedHashMap<String, String> userData = new LinkedHashMap<>();
-        userData.put("email", user.getEmail());
-        userData.put("password", BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-        userData.put("type", user.isAdmin() ? "admin" : "user");
+        userData.put(Constants.EMAIL, user.getEmail());
+        userData.put(Constants.PASSWORD, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+        userData.put(Constants.TYPE, user.isAdmin() ? Constants.ADMIN : Constants.USER);
 
-        HashMap<String, String> resultQuery = daoManager.insert("user", userData);
+        HashMap<String, String> resultQuery = daoManager.insert(Constants.USER, userData);
 
         if (!resultQuery.isEmpty()) {
             Common.showAlert(Alert.AlertType.INFORMATION, "Inscription réussie", "Utilisateur enregistré.");
@@ -56,12 +64,12 @@ public class UserDAO {
 
     public boolean updatePassword(User user) {
         HashMap<String, String> userData = new HashMap<>();
-        userData.put("password", BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+        userData.put(Constants.PASSWORD, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 
         HashMap<String, String> whereClause = new HashMap<>();
-        whereClause.put("email", user.getEmail());
+        whereClause.put(Constants.EMAIL, user.getEmail());
 
-        HashMap<String, String> resultQuery =  daoManager.update("user", userData, whereClause);
+        HashMap<String, String> resultQuery =  daoManager.update(Constants.USER, userData, whereClause);
 
         return !resultQuery.isEmpty();
     }

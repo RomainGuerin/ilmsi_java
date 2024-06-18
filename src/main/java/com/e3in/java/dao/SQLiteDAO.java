@@ -105,7 +105,7 @@ public class SQLiteDAO extends BaseDAO {
         query.append(" FROM ").append(tableName);
         if (!whereClause.isEmpty()) {
             query.append(" WHERE ");
-            query.append(String.join(" = ? AND ", whereClause.keySet())).append(" = ?");
+            query.append(String.join(Constants.AND_QUERY, whereClause.keySet())).append(Constants.AND_PARAMETER);
         }
         return query.toString();
     }
@@ -158,7 +158,7 @@ public class SQLiteDAO extends BaseDAO {
         StringBuilder query = new StringBuilder("UPDATE ");
         query.append(tableName).append(" SET ");
         query.append(String.join(" = ?, ", columnAndValue.keySet())).append(" = ? WHERE ");
-        query.append(String.join(" = ? AND ", whereClause.keySet())).append(" = ?");
+        query.append(String.join(Constants.AND_QUERY, whereClause.keySet())).append(Constants.AND_PARAMETER);
 
         List<Object> parameters = new ArrayList<>(List.copyOf(columnAndValue.values()));
         parameters.addAll(whereClause.values());
@@ -175,7 +175,7 @@ public class SQLiteDAO extends BaseDAO {
     public HashMap<String, String> delete(String tableName, HashMap<String, String> whereClause) {
         StringBuilder query = new StringBuilder("DELETE FROM ");
         query.append(tableName).append(" WHERE ");
-        query.append(String.join(" = ? AND ", whereClause.keySet())).append(" = ?");
+        query.append(String.join(Constants.AND_QUERY, whereClause.keySet())).append(Constants.AND_PARAMETER);
 
         List<Object> parameters = List.copyOf(whereClause.values());
 

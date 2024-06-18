@@ -26,6 +26,7 @@ public class WordController {
     public WordController(String path) {
         this.document = new XWPFDocument();
         this.path = path;
+        // TODO : Faire l'initialisation du word (add header, footer, table of content, title, etc)
     }
 
     public void addHeader() {

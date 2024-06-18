@@ -14,6 +14,7 @@ public class UserController {
         this.userDAO = userDAO;
     }
 
+    // TODO : Dans le controller il manipule la view ??, le controller peux évaluer la cohérence des champs oui, mais pas dans la class user (Doute voir avec prof)
     public static boolean checkValidity(User user) {
         if (user.isEmailValid()) {
             Common.showAlert(Alert.AlertType.ERROR, "Email invalide", "Insérez une adresse email valide.");

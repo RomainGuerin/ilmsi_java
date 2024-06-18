@@ -341,6 +341,7 @@ public class MainViewController implements UserAwareController {
                 throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
             }
 
+            // TODO : Déplacer le chargement du word controller je pense qu'on devrait avoir uniquement le word.addBooks() et le word.addBorrowed books
             WordController word = new WordController(path);
             word.addHeader();
             word.addFooter();
@@ -491,6 +492,7 @@ public class MainViewController implements UserAwareController {
     }
 
     // Méthode pour vérifier si un livre est unique
+    // TODO : Nom de la method en français
     private boolean estLivreUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
         for (Livre livre : listeLivres) {
             if(livre == this.selectedBook) {

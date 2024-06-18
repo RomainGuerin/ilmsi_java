@@ -27,10 +27,6 @@ public class UserController {
         return true;
     }
 
-    public HashMap<String, String> getUserById(String userId) {
-        return userDAO.getUserById(userId);
-    }
-
     public User getUserByEmailPassword(User user) {
         return userDAO.getUserByEmailPassword(user);
     }
@@ -39,11 +35,7 @@ public class UserController {
         return userDAO.createUser(user);
     }
 
-    public HashMap<String, String> updateUser(String userId, HashMap<String, String> userData) {
-        return userDAO.updateUser(userId, userData);
-    }
-
-    public HashMap<String, String> deleteUser(String userId) {
-        return userDAO.deleteUser(userId);
+    public boolean updatePassword(User user) {
+        return userDAO.updatePassword(user);
     }
 }

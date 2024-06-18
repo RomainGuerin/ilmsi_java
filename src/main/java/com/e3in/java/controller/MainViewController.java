@@ -286,11 +286,19 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleOnlineSync() {
         // de xml vers BDD
+        Bibliotheque xmlBiblio = bibliothequeController.getAllBibliotheque();
+        AppConfig.getDAOManager().setOnline(true);
+        bibliothequeController.updateBibliotheque(xmlBiblio);
+        AppConfig.getDAOManager().setOnline(false);
     }
 
     @FXML
     private void handleLocalSync() {
         // de BDD vers xml
+        Bibliotheque sqlBiblio = bibliothequeController.getAllBibliotheque();
+        AppConfig.getDAOManager().setOnline(false);
+        bibliothequeController.updateBibliotheque(sqlBiblio);
+        AppConfig.getDAOManager().setOnline(true);
     }
 
     // Gère l'ajout ou la modification d'un livre.

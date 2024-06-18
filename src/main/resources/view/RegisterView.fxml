@@ -18,11 +18,15 @@
         <AnchorPane prefHeight="400.0" prefWidth="600.0">
             <VBox styleClass="log-box" alignment="CENTER" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="100.0">
                 <children>
-                    <Label alignment="CENTER" contentDisplay="CENTER" text="Page d'inscription" textAlignment="CENTER" />
+                    <Label styleClass="title-label" alignment="CENTER" contentDisplay="CENTER" text="Page d'inscription" textAlignment="CENTER" />
                     <Separator prefWidth="200.0" />
                     <TextField fx:id="textFieldLogin" promptText="Entrer votre email"/>
                     <PasswordField fx:id="passwordField" promptText="Entrer votre mot de passe"/>
                     <PasswordField fx:id="passwordFieldEnsure" promptText="Entrer à nouveau votre mot de passe"/>
+                    <HBox>
+                        <CheckBox fx:id="userIsAdmin" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" text=" Compte administrateur"/>
+                    </HBox>
                     <Button mnemonicParsing="false" text="S'inscrire" onAction="#handleRegister" />
                     <HBox alignment="CENTER" spacing="5.0">
                         <children>

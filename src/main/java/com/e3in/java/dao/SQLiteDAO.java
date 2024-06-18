@@ -1,5 +1,6 @@
 package com.e3in.java.dao;
 
+import com.e3in.java.utils.Constants;
 import com.e3in.java.utils.SQLiteConnection;
 
 import java.sql.PreparedStatement;
@@ -74,24 +75,28 @@ public class SQLiteDAO extends BaseDAO {
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
-            int affectedRows = 0;
-            try {
-                affectedRows = pstmt.executeUpdate();
-            } catch (Exception e) {
-                System.err.println("Une erreur est survenue avec la requete " + query);
-            }
-            if (affectedRows > 0) {
-                result.put("status", "success");
+            if (getAffectedRows(query, pstmt) > 0) {
+                result.put(Constants.STATUS, Constants.SUCCESS);
             } else {
-                result.put("status", "failure");
+                result.put(Constants.STATUS, Constants.FAILURE);
             }
             commitTransaction();
         } catch (SQLException e) {
             rollbackTransaction();
-            result.put("status", "error");
+            result.put(Constants.STATUS, Constants.ERROR);
             throw e;
         }
         return result;
+    }
+
+    private static int getAffectedRows(String query, PreparedStatement pstmt) {
+        int affectedRows = 0;
+        try {
+            affectedRows = pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Une erreur est survenue avec la requete " + query);
+        }
+        return affectedRows;
     }
 
     private String buildSelectQuery(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {

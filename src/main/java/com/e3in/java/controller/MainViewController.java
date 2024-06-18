@@ -1,7 +1,6 @@
 package com.e3in.java.controller;
 
 import com.e3in.java.AppConfig;
-import com.e3in.java.dao.BibliothequeDAO;
 import com.e3in.java.dao.DAO;
 import com.e3in.java.dao.XmlDAO;
 import com.e3in.java.model.Bibliotheque;
@@ -53,6 +52,8 @@ public class MainViewController implements UserAwareController {
     private MenuItem connectionBDD;
     @FXML
     private Menu editionMenu;
+    @FXML
+    private MenuItem unloadFile;
 
     @FXML
     private TableView<Livre> tableView;
@@ -68,9 +69,9 @@ public class MainViewController implements UserAwareController {
     @FXML
     private TextField textFieldParution;
     @FXML
-    private Spinner spinnerColonne;
+    private Spinner<Integer> spinnerColonne;
     @FXML
-    private Spinner spinnerRangee;
+    private Spinner<Integer> spinnerRangee;
     @FXML
     private RadioButton radioBorrow;
     @FXML
@@ -217,6 +218,7 @@ public class MainViewController implements UserAwareController {
         containerEditionLivre.setVisible(isAdmin);
         xmlMenu.setVisible(isAdmin);
         editionMenu.setVisible(isAdmin);
+        unloadFile.setVisible(isAdmin);
     }
 
     // Charge un fichier XML et le transforme en une liste de livres.
@@ -224,27 +226,27 @@ public class MainViewController implements UserAwareController {
     private void handleLoadFile() {
         handleUnloadFile();
 
-        String xmlFilePath = chooseLocation("open", getStage(), "xml");
-        if (xmlFilePath == null || xmlFilePath.isEmpty()) {
+        String currentXmlFilePath = chooseLocation("open", getStage(), "xml");
+        if (currentXmlFilePath == null || currentXmlFilePath.isEmpty()) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur fichier", "Aucun fichier sélectionné");
             return;
         }
 
-        if (!Xml.validateXml(xmlFilePath)) {
+        if (!Xml.validateXml(currentXmlFilePath)) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur XML", "XML non valide");
             return;
         }
 
-        this.xmlFilePath = xmlFilePath;
+        this.xmlFilePath = currentXmlFilePath;
 
-        updateXmlFilePath(xmlFilePath);
+        updateXmlFilePath(currentXmlFilePath);
         insertLibraryInTableView(bibliothequeController.getAllBibliotheque());
     }
 
     private void updateXmlFilePath(String xmlFilePath) {
         DAO xmlDAO = AppConfig.getDAOManager().getXmlDAO();
-        if(xmlDAO instanceof XmlDAO) {
-            ((XmlDAO) xmlDAO).setXmlFilePath(xmlFilePath);
+        if(xmlDAO instanceof XmlDAO xmlDAO1) {
+            xmlDAO1.setXmlFilePath(xmlFilePath);
         }
     }
 
@@ -322,11 +324,9 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleRemove() {
         if (selectedBook != null) {
-            if (isOnline) {
-                if (!bibliothequeController.removeLivreBibliotheque(selectedBook)) {
-                    Common.showAlert(Alert.AlertType.ERROR, "Erreur de la suppression", "Impossible de supprimer le livre, merci de ré-essayer");
-                    return;
-                }
+            if (isOnline && !bibliothequeController.removeLivreBibliotheque(selectedBook)) {
+                Common.showAlert(Alert.AlertType.ERROR, "Erreur de la suppression", "Impossible de supprimer le livre, merci de ré-essayer");
+                return;
             }
             tableView.getItems().remove(selectedBook);
             clearField();
@@ -440,17 +440,15 @@ public class MainViewController implements UserAwareController {
                 this.selectedBook.setPresentation(textFieldPresentation.getText().strip());
                 this.selectedBook.setJaquette(textFieldJaquette.getText().strip());
                 this.selectedBook.setParution(Integer.parseInt(textFieldParution.getText().strip()));
-                if (spinnerColonne.getValue() instanceof Integer && spinnerRangee.getValue() instanceof Integer) {
-                    this.selectedBook.setColonne((int) spinnerColonne.getValue());
-                    this.selectedBook.setRangee((int) spinnerRangee.getValue());
+                if (spinnerColonne.getValue() != null && spinnerRangee.getValue() != null) {
+                    this.selectedBook.setColonne(spinnerColonne.getValue());
+                    this.selectedBook.setRangee(spinnerRangee.getValue());
                 }
                 this.selectedBook.setEmprunte(getBorrowRadio());
 
-                if (isOnline) {
-                    if (!bibliothequeController.updateLivreBibliotheque(selectedBook)) {
-                        Common.showAlert(Alert.AlertType.ERROR, "Erreur de la mise à jour", "Impossible de mettre à jour le livre, merci de ré-essayer");
-                        return;
-                    }
+                if (isOnline && !bibliothequeController.updateLivreBibliotheque(selectedBook)) {
+                    Common.showAlert(Alert.AlertType.ERROR, "Erreur de la mise à jour", "Impossible de mettre à jour le livre, merci de ré-essayer");
+                    return;
                 }
 
                 tableView.refresh();
@@ -484,11 +482,9 @@ public class MainViewController implements UserAwareController {
             tableView.getItems().add(livre);
             tableView.refresh();
 
-            if (isOnline) {
-                if (!bibliothequeController.addLivreBibliotheque(livre)) {
-                    throw new Exception("Impossible d'ajouter le livre dans la BDD");
-                }
-
+            if (isOnline && !bibliothequeController.addLivreBibliotheque(livre)) {
+                Common.showAlert(Alert.AlertType.ERROR, "Erreur de l'ajout du livre", "Impossible d'ajouter le livre dans la BDD.");
+                return;
             }
 
             clearField();
@@ -504,8 +500,8 @@ public class MainViewController implements UserAwareController {
         livre.setPresentation(textFieldPresentation.getText().strip());
         livre.setJaquette(textFieldJaquette.getText().strip());
         livre.setParution(Integer.parseInt(textFieldParution.getText().strip()));
-        livre.setColonne((int) spinnerColonne.getValue());
-        livre.setRangee((int) spinnerRangee.getValue());
+        livre.setColonne(spinnerColonne.getValue());
+        livre.setRangee(spinnerRangee.getValue());
         livre.setEmprunte(getBorrowRadio());
         return livre;
     }
@@ -556,7 +552,7 @@ public class MainViewController implements UserAwareController {
         String url = imagePath.startsWith("http") ? imagePath : new File(imagePath).toURI().toString();
         Image image = new Image(url, 100, 150, true, true, true);
         image.errorProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+            if (newValue != null && newValue) {
                 System.err.println("Erreur lors du chargement de l'image : " + image.getException().getMessage());
             }
         });

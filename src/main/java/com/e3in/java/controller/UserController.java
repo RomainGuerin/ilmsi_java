@@ -5,8 +5,6 @@ import com.e3in.java.model.User;
 import com.e3in.java.utils.Common;
 import javafx.scene.control.Alert;
 
-import java.util.HashMap;
-
 public class UserController {
     private final UserDAO userDAO;
 

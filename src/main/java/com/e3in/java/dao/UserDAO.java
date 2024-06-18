@@ -17,12 +17,6 @@ public class UserDAO {
         this.daoManager = daoManager;
     }
 
-    public HashMap<String, String> getUserById(String userId) {
-        HashMap<String, String> whereClause = new HashMap<>();
-        whereClause.put("id", userId);
-        return daoManager.select("user", List.of("id", "email", "password","type"), whereClause);
-    }
-
     public User getUserByEmailPassword(User user) {
         HashMap<String, String> whereClause = new HashMap<>();
         whereClause.put("email", user.getEmail());
@@ -47,7 +41,7 @@ public class UserDAO {
         LinkedHashMap<String, String> userData = new LinkedHashMap<>();
         userData.put("email", user.getEmail());
         userData.put("password", BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-        userData.put("type", "user");
+        userData.put("type", user.isAdmin() ? "admin" : "user");
 
         HashMap<String, String> resultQuery = daoManager.insert("user", userData);
 

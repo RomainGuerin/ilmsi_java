@@ -25,11 +25,6 @@ public class UpdatePasswordController implements UserAwareController {
 
     private User connectedUser;
 
-    /**
-     * Constructeur par défaut de la classe UpdatePasswordController.
-     */
-    public UpdatePasswordController() {}
-
     @Override
     public void setUser(User user) {
         connectedUser = user;

@@ -1,15 +1,19 @@
 package com.e3in.java.dao;
 
-import org.w3c.dom.*;
+import com.e3in.java.utils.Constants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 // TODO : Refactor le xml DAO parce que c'est moche mais genre vraiment
@@ -129,10 +133,10 @@ public class XmlDAO implements DAO {
             root.appendChild(newElement);
             saveXML(doc);
 
-            result.put("status", "success");
+            result.put(Constants.STATUS, Constants.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("status", "error");
+            result.put(Constants.STATUS, Constants.ERROR);
         }
 
         return result;
@@ -176,13 +180,13 @@ public class XmlDAO implements DAO {
 
             if (updated) {
                 saveXML(doc);
-                result.put("status", "success");
+                result.put(Constants.STATUS, Constants.SUCCESS);
             } else {
-                result.put("status", "failure");
+                result.put(Constants.STATUS, Constants.FAILURE);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("status", "error");
+            result.put(Constants.STATUS, Constants.ERROR);
         }
 
         return result;
@@ -223,13 +227,13 @@ public class XmlDAO implements DAO {
 
             if (deleted) {
                 saveXML(doc);
-                result.put("status", "success");
+                result.put(Constants.STATUS, Constants.SUCCESS);
             } else {
-                result.put("status", "failure");
+                result.put(Constants.STATUS, Constants.FAILURE);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("status", "error");
+            result.put(Constants.STATUS, Constants.ERROR);
         }
 
         return result;

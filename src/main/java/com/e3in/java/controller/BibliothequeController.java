@@ -8,7 +8,6 @@ public class BibliothequeController {
     private final BibliothequeDAO bibliothequeDAO;
 
     public BibliothequeController(BibliothequeDAO bibliothequeDAO) {
-        //this.bibliothequeDAO = String Xml.buildLibraryFromXML(xmlFilePath);
         this.bibliothequeDAO = bibliothequeDAO;
     }
 
@@ -22,6 +21,7 @@ public class BibliothequeController {
         }
 
     }
+
     public boolean addLivreBibliotheque(Livre livre) {
         return bibliothequeDAO.addLivreBibliotheque(livre);
     }

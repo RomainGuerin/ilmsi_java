@@ -17,9 +17,7 @@ public final class SQLiteConnection {
     public static SQLiteConnection getInstance() {
         if (SQLiteConnection.instance == null) {
             synchronized(SQLiteConnection.class) {
-                if (SQLiteConnection.instance == null) {
-                    SQLiteConnection.instance = new SQLiteConnection();
-                }
+                SQLiteConnection.instance = new SQLiteConnection();
             }
         }
         return SQLiteConnection.instance;

@@ -11,12 +11,14 @@ public class DAOManager implements DAO {
     private final DAO xmlDAO;
     private DAO actualDAO;
     private boolean isOnline;
-    private DAOManager(DAO sqliteDAO, DAO XmlDAO) {
+
+    private DAOManager(DAO sqliteDAO, DAO xmlDAO) {
         this.sqliteDAO = sqliteDAO;
-        this.xmlDAO = XmlDAO;
+        this.xmlDAO = xmlDAO;
         this.isOnline = true;
-        this.actualDAO = this.isOnline ? this.sqliteDAO : this.xmlDAO;
+        this.actualDAO = this.sqliteDAO;
     }
+
     public DAO getXmlDAO() {
         return this.xmlDAO;
     }

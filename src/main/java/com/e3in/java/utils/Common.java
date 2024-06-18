@@ -45,8 +45,8 @@ public class Common {
             Parent registerView = loader.load();
 
             Object controller = loader.getController();
-            if (controller instanceof UserAwareController) {
-                ((UserAwareController) controller).setUser(user);
+            if (controller instanceof UserAwareController userAwareController) {
+                userAwareController.setUser(user);
             }
 
             Scene registerScene = new Scene(registerView, 1200, 600);

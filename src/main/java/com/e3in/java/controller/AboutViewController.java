@@ -1,9 +1,5 @@
 package com.e3in.java.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 

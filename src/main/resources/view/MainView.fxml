@@ -16,7 +16,7 @@
                     <MenuItem onAction="#handleLocalSync" text="Synchro BDD vers XML"/>
                 </Menu>
                 <MenuItem onAction="#handleExport" text="Exporter le tableau"/>
-                <MenuItem onAction="#handleUnloadFile" text="Décharger le tableau"/>
+                <MenuItem fx:id="unloadFile" onAction="#handleUnloadFile" text="Décharger le tableau"/>
                 <MenuItem onAction="#handleQuitApp" text="Quitter l'application"/>
             </Menu>
             <Menu fx:id="editionMenu" text="Édition">

@@ -8,11 +8,9 @@ import com.e3in.java.dao.XmlDAO;
 import com.e3in.java.model.Auteur;
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
-import com.e3in.java.utils.Xml;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class XMLDAOTest {
@@ -23,7 +21,8 @@ public class XMLDAOTest {
         manager.insert("Me", new LinkedHashMap<>());
 
     }
-    public static void insert_in_xml_with_manager(){
+
+    public static void insertInXmlWithManager() {
         LinkedHashMap<String, String> objMap = new LinkedHashMap<String, String>();
         objMap.put("Name", "Suzuki");
         objMap.put("Power", "220");
@@ -36,13 +35,14 @@ public class XMLDAOTest {
         manager.insert("Me", objMap);
     }
 
-    public static void insert_in_xml_with_controller() {
+    public static void insertInXmlWithController() {
         DAOManager manager = DAOManager.getInstance(new SQLiteDAO(), new XmlDAO("C:\\Users\\Atlas\\Documents\\temp\\xmlDAO.xml"));
         manager.setOnline(false);
         final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.getBibliothequeDAO());
         bibliothequeController.addLivreBibliotheque(new Livre("monTitre", new Auteur("Nom", "Prenom"), "MaPresentation", "Ma Jaquette", 2022, 1, 2, false));
     }
-    public static void create_file() {
+
+    public static void createFile() {
         FileOutputStream file = null;
         try {
             file = new FileOutputStream("C:\\Users\\Atlas\\Documents\\temp\\xmlDAO.xml");
@@ -60,7 +60,7 @@ public class XMLDAOTest {
         }
     }
 
-    public static void get_libs() {
+    public static void getLibs() {
         DAOManager manager = DAOManager.getInstance(new SQLiteDAO(), new XmlDAO("C:\\Users\\Atlas\\Documents\\temp\\xmlDAO.xml"));
 
         System.out.println("Hors Ligne");
@@ -72,7 +72,8 @@ public class XMLDAOTest {
         manager.setOnline(true);
         System.out.println(bibliothequeController.getAllBibliotheque().getLivres());
     }
-    public static void sync_sql_to_xml() {
+
+    public static void syncSqlToXml() {
         final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.getBibliothequeDAO());
 
         AppConfig.getDAOManager().setOnline(true);
@@ -83,10 +84,10 @@ public class XMLDAOTest {
     }
 
     public static void main(String[] args) {
-//        create_file();
-//        insert_in_xml_with_manager();
-//        insert_in_xml_with_controller();
-//        get_libs();
-        sync_sql_to_xml();
+//        createFile();
+//        insertInXmlWithManager();
+//        insertInXmlWithController();
+//        getLibs();
+        syncSqlToXml();
     }
 }

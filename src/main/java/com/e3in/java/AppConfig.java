@@ -3,6 +3,9 @@ package com.e3in.java;
 import com.e3in.java.dao.*;
 
 public class AppConfig {
+
+    private AppConfig () {}
+
     public static DAOManager getDAOManager() {
         SQLiteDAO sqliteDAO = new SQLiteDAO();
         XmlDAO xmlDAO = new XmlDAO("%USERPROFILE%\\temp\\xmlDAO.xml");

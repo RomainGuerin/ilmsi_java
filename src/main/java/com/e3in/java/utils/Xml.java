@@ -69,25 +69,4 @@ public class Xml{
             return null;
         }
     }
-
-    /**
-     * Enregistre une liste de livres dans un fichier XML.
-     *
-     * @param livres   Liste des livres à enregistrer.
-     * @param filePath Chemin vers le fichier XML de sortie.
-     */
-    public static void saveLibraryToXml(List<Livre> livres, String filePath) {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Bibliotheque.class);
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            Bibliotheque library = new Bibliotheque();
-            library.setLivres(livres);
-
-            marshaller.marshal(library, new File(filePath));
-        } catch (JAXBException e) {
-            System.err.println("Erreur d'enregistrement du XML : " + e.getMessage());
-        }
-    }
 }

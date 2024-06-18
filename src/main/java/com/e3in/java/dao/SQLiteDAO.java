@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class SQLiteDAO extends BaseDAO {
@@ -73,7 +74,12 @@ public class SQLiteDAO extends BaseDAO {
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
-            int affectedRows = pstmt.executeUpdate();
+            int affectedRows = 0;
+            try {
+                affectedRows = pstmt.executeUpdate();
+            } catch (Exception e) {
+                System.err.println("Une erreur est survenue avec la requete " + query);
+            }
             if (affectedRows > 0) {
                 result.put("status", "success");
             } else {
@@ -126,7 +132,7 @@ public class SQLiteDAO extends BaseDAO {
     }
 
     @Override
-    public HashMap<String, String> insert(String tableName, HashMap<String, String> columnAndValue) {
+    public HashMap<String, String> insert(String tableName, LinkedHashMap<String, String> columnAndValue) {
         StringBuilder query = new StringBuilder("INSERT INTO ");
         query.append(tableName).append(" (");
         query.append(String.join(", ", columnAndValue.keySet()));

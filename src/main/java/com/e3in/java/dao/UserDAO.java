@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +45,7 @@ public class UserDAO {
     }
 
     public boolean createUser(User user) {
-        HashMap<String, String> userData = new HashMap<>();
+        LinkedHashMap<String, String> userData = new LinkedHashMap<>();
         userData.put("email", user.getEmail());
         userData.put("password", BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         userData.put("type", "user");

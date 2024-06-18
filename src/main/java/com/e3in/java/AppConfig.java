@@ -1,21 +1,19 @@
 package com.e3in.java;
 
-import com.e3in.java.dao.BibliothequeDAO;
-import com.e3in.java.dao.DAOManager;
-import com.e3in.java.dao.SQLiteDAO;
-import com.e3in.java.dao.UserDAO;
+import com.e3in.java.dao.*;
 
 public class AppConfig {
-    public static DAOManager createDAOManager() {
+    public static DAOManager getDAOManager() {
         SQLiteDAO sqliteDAO = new SQLiteDAO();
-        return DAOManager.getInstance(sqliteDAO);
+        XmlDAO xmlDAO = new XmlDAO("%USERPROFILE%\\temp\\xmlDAO.xml");
+        return DAOManager.getInstance(sqliteDAO, xmlDAO);
     }
 
-    public static UserDAO createUserDAO() {
-        return new UserDAO(createDAOManager());
+    public static UserDAO getUserDAO() {
+        return new UserDAO(getDAOManager());
     }
 
-    public static BibliothequeDAO createBibliothequeDAO() {
-        return new BibliothequeDAO(createDAOManager());
+    public static BibliothequeDAO getBibliothequeDAO() {
+        return new BibliothequeDAO(getDAOManager());
     }
 }

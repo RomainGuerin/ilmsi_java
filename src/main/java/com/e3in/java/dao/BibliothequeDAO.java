@@ -6,6 +6,7 @@ import com.e3in.java.model.Livre;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class BibliothequeDAO {
@@ -16,14 +17,12 @@ public class BibliothequeDAO {
     }
 
     public Bibliotheque getAllBibliotheque() {
-        ArrayList<HashMap<String, String>> resultQuery = daoManager.selectAll("livre", List.of("titre", "auteurNom", "auteurPrenom","presentation", "jaquette", "parution", "colonne", "rangee", "emprunte"), new HashMap<>());
+        ArrayList<HashMap<String, String>> resultQuery = daoManager.selectAll("livre", List.of("titre", "auteurNom", "auteurPrenom", "presentation", "jaquette", "parution", "colonne", "rangee", "emprunte"), new HashMap<>());
         return getBibliotheque(resultQuery);
     }
 
     public boolean addLivreBibliotheque(Livre livre) {
-        HashMap<String, String> map = getMapLivre(livre);
-        HashMap<String, String> mapLivreUnique = getMapLivreUnique(livre);
-        map.putAll(mapLivreUnique);
+        LinkedHashMap<String, String> map = getMapLivreComplete(livre);
 
         HashMap<String, String> resultQuery = daoManager.insert("livre", map);
         return !resultQuery.isEmpty() && resultQuery.get("status").equals("success");
@@ -56,6 +55,19 @@ public class BibliothequeDAO {
         return bibliotheque;
     }
 
+    private LinkedHashMap<String, String> getMapLivreComplete (Livre livre) {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put("titre", livre.getTitre());
+        map.put("auteurNom", livre.getAuteur().getNom());
+        map.put("auteurPrenom", livre.getAuteur().getPrenom());
+        map.put("presentation", livre.getPresentation());
+        map.put("jaquette", livre.getJaquette());
+        map.put("parution", String.valueOf(livre.getParution()));
+        map.put("colonne", String.valueOf(livre.getColonne()));
+        map.put("rangee", String.valueOf(livre.getRangee()));
+        map.put("emprunte", livre.getEmprunte() ? "1" : "0");
+        return map;
+    }
     private HashMap<String, String> getMapLivre(Livre livre) {
         HashMap<String, String> map = new HashMap<>();
         map.put("presentation", livre.getPresentation());

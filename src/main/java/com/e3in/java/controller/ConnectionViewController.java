@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 public class ConnectionViewController {
 
-    private final UserController userController = new UserController(AppConfig.createUserDAO());
+    private final UserController userController = new UserController(AppConfig.getUserDAO());
 
     @FXML
     private TextField textFieldLogin;

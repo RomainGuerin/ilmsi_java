@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public abstract class BaseDAO implements DAO {
@@ -40,7 +41,7 @@ public abstract class BaseDAO implements DAO {
     public abstract ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause);
 
     @Override
-    public abstract HashMap<String, String> insert(String tableName, HashMap<String, String> columnAndValue);
+    public abstract HashMap<String, String> insert(String tableName, LinkedHashMap<String, String> columnAndValue);
 
     @Override
     public abstract HashMap<String, String> update(String tableName, HashMap<String, String> columnAndValue, HashMap<String, String> whereClause);

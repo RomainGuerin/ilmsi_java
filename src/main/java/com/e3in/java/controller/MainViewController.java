@@ -1,6 +1,9 @@
 package com.e3in.java.controller;
 
 import com.e3in.java.AppConfig;
+import com.e3in.java.dao.BibliothequeDAO;
+import com.e3in.java.dao.DAO;
+import com.e3in.java.dao.XmlDAO;
 import com.e3in.java.model.Bibliotheque;
 import com.e3in.java.model.Livre;
 import com.e3in.java.model.User;
@@ -32,7 +35,7 @@ import java.util.function.UnaryOperator;
  */
 public class MainViewController implements UserAwareController {
 
-    private final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.createBibliothequeDAO());
+    private final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.getBibliothequeDAO());
 
     private User connectedUser;
 
@@ -199,6 +202,7 @@ public class MainViewController implements UserAwareController {
             userTypeChip.getStyleClass().setAll(connectedUser.isAdmin() ? "chip-admin" : "chip");
         }
         connectionTypeChip.setText("Status : " + (isOnline ? "En ligne" : "Hors ligne"));
+        AppConfig.getDAOManager().setOnline(isOnline);
         lastEditDateChip.setText("Dernière mise à jour : " + Common.getCurrentDateTime());
     }
 
@@ -236,7 +240,15 @@ public class MainViewController implements UserAwareController {
 
         this.xmlFilePath = xmlFilePath;
 
-        insertLibraryInTableView(Xml.buildLibraryFromXML(xmlFilePath));
+        updateXmlFilePath(xmlFilePath);
+        insertLibraryInTableView(bibliothequeController.getAllBibliotheque());
+    }
+
+    private void updateXmlFilePath(String xmlFilePath) {
+        DAO xmlDAO = AppConfig.getDAOManager().getXmlDAO();
+        if(xmlDAO instanceof XmlDAO) {
+            ((XmlDAO) xmlDAO).setXmlFilePath(xmlFilePath);
+        }
     }
 
     @FXML
@@ -508,7 +520,8 @@ public class MainViewController implements UserAwareController {
 
     // Méthode pour sauvegarder les données dans un fichier XML
     private void saveData(String filePath) {
-        Xml.saveLibraryToXml(tableView.getItems(), filePath);
+        updateXmlFilePath(filePath);
+        bibliothequeController.updateBibliotheque(new Bibliotheque(tableView.getItems()));
     }
 
     // Méthode pour choisir l'emplacement de fichier

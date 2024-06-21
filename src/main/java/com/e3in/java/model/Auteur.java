@@ -16,6 +16,15 @@ public class Auteur {
      */
     public Auteur() { }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Auteur auteur) {
+            return (auteur.getNom().equals(this.nom) && auteur.getPrenom().equals(this.prenom));
+        } else {
+            return super.equals(obj);
+        }
+    }
+
     /**
      * Constructeur de l'auteur avec son nom et son prénom.
      *

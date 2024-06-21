@@ -16,10 +16,13 @@ public class BibliothequeController {
     }
 
     public void updateBibliotheque(Bibliotheque bibliotheque) {
-        for(Livre livre : bibliotheque.getLivres()) {
-            bibliothequeDAO.addLivreBibliotheque(livre);
-        }
+        Bibliotheque library = getAllBibliotheque();
 
+        for(Livre livre : bibliotheque.getLivres()) {
+            if (!library.contain(livre)) {
+                bibliothequeDAO.addLivreBibliotheque(livre);
+            }
+        }
     }
 
     public boolean addLivreBibliotheque(Livre livre) {

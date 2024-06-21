@@ -25,7 +25,7 @@ public class DAOManager implements DAO {
 
     public static synchronized DAOManager getInstance() {
         if (instance == null) {
-            instance = new DAOManager(new SQLiteDAO(), new XmlDAO());
+            instance = new DAOManager(new SQLiteDAO(), new XmlDAO(""));
         }
         return instance;
     }

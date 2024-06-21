@@ -248,8 +248,10 @@ public class MainViewController implements UserAwareController {
 
     private void updateXmlFilePath(String xmlFilePath) {
         DAO xmlDAO = AppConfig.getDAOManager().getXmlDAO();
-        if(xmlDAO instanceof XmlDAO xmlDAO1) {
-            xmlDAO1.setXmlFilePath(xmlFilePath);
+        if (xmlDAO instanceof XmlDAO) {
+            ((XmlDAO) xmlDAO).setXmlFilePath(xmlFilePath);
+        } else {
+            Logger.getLogger(MainViewController.class.getName()).severe("Erreur : DAO obtenu n'est pas une instance de XmlDAO.");
         }
     }
 

@@ -27,6 +27,15 @@ public class Livre {
      */
     public Livre() { }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Livre livre) {
+            return (livre.auteur.equals(this.auteur) && livre.auteur.equals(this.auteur) && livre.auteur.equals(this.auteur));
+        } else {
+            return super.equals(obj);
+        }
+    }
+
     /**
      * Constructeur du livre avec ses attributs.
      * 

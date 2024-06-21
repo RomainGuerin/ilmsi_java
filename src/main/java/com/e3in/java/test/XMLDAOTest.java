@@ -14,16 +14,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 public class XMLDAOTest {
+    /**
+     * Constructeur de la classe de test
+     */
     public XMLDAOTest() {
         System.out.println("XMLDAOTest");
         DAOManager manager = DAOManager.getInstance();
         manager.setOnline(false);
         manager.insert("Me", new LinkedHashMap<>());
-
     }
 
+    /**
+     * Méthode pour insérer des données dans un fichier XML en utilisant DAOManager
+     */
     public static void insertInXmlWithManager() {
-        LinkedHashMap<String, String> objMap = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> objMap = new LinkedHashMap<>();
         objMap.put("Name", "Suzuki");
         objMap.put("Power", "220");
         objMap.put("Type", "2-wheeler");
@@ -35,6 +40,9 @@ public class XMLDAOTest {
         manager.insert("Me", objMap);
     }
 
+    /**
+     * Méthode pour insérer un livre dans une bibliothèque en utilisant BibliothequeController
+     */
     public static void insertInXmlWithController() {
         DAOManager manager = DAOManager.getInstance(new SQLiteDAO(), new XmlDAO("C:\\Users\\Atlas\\Documents\\temp\\xmlDAO.xml"));
         manager.setOnline(false);
@@ -42,8 +50,11 @@ public class XMLDAOTest {
         bibliothequeController.addLivreBibliotheque(new Livre("monTitre", new Auteur("Nom", "Prenom"), "MaPresentation", "Ma Jaquette", 2022, 1, 2, false));
     }
 
+    /**
+     * Méthode pour créer un fichier XML avec un contenu par défaut
+     */
     public static void createFile() {
-        FileOutputStream file = null;
+        FileOutputStream file;
         try {
             file = new FileOutputStream("C:\\Users\\Atlas\\Documents\\temp\\xmlDAO.xml");
         } catch (FileNotFoundException e) {
@@ -60,6 +71,9 @@ public class XMLDAOTest {
         }
     }
 
+    /**
+     * Méthode pour récupérer les livres de la bibliothèque en mode hors ligne et en ligne
+     */
     public static void getLibs() {
         DAOManager manager = DAOManager.getInstance(new SQLiteDAO(), new XmlDAO("C:\\Users\\Atlas\\Documents\\temp\\xmlDAO.xml"));
 
@@ -73,6 +87,9 @@ public class XMLDAOTest {
         System.out.println(bibliothequeController.getAllBibliotheque().getLivres());
     }
 
+    /**
+     * Méthode pour synchroniser les données de la base de données SQL vers le fichier XML
+     */
     public static void syncSqlToXml() {
         final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.getBibliothequeDAO());
 
@@ -83,11 +100,16 @@ public class XMLDAOTest {
         bibliothequeController.updateBibliotheque(bibliothequeSql);
     }
 
+    /**
+     * Méthode principale pour exécuter les tests
+     * @param args les arguments de la ligne de commande
+     */
     public static void main(String[] args) {
-//        createFile();
-//        insertInXmlWithManager();
-//        insertInXmlWithController();
-//        getLibs();
+        // Décommentez les lignes ci-dessous pour exécuter les différentes méthodes de test
+        // createFile();
+        // insertInXmlWithManager();
+        // insertInXmlWithController();
+        // getLibs();
         syncSqlToXml();
     }
 }

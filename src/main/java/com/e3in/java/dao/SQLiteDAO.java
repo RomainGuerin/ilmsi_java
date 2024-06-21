@@ -13,8 +13,10 @@ import java.util.List;
 
 public class SQLiteDAO extends BaseDAO {
 
+    // Constructeur de SQLiteDAO
     public SQLiteDAO() {
         try {
+            // Obtenez la connexion SQLite et désactivez l'auto-commit
             this.connection = SQLiteConnection.getInstance().getConnection();
             this.connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -22,10 +24,11 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
+    // Méthode pour exécuter une requête SQL et retourner un seul résultat
     private HashMap<String, String> executeQuery(String query, List<Object> parameters, List<String> columnNames) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            beginTransaction();
+            beginTransaction(); // Commence la transaction
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
@@ -36,18 +39,19 @@ public class SQLiteDAO extends BaseDAO {
                     }
                 }
             }
-            commitTransaction();
+            commitTransaction(); // Commit la transaction
         } catch (SQLException e) {
-            rollbackTransaction();
+            rollbackTransaction(); // Rollback en cas d'erreur
             throw e;
         }
         return result;
     }
 
+    // Méthode pour exécuter une requête SQL et retourner plusieurs résultats
     private ArrayList<HashMap<String, String>> executeMultiResultQuery(String query, List<Object> parameters, List<String> columnNames) throws SQLException {
         ArrayList<HashMap<String, String>> results = new ArrayList<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            beginTransaction();
+            beginTransaction(); // Commence la transaction
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
@@ -60,18 +64,19 @@ public class SQLiteDAO extends BaseDAO {
                     results.add(row);
                 }
             }
-            commitTransaction();
+            commitTransaction(); // Commit la transaction
         } catch (SQLException e) {
-            rollbackTransaction();
+            rollbackTransaction(); // Rollback en cas d'erreur
             throw e;
         }
         return results;
     }
 
+    // Méthode pour exécuter une requête de mise à jour (INSERT, UPDATE, DELETE)
     private HashMap<String, String> executeUpdate(String query, List<Object> parameters) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            beginTransaction();
+            beginTransaction(); // Commence la transaction
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
@@ -80,25 +85,27 @@ public class SQLiteDAO extends BaseDAO {
             } else {
                 result.put(Constants.STATUS, Constants.FAILURE);
             }
-            commitTransaction();
+            commitTransaction(); // Commit la transaction
         } catch (SQLException e) {
-            rollbackTransaction();
+            rollbackTransaction(); // Rollback en cas d'erreur
             result.put(Constants.STATUS, Constants.ERROR);
             throw e;
         }
         return result;
     }
 
+    // Méthode pour obtenir le nombre de lignes affectées par une mise à jour
     private static int getAffectedRows(String query, PreparedStatement pstmt) {
         int affectedRows = 0;
         try {
             affectedRows = pstmt.executeUpdate();
         } catch (Exception e) {
-            System.err.println("Une erreur est survenue avec la requete " + query);
+            System.err.println("Une erreur est survenue avec la requête " + query);
         }
         return affectedRows;
     }
 
+    // Méthode pour construire une requête SELECT
     private String buildSelectQuery(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         StringBuilder query = new StringBuilder("SELECT");
         query.append(" ").append(String.join(", ", columnNames));
@@ -110,6 +117,7 @@ public class SQLiteDAO extends BaseDAO {
         return query.toString();
     }
 
+    // Méthode pour sélectionner un enregistrement dans la base de données
     @Override
     public HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         String query = buildSelectQuery(tableName, columnNames, whereClause);
@@ -123,6 +131,7 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
+    // Méthode pour sélectionner tous les enregistrements correspondant aux critères dans la base de données
     @Override
     public ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         String query = buildSelectQuery(tableName, columnNames, whereClause);
@@ -136,6 +145,7 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
+    // Méthode pour insérer un enregistrement dans la base de données
     @Override
     public HashMap<String, String> insert(String tableName, LinkedHashMap<String, String> columnAndValue) {
         StringBuilder query = new StringBuilder("INSERT INTO ");
@@ -153,6 +163,7 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
+    // Méthode pour mettre à jour un enregistrement dans la base de données
     @Override
     public HashMap<String, String> update(String tableName, HashMap<String, String> columnAndValue, HashMap<String, String> whereClause) {
         StringBuilder query = new StringBuilder("UPDATE ");
@@ -171,6 +182,7 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
+    // Méthode pour supprimer un enregistrement dans la base de données
     @Override
     public HashMap<String, String> delete(String tableName, HashMap<String, String> whereClause) {
         StringBuilder query = new StringBuilder("DELETE FROM ");

@@ -15,6 +15,7 @@ import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Classe utilitaire pour la manipulation d'XML.
@@ -22,6 +23,7 @@ import java.util.Objects;
 public class Xml{
     // Chemin vers le fichier XSD utilisé pour la validation XML
     private static final String xsdFilePath = Objects.requireNonNull(Xml.class.getResource("/Biblio.xsd")).getPath();
+    static Logger logger = Logger.getLogger(Xml.class.getName());
 
     /**
      * Valide un fichier XML par rapport à un schéma XSD.
@@ -40,8 +42,7 @@ public class Xml{
 
             return true;
         } catch (SAXException | IOException e) {
-            System.err.println("Erreur de validation XML : " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Erreur de validation XML : " + e.getMessage());
             return false;
         }
     }

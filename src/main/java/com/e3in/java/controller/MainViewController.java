@@ -387,8 +387,7 @@ public class MainViewController implements UserAwareController {
             word.saveDocument();
         } catch (Exception e) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
-            System.err.println(e);
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'exportation des données : " + e.getMessage());
         }
     }
 

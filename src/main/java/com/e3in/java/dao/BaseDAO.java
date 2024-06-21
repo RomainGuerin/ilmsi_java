@@ -2,13 +2,11 @@ package com.e3in.java.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class BaseDAO implements DAO {
     protected Connection connection;
+    static Logger logger = Logger.getLogger(BaseDAO.class.getName());
 
     protected void beginTransaction() throws SQLException {
         if (connection != null && !connection.getAutoCommit()) {
@@ -29,7 +27,7 @@ public abstract class BaseDAO implements DAO {
                 connection.rollback();
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.severe("Erreur de rollback de la transaction: " + e.getMessage());
             }
         }
     }

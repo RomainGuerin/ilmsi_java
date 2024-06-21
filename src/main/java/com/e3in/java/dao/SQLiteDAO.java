@@ -21,7 +21,7 @@ public class SQLiteDAO extends BaseDAO {
             this.connection = SQLiteConnection.getInstance().getConnection();
             this.connection.setAutoCommit(false);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de connexion à la base de données SQLite: " + e.getMessage());
         }
     }
 
@@ -121,7 +121,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeQuery(query, parameters, columnNames);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de récupération des données: " + e.getMessage());
             return new HashMap<>();
         }
     }
@@ -134,7 +134,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeMultiResultQuery(query, parameters, columnNames);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de récupération des données: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -151,7 +151,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeUpdate(query.toString(), parameters);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur d'insertion des données: " + e.getMessage());
             return new HashMap<>();
         }
     }
@@ -169,7 +169,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeUpdate(query.toString(), parameters);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de mise à jour des données: " + e.getMessage());
             return new HashMap<>();
         }
     }
@@ -185,7 +185,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeUpdate(query.toString(), parameters);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de suppression des données: " + e.getMessage());
             return new HashMap<>();
         }
     }

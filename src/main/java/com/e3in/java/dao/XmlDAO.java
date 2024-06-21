@@ -15,10 +15,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.*;
+import java.util.logging.Logger;
 
 // TODO : Refactor le xml DAO parce que c'est moche mais genre vraiment
 public class XmlDAO implements DAO {
     private String xmlFilePath;
+
+    static Logger logger = Logger.getLogger(XmlDAO.class.getName());
 
     public XmlDAO() {
         this.xmlFilePath = "";
@@ -64,7 +67,7 @@ public class XmlDAO implements DAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de la récupération des données : " + e.getMessage());
         }
 
         return result;
@@ -105,7 +108,7 @@ public class XmlDAO implements DAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de la récupération des données : " + e.getMessage());
         }
         return results;
     }
@@ -135,7 +138,7 @@ public class XmlDAO implements DAO {
 
             result.put(Constants.STATUS, Constants.SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'insertion des données : " + e.getMessage());
             result.put(Constants.STATUS, Constants.ERROR);
         }
 
@@ -185,7 +188,7 @@ public class XmlDAO implements DAO {
                 result.put(Constants.STATUS, Constants.FAILURE);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de la mise à jour des données : " + e.getMessage());
             result.put(Constants.STATUS, Constants.ERROR);
         }
 
@@ -232,7 +235,7 @@ public class XmlDAO implements DAO {
                 result.put(Constants.STATUS, Constants.FAILURE);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de la suppression des données : " + e.getMessage());
             result.put(Constants.STATUS, Constants.ERROR);
         }
 

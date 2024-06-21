@@ -16,12 +16,15 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static com.e3in.java.utils.Common.getCurrentDateTime;
 
 public class WordController {
     private final XWPFDocument document;
     private final String path;
+
+    static Logger logger = Logger.getLogger(WordController.class.getName());
 
     public WordController(String path) {
         this.document = new XWPFDocument();
@@ -41,7 +44,7 @@ public class WordController {
             String headerText = "Export Bibliothèque - Fichier : " + pathName + " - " + date;
             headerRun.setText(headerText);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'ajout de l'entête du document Word. " + e.getMessage());
         }
     }
     public void addFooter() {
@@ -67,7 +70,7 @@ public class WordController {
 
             pageNumberParagraph.getCTP().addNewFldSimple().setInstr("NUMPAGES \\* MERGEFORMAT");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'ajout du pied de page du document Word. " + e.getMessage());
         }
     }
 
@@ -115,7 +118,7 @@ public class WordController {
 
             document.createParagraph().setPageBreak(true);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'ajout de la page de couverture du document Word. " + e.getMessage());
         }
     }
 
@@ -208,7 +211,7 @@ public class WordController {
             file.close();
             document.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de la sauvegarde du document Word. " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

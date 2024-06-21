@@ -43,7 +43,7 @@ public class Common {
     }
 
     public static void switchScene(String page, Stage stage, User user) {
-        System.out.println("Redirection vers la page " + page);
+        logger.info("Redirection vers la page " + page);
         try {
             FXMLLoader loader = new FXMLLoader(Common.class.getResource("/view/"+page+".fxml"));
             Parent registerView = loader.load();
@@ -57,7 +57,7 @@ public class Common {
             stage.setScene(registerScene);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de chargement de la page " + page + ": " + e.getMessage());
         }
     }
 

@@ -5,10 +5,13 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 public final class SQLiteConnection {
     private static SQLiteConnection instance = null;
     private static Connection connection = null;
+
+    static Logger logger = Logger.getLogger(SQLiteConnection.class.getName());
 
     private SQLiteConnection() {
         connect();
@@ -39,16 +42,13 @@ public final class SQLiteConnection {
 
             // Connexion à la base de données
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            System.out.println("Connexion à SQLite établie avec succès.");
+            logger.info("Connexion à SQLite établie avec succès.");
         } catch (ClassNotFoundException e) {
-            System.err.println("Erreur de chargement du driver JDBC pour SQLite.");
-            e.printStackTrace();
+            logger.severe("Erreur de chargement du driver JDBC pour SQLite. " + e.getMessage());
         } catch (SQLException e) {
-            System.err.println("Erreur de connexion à la base de données SQLite.");
-            e.printStackTrace();
+            logger.severe("Erreur de connexion à la base de données SQLite. " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Erreur inattendue.");
-            e.printStackTrace();
+            logger.severe("Erreur inattendue. " + e.getMessage());
         }
     }
 
@@ -65,11 +65,10 @@ public final class SQLiteConnection {
         try {
             if (connection != null) {
                 connection.close();
-                System.out.println("Connexion à SQLite fermée avec succès.");
+                logger.info("Connexion à SQLite fermée avec succès.");
             }
         } catch (SQLException e) {
-            System.err.println("Erreur de fermeture de la connexion à la base de données SQLite.");
-            e.printStackTrace();
+            logger.severe("Erreur de fermeture de la connexion à la base de données SQLite. " + e.getMessage());
         }
     }
 }

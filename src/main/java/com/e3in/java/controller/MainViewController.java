@@ -26,6 +26,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.UnaryOperator;
+import java.util.logging.Logger;
 
 /**
  * Contrôleur de la vue principale de gestion de la bibliothèque
@@ -33,6 +34,8 @@ import java.util.function.UnaryOperator;
  * ainsi que le chargement et la sauvegarde des données depuis/vers un fichier XML.
  */
 public class MainViewController implements UserAwareController {
+
+    static Logger logger = Logger.getLogger(MainViewController.class.getName());
 
     private final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.getBibliothequeDAO());
 
@@ -553,7 +556,7 @@ public class MainViewController implements UserAwareController {
         Image image = new Image(url, 100, 150, true, true, true);
         image.errorProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && newValue) {
-                System.err.println("Erreur lors du chargement de l'image : " + image.getException().getMessage());
+                logger.warning("Erreur lors du chargement de l'image : " + image.getException().getMessage());
             }
         });
         imageView.setImage(image);

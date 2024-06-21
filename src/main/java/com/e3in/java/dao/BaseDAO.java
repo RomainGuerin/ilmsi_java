@@ -33,19 +33,4 @@ public abstract class BaseDAO implements DAO {
             }
         }
     }
-
-    @Override
-    public abstract HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause);
-
-    @Override
-    public abstract ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause);
-
-    @Override
-    public abstract HashMap<String, String> insert(String tableName, LinkedHashMap<String, String> columnAndValue);
-
-    @Override
-    public abstract HashMap<String, String> update(String tableName, HashMap<String, String> columnAndValue, HashMap<String, String> whereClause);
-
-    @Override
-    public abstract HashMap<String, String> delete(String tableName, HashMap<String, String> whereClause);
 }

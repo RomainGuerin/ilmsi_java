@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class SQLiteDAO extends BaseDAO {
+
+    static Logger logger = Logger.getLogger(SQLiteDAO.class.getName());
 
     public SQLiteDAO() {
         try {
@@ -94,7 +97,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             affectedRows = pstmt.executeUpdate();
         } catch (Exception e) {
-            System.err.println("Une erreur est survenue avec la requete " + query);
+            logger.severe("Une erreur est survenue avec la requete " + query);
         }
         return affectedRows;
     }

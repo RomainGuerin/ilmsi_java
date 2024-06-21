@@ -10,8 +10,12 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Logger;
+
 
 public class RegisterViewController {
+
+    static Logger logger = Logger.getLogger(RegisterViewController.class.getName());
 
     private final UserController userController = new UserController(AppConfig.getUserDAO());
 
@@ -47,10 +51,10 @@ public class RegisterViewController {
         if (UserController.checkValidity(user)) {
             boolean userInserted = userController.createUser(user);
             if (userInserted) {
-                System.out.println("Connexion réussie ! Bienvenue " + user.getEmail());
+                logger.info("Connexion réussie ! Bienvenue " + user.getEmail());
                 Common.switchScene("ConnectionView", getStage());
             } else {
-                System.out.println("Échec d'inscription. Veuillez vérifier les informations.");
+                logger.warning("Échec d'inscription. Veuillez vérifier les informations.");
             }
         }
         this.resetFields();

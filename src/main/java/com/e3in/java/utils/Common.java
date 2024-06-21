@@ -14,8 +14,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class Common {
+
+    static Logger logger = Logger.getLogger(Common.class.getName());
+
     public static void closeApp(Stage stage) {
         stage.close();
     }
@@ -30,7 +34,7 @@ public class Common {
             alert.getDialogPane().setContent(content);
             alert.showAndWait();
         } catch (Exception e) {
-            System.err.println("Erreur de chargement de la page About: " + e.getMessage());
+            logger.severe("Erreur de chargement de la page About: " + e.getMessage());
         }
     }
 

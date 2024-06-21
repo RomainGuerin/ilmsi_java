@@ -2,13 +2,16 @@ package com.e3in.java;
 
 import com.e3in.java.dao.*;
 
+import java.util.Objects;
+
 public class AppConfig {
 
     private AppConfig () {}
 
     public static DAOManager getDAOManager() {
         SQLiteDAO sqliteDAO = new SQLiteDAO();
-        XmlDAO xmlDAO = new XmlDAO("%USERPROFILE%\\temp\\xmlDAO.xml");
+        String xmlPath = Objects.requireNonNull(AppConfig.class.getResource("/xmlDAO.xml")).getPath();
+        XmlDAO xmlDAO = new XmlDAO(xmlPath);
         return DAOManager.getInstance(sqliteDAO, xmlDAO);
     }
 

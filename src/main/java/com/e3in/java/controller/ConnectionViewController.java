@@ -9,7 +9,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Logger;
+
 public class ConnectionViewController {
+
+    static Logger logger = Logger.getLogger(ConnectionViewController.class.getName());
 
     private final UserController userController = new UserController(AppConfig.getUserDAO());
 
@@ -30,7 +34,7 @@ public class ConnectionViewController {
                 Common.showAlert(Alert.AlertType.INFORMATION, "Connexion réussie", "Bienvenue " + userConnected.getEmail());
                 Common.switchScene("MainView", getStage(), userConnected);
             } else {
-                System.out.println("Échec de la connexion. Veuillez vérifier vos identifiants.");
+                logger.warning("Échec de la connexion. Veuillez vérifier vos identifiants.");
             }
         }
         this.resetFields();

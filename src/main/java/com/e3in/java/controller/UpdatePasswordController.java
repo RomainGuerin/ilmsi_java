@@ -10,7 +10,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Logger;
+
 public class UpdatePasswordController implements UserAwareController {
+
+    static Logger logger = Logger.getLogger(UpdatePasswordController.class.getName());
 
     private final UserController userController = new UserController(AppConfig.getUserDAO());
 
@@ -66,7 +70,7 @@ public class UpdatePasswordController implements UserAwareController {
                     Common.showAlert(Alert.AlertType.ERROR, "Erreur - Mise à jour du mot de passe", "Impossible de mettre à jour le mot de passe. Vérifier les informations.");
                 }
             } else {
-                System.out.println("Les identifiants ne correspondent pas. Veuillez réessayer.");
+                logger.warning("Les identifiants ne correspondent pas. Veuillez réessayer.");
             }
         }
         this.resetFields();

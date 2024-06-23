@@ -10,7 +10,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 
@@ -49,7 +49,7 @@ public class RegisterViewController {
         }
 
         User user = new User(email, password, isAdmin);
-        HashMap<String, String> userValidation = UserController.checkValidity(user);
+        Map<String, String> userValidation = UserController.checkValidity(user);
         if (userValidation.isEmpty()) {
             boolean userInserted = userController.createUser(user);
             if (userInserted) {

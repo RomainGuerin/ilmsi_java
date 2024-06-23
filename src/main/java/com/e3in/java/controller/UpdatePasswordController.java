@@ -10,7 +10,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class UpdatePasswordController implements UserAwareController {
@@ -62,7 +62,7 @@ public class UpdatePasswordController implements UserAwareController {
 
         User oldUser = new User(email, oldPassword, false);
         User newUser = new User(email, newPassword, false);
-        HashMap<String, String> userValidation = UserController.checkValidity(newUser);
+        Map<String, String> userValidation = UserController.checkValidity(newUser);
         if (userValidation.isEmpty()) {
             AppConfig.getDAOManager().setOnline(true); // Nécessaire pour utiliser UserDAO
             User userConnected = userController.getUserByEmailPassword(oldUser);

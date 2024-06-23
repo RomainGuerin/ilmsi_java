@@ -9,7 +9,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class ConnectionViewController {
@@ -29,7 +29,7 @@ public class ConnectionViewController {
         String password = passwordField.getText();
 
         User user = new User(email, password);
-        HashMap<String, String> userValidation = UserController.checkValidity(user);
+        Map<String, String> userValidation = UserController.checkValidity(user);
         if (userValidation.isEmpty()) {
             User userConnected = userController.getUserByEmailPassword(user);
             if (userConnected != null) {

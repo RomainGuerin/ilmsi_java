@@ -4,6 +4,7 @@ import com.e3in.java.dao.UserDAO;
 import com.e3in.java.model.User;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class UserController {
     private final UserDAO userDAO;
@@ -12,17 +13,19 @@ public class UserController {
         this.userDAO = userDAO;
     }
 
-    public static HashMap<String, String> checkValidity(User user) {
-        HashMap<String, String> errors = new HashMap<>();
+    public static Map<String, String> checkValidity(User user) {
+        Map<String, String> errorMessage = new HashMap<>();
         if (user.isEmailValid()) {
-            errors.put("error", "Email invalide");
-            errors.put("message", "Insérez une adresse email valide.");
+            errorMessage.put("error", "Email invalide");
+            errorMessage.put("message", "Insérez une adresse email valide.");
+            return errorMessage;
         }
         if (user.isPasswordValid()) {
-            errors.put("error", "Mot de passe invalide");
-            errors.put("message", "Le mot de passe ne peut pas être vide.");
+            errorMessage.put("error", "Mot de passe invalide");
+            errorMessage.put("message", "Le mot de passe ne peut pas être vide.");
+            return errorMessage;
         }
-        return errors;
+        return errorMessage;
     }
 
     public User getUserByEmailPassword(User user) {

@@ -4,6 +4,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -34,6 +35,16 @@ public class Livre {
         } else {
             return super.equals(obj);
         }
+    }
+
+    /**
+     * Retourne un code de hachage pour cet objet Livre.
+     *
+     * @return un code de hachage pour cet objet Livre.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(titre, auteur, parution);
     }
 
     /**

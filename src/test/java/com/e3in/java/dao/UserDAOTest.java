@@ -6,10 +6,12 @@ import com.e3in.java.utils.Constants;
 import javafx.scene.control.Alert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,7 +21,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class UserDAOTest {
+@ExtendWith(MockitoExtension.class)
+class UserDAOTest {
 
     @Mock
     private DAOManager daoManager;
@@ -29,14 +32,14 @@ public class UserDAOTest {
     private User user;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         userDAO = new UserDAO(daoManager);
         user = new User("test@example.com", "password123", false);
     }
 
     @Test
-    public void testGetUserByEmailPassword_valid() {
+    void testGetUserByEmailPassword_valid() {
         HashMap<String, String> resultQuery = getResultQuerySelectCall();
 
         when(daoManager.select(eq(Constants.USER), anyList(), any(HashMap.class))).thenReturn(resultQuery);
@@ -50,7 +53,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testGetUserByEmailPassword_invalidPassword() {
+    void testGetUserByEmailPassword_invalidPassword() {
         User userTemp = new User("test@example.com", "wrongpassword");
         HashMap<String, String> resultQuery = getResultQuerySelectCall();
 
@@ -64,7 +67,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testGetUserByEmailPassword_invalidUser() {
+    void testGetUserByEmailPassword_invalidUser() {
         when(daoManager.select(eq(Constants.USER), anyList(), any(HashMap.class))).thenReturn(new HashMap<>());
 
         try (MockedStatic<Common> mockedCommon = mockStatic(Common.class)) {
@@ -75,7 +78,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testCreateUser_success() {
+    void testCreateUser_success() {
         LinkedHashMap<String, String> userData = new LinkedHashMap<>();
         userData.put(Constants.EMAIL, user.getEmail());
         userData.put(Constants.PASSWORD, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
@@ -94,7 +97,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testCreateUser_failure() {
+    void testCreateUser_failure() {
         when(daoManager.insert(eq(Constants.USER), any(LinkedHashMap.class))).thenReturn(new HashMap<>());
 
         try (MockedStatic<Common> mockedCommon = mockStatic(Common.class)) {
@@ -105,7 +108,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testUpdatePassword_success() {
+    void testUpdatePassword_success() {
         user.setPassword("newpassword123");
         HashMap<String, String> resultQuery = new HashMap<>();
         resultQuery.put(Constants.STATUS, Constants.SUCCESS);
@@ -117,7 +120,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testUpdatePassword_failure() {
+    void testUpdatePassword_failure() {
         user.setPassword("newpassword123");
 
         when(daoManager.update(eq(Constants.USER), any(HashMap.class), any(HashMap.class))).thenReturn(new HashMap<>());

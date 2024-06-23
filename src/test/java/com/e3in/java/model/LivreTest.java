@@ -24,8 +24,8 @@ class LivreTest {
 
     @Test
     void testHashCode() {
-        Livre livre = createLivre(1);
-        assertNotEquals(0, livre.hashCode());
+        Livre livre1 = createLivre(1);
+        assertNotEquals(0, livre1.hashCode());
     }
 
     @Test

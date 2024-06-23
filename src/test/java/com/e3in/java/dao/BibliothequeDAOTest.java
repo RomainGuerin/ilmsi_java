@@ -6,8 +6,10 @@ import com.e3in.java.model.Livre;
 import com.e3in.java.utils.Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +19,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class BibliothequeDAOTest {
+@ExtendWith(MockitoExtension.class)
+class BibliothequeDAOTest {
 
     @Mock
     private DAOManager daoManager;
@@ -34,7 +37,7 @@ public class BibliothequeDAOTest {
     }
 
     @Test
-    public void testGetAllBibliotheque() {
+    void testGetAllBibliotheque() {
         List<String> columnNames = List.of(
                 Constants.TITRE,
                 Constants.AUTEUR_NOM,
@@ -59,7 +62,7 @@ public class BibliothequeDAOTest {
     }
 
     @Test
-    public void testAddLivreBibliotheque() {
+    void testAddLivreBibliotheque() {
         HashMap<String, String> resultQuery = new HashMap<>();
         resultQuery.put(Constants.STATUS, Constants.SUCCESS);
 
@@ -70,7 +73,7 @@ public class BibliothequeDAOTest {
     }
 
     @Test
-    public void testUpdateLivreBibliotheque() {
+    void testUpdateLivreBibliotheque() {
         HashMap<String, String> resultQuery = new HashMap<>();
         resultQuery.put(Constants.STATUS, Constants.SUCCESS);
 
@@ -81,7 +84,7 @@ public class BibliothequeDAOTest {
     }
 
     @Test
-    public void testRemoveLivreBibliotheque() {
+    void testRemoveLivreBibliotheque() {
         HashMap<String, String> resultQuery = new HashMap<>();
         resultQuery.put(Constants.STATUS, Constants.SUCCESS);
 
@@ -107,7 +110,7 @@ public class BibliothequeDAOTest {
         return resultQuery;
     }
 
-    Livre getLivre() {
+    private Livre getLivre() {
         Livre livre = new Livre();
         livre.setTitre("Test Livre");
         livre.setAuteur(new Auteur("Doe", "John"));

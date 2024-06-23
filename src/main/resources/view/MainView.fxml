@@ -9,11 +9,11 @@
             <Menu text="Fichier">
                 <Menu fx:id="xmlMenu" text="XML">
                     <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
-                    <MenuItem onAction="#handleOnlineSync" text="Synchro XML vers BDD"/>
+                    <MenuItem fx:id="XMLOnlineSync" visible="false" onAction="#handleOnlineSync" text="Synchro XML vers BDD"/>
                 </Menu>
                 <Menu fx:id="bddMenu" text="BDD">
                     <MenuItem fx:id="connectionBDD" onAction="#handleConnectionBDD" text="Connexion"/>
-                    <MenuItem onAction="#handleLocalSync" text="Synchro BDD vers XML"/>
+                    <MenuItem fx:id="BDDLocalSync" visible="false" onAction="#handleLocalSync" text="Synchro BDD vers XML"/>
                 </Menu>
                 <MenuItem onAction="#handleExport" text="Exporter le tableau"/>
                 <MenuItem fx:id="unloadFile" onAction="#handleUnloadFile" text="Décharger le tableau"/>

@@ -15,12 +15,22 @@ public class BibliothequeController {
         return bibliothequeDAO.getAllBibliotheque();
     }
 
-    public void updateBibliotheque(Bibliotheque bibliotheque) {
+    public void updateBibliotheque(Bibliotheque bibliotheque, boolean isOnline) {
         Bibliotheque library = getAllBibliotheque();
 
         for(Livre livre : bibliotheque.getLivres()) {
             if (!library.contain(livre)) {
                 bibliothequeDAO.addLivreBibliotheque(livre);
+            } else {
+                bibliothequeDAO.updateLivreBibliotheque(livre);
+            }
+        }
+
+        if (isOnline) {
+            for (Livre livre : library.getLivres()) {
+                if (!bibliotheque.contain(livre)) {
+                    bibliothequeDAO.removeLivreBibliotheque(livre);
+                }
             }
         }
     }

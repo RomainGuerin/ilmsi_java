@@ -57,6 +57,10 @@ public class MainViewController implements UserAwareController {
     private Menu editionMenu;
     @FXML
     private MenuItem unloadFile;
+    @FXML
+    private MenuItem XMLOnlineSync;
+    @FXML
+    private MenuItem BDDLocalSync;
 
     @FXML
     private TableView<Livre> tableView;
@@ -240,6 +244,7 @@ public class MainViewController implements UserAwareController {
             return;
         }
 
+        XMLOnlineSync.setVisible(true);
         this.xmlFilePath = currentXmlFilePath;
 
         updateXmlFilePath(currentXmlFilePath);
@@ -259,6 +264,7 @@ public class MainViewController implements UserAwareController {
     private void handleConnectionBDD() {
         handleUnloadFile();
         connectionBDD.setText("Rafraîchir");
+        BDDLocalSync.setVisible(true);
         isOnline = true;
         updateStatusBox();
 
@@ -293,10 +299,12 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleOnlineSync() {
         // de xml vers BDD
+        saveData(xmlFilePath);
         Bibliotheque xmlBiblio = bibliothequeController.getAllBibliotheque();
         AppConfig.getDAOManager().setOnline(true);
-        bibliothequeController.updateBibliotheque(xmlBiblio);
+        bibliothequeController.updateBibliotheque(xmlBiblio, AppConfig.getDAOManager().isOnline());
         AppConfig.getDAOManager().setOnline(false);
+        Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers la BDD", "La synchronisation vers la BDD s'est bien effectuée!");
     }
 
     @FXML
@@ -304,8 +312,9 @@ public class MainViewController implements UserAwareController {
         // de BDD vers xml
         Bibliotheque sqlBiblio = bibliothequeController.getAllBibliotheque();
         AppConfig.getDAOManager().setOnline(false);
-        bibliothequeController.updateBibliotheque(sqlBiblio);
+        bibliothequeController.updateBibliotheque(sqlBiblio, AppConfig.getDAOManager().isOnline());
         AppConfig.getDAOManager().setOnline(true);
+        Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers XML", "La synchronisation vers le fichier XML s'est bien effectuée!");
     }
 
     // Gère l'ajout ou la modification d'un livre.
@@ -342,6 +351,8 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleUnloadFile() {
         connectionBDD.setText("Connexion");
+        BDDLocalSync.setVisible(false);
+        XMLOnlineSync.setVisible(false);
 
         isOnline = false;
         updateStatusBox();
@@ -382,6 +393,7 @@ public class MainViewController implements UserAwareController {
             word.addBooks(this.tableView.getItems());
             word.addBorrowedBooks(this.tableView.getItems());
             word.saveDocument();
+            Common.showAlert(Alert.AlertType.INFORMATION, "Export Word", "L'export du tableau s'est bien effectué!");
         } catch (Exception e) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
             logger.severe("Erreur lors de l'exportation des données : " + e.getMessage());
@@ -522,7 +534,7 @@ public class MainViewController implements UserAwareController {
     // Méthode pour sauvegarder les données dans un fichier XML
     private void saveData(String filePath) {
         updateXmlFilePath(filePath);
-        bibliothequeController.updateBibliotheque(new Bibliotheque(tableView.getItems()));
+        bibliothequeController.updateBibliotheque(new Bibliotheque(tableView.getItems()), false);
     }
 
     // Méthode pour choisir l'emplacement de fichier

@@ -61,10 +61,14 @@ public class BibliothequeDAO {
             livre.setParution(Integer.parseInt(map.get(Constants.PARUTION)));
             livre.setColonne(Integer.parseInt(map.get(Constants.COLONNE)));
             livre.setRangee(Integer.parseInt(map.get(Constants.RANGEE)));
-            livre.setEmprunte(Boolean.parseBoolean(map.get(Constants.EMPRUNTE)));
+            livre.setEmprunte(parseEmprunte(map.get(Constants.EMPRUNTE)));
             bibliotheque.getLivres().add(livre);
         }
         return bibliotheque;
+    }
+
+    private static boolean parseEmprunte(String value) {
+        return "1".equals(value) || "true".equalsIgnoreCase(value);
     }
 
     private LinkedHashMap<String, String> getMapLivreComplete (Livre livre) {

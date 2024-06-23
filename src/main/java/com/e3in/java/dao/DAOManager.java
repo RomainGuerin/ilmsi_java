@@ -66,4 +66,8 @@ public class DAOManager implements DAO {
         this.isOnline = isOnline;
         this.actualDAO = this.isOnline ? this.sqliteDAO : this.xmlDAO;
     }
+
+    public boolean isOnline() {
+        return this.isOnline;
+    }
 }

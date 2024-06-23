@@ -58,9 +58,9 @@ public class MainViewController implements UserAwareController {
     @FXML
     private MenuItem unloadFile;
     @FXML
-    private MenuItem XMLOnlineSync;
+    private MenuItem XmlOnlineSync;
     @FXML
-    private MenuItem BDDLocalSync;
+    private MenuItem BddLocalSync;
 
     @FXML
     private TableView<Livre> tableView;
@@ -244,7 +244,7 @@ public class MainViewController implements UserAwareController {
             return;
         }
 
-        XMLOnlineSync.setVisible(true);
+        XmlOnlineSync.setVisible(true);
         this.xmlFilePath = currentXmlFilePath;
 
         updateXmlFilePath(currentXmlFilePath);
@@ -264,7 +264,7 @@ public class MainViewController implements UserAwareController {
     private void handleConnectionBDD() {
         handleUnloadFile();
         connectionBDD.setText("Rafraîchir");
-        BDDLocalSync.setVisible(true);
+        BddLocalSync.setVisible(true);
         isOnline = true;
         updateStatusBox();
 
@@ -351,8 +351,8 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleUnloadFile() {
         connectionBDD.setText("Connexion");
-        BDDLocalSync.setVisible(false);
-        XMLOnlineSync.setVisible(false);
+        BddLocalSync.setVisible(false);
+        XmlOnlineSync.setVisible(false);
 
         isOnline = false;
         updateStatusBox();
@@ -367,7 +367,11 @@ public class MainViewController implements UserAwareController {
     // Sauvegarde les données dans le fichier XML actuel.
     @FXML
     private void handleSave() {
-        saveData(xmlFilePath);
+        if (!xmlFilePath.isEmpty()) {
+            saveData(xmlFilePath);
+        } else {
+            handleSaveAs();
+        }
     }
 
     // Sauvegarde les données dans un nouveau fichier XML.

@@ -15,12 +15,12 @@ public class UserController {
 
     public static Map<String, String> checkValidity(User user) {
         Map<String, String> errorMessage = new HashMap<>();
-        if (user.isEmailValid()) {
+        if (user.isEmailInvalid()) {
             errorMessage.put("error", "Email invalide");
             errorMessage.put("message", "Insérez une adresse email valide.");
             return errorMessage;
         }
-        if (user.isPasswordValid()) {
+        if (user.isPasswordInvalid()) {
             errorMessage.put("error", "Mot de passe invalide");
             errorMessage.put("message", "Le mot de passe ne peut pas être vide.");
             return errorMessage;

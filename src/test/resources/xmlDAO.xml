@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- fichier livre.xml -->
+<bibliotheque>
+    <livre>
+        <titre>XSD pour les nuls</titre>
+        <auteurNom>Dupond</auteurNom>
+        <auteurPrenom>Jean</auteurPrenom>
+        <presentation>Ce livre est une introduction au schema XSD</presentation>
+        <jaquette>https://5livres.fr/wp-content/uploads/2019/07/Programmer-pour-les-Nuls.jpg</jaquette>
+        <parution>2000</parution>
+        <colonne>5</colonne>
+        <rangee>2</rangee>
+        <emprunte>true</emprunte>
+    </livre>
+</bibliotheque>

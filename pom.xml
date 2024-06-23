@@ -15,8 +15,16 @@
     <sonar.projectKey>RomainGuerin_ilmsi_java</sonar.projectKey>
     <sonar.organization>romainguerin</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.exclusions>src/main/java/**/controller/**</sonar.exclusions>
-    <sonar.coverage.exclusions>src/main/java/**/controller/**</sonar.coverage.exclusions>
+    <sonar.coverage.exclusions>
+      src/main/java/**/controller/**,
+      **/Main**,
+      **/AppConfig**,
+      **/utils/Common**,
+      **/dao/BaseDAO**,
+      **/dao/DAO**,
+      **/dao/DAOManager**,
+      **/dao/SQLiteDAO**
+    </sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
@@ -149,6 +157,18 @@
             <goals>
               <goal>report</goal>
             </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/controller/**</exclude>
+                <exclude>**/Main**</exclude>
+                <exclude>**/AppConfig**</exclude>
+                <exclude>**/utils/Common**</exclude>
+                <exclude>**/dao/BaseDAO**</exclude>
+                <exclude>**/dao/DAO**</exclude>
+                <exclude>**/dao/DAOManager**</exclude>
+                <exclude>**/dao/SQLiteDAO**</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>

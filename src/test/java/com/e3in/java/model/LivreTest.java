@@ -37,6 +37,8 @@ class LivreTest {
 
     @Test
     void testGetSetAuteur() {
+        livre.setAuteur(" ");
+        livre.setAuteur("Nom");
         livre.setAuteur("Nom Prenom");
         Auteur retrievedAuteur = livre.getAuteur();
         assertEquals("Nom Prenom", retrievedAuteur.toString());
@@ -82,6 +84,13 @@ class LivreTest {
         livre.setEmprunte(false);
         boolean emprunte = livre.getEmprunte();
         assertFalse(emprunte);
+    }
+
+    @Test
+    void testGetStringEmprunte() {
+        assertEquals("Disponible", livre.getEmprunteString());
+        livre.setEmprunte(true);
+        assertEquals("Emprunté", livre.getEmprunteString());
     }
 
     @Test

@@ -36,7 +36,7 @@ class SQLiteConnectionTest {
     @Order(3)
     void testClose() throws SQLException {
         Connection connection = sqliteConnection.getConnection();
-        SQLiteConnection.close();
+        sqliteConnection.finalize();
         assertFalse(connection.isValid(0));
     }
 }

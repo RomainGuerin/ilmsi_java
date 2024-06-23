@@ -19,7 +19,7 @@ public class Auteur {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Auteur auteur) {
-            return (auteur.getNom().equals(this.nom) && auteur.getPrenom().equals(this.prenom));
+            return (auteur.getNom().equals(this.getNom()) && auteur.getPrenom().equals(this.getPrenom()));
         } else {
             return super.equals(obj);
         }

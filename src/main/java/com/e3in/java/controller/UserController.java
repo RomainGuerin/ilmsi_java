@@ -2,8 +2,8 @@ package com.e3in.java.controller;
 
 import com.e3in.java.dao.UserDAO;
 import com.e3in.java.model.User;
-import com.e3in.java.utils.Common;
-import javafx.scene.control.Alert;
+
+import java.util.HashMap;
 
 public class UserController {
     private final UserDAO userDAO;
@@ -12,17 +12,17 @@ public class UserController {
         this.userDAO = userDAO;
     }
 
-    // TODO : Dans le controller il manipule la view ??, le controller peux évaluer la cohérence des champs oui, mais pas dans la class user (Doute voir avec prof)
-    public static boolean checkValidity(User user) {
+    public static HashMap<String, String> checkValidity(User user) {
+        HashMap<String, String> errors = new HashMap<>();
         if (user.isEmailValid()) {
-            Common.showAlert(Alert.AlertType.ERROR, "Email invalide", "Insérez une adresse email valide.");
-            return false;
+            errors.put("error", "Email invalide");
+            errors.put("message", "Insérez une adresse email valide.");
         }
         if (user.isPasswordValid()) {
-            Common.showAlert(Alert.AlertType.ERROR, "Mot de passe invalide", "Le mot de passe ne peut pas être vide.");
-            return false;
+            errors.put("error", "Mot de passe invalide");
+            errors.put("message", "Le mot de passe ne peut pas être vide.");
         }
-        return true;
+        return errors;
     }
 
     public User getUserByEmailPassword(User user) {

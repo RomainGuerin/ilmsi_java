@@ -10,6 +10,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class UpdatePasswordController implements UserAwareController {
@@ -61,7 +62,9 @@ public class UpdatePasswordController implements UserAwareController {
 
         User oldUser = new User(email, oldPassword, false);
         User newUser = new User(email, newPassword, false);
-        if (UserController.checkValidity(newUser)) {
+        HashMap<String, String> userValidation = UserController.checkValidity(newUser);
+        if (userValidation.isEmpty()) {
+            AppConfig.getDAOManager().setOnline(true); // Nécessaire pour utiliser UserDAO
             User userConnected = userController.getUserByEmailPassword(oldUser);
             if (userConnected != null) {
                 if(userController.updatePassword(newUser)){
@@ -72,11 +75,14 @@ public class UpdatePasswordController implements UserAwareController {
             } else {
                 logger.warning("Les identifiants ne correspondent pas. Veuillez réessayer.");
             }
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, userValidation.get("error"), userValidation.get("message"));
         }
         this.resetFields();
     }
 
     public void resetFields() {
+        AppConfig.getDAOManager().setOnline(false);
         textFieldLogin.setText("");
         oldPasswordField.setText("");
         newPasswordField.setText("");

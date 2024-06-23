@@ -43,7 +43,6 @@ public class Common {
     }
 
     public static void switchScene(String page, Stage stage, User user) {
-        logger.info("Redirection vers la page " + page);
         try {
             FXMLLoader loader = new FXMLLoader(Common.class.getResource("/view/"+page+".fxml"));
             Parent registerView = loader.load();

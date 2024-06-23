@@ -30,7 +30,7 @@ public class Livre {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Livre livre) {
-            return (livre.auteur.equals(this.auteur) && livre.auteur.equals(this.auteur) && livre.auteur.equals(this.auteur));
+            return (livre.getTitre().equals(this.getTitre()) && livre.auteur.equals(this.getAuteur()) && this.getParution() == livre.getParution());
         } else {
             return super.equals(obj);
         }

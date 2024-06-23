@@ -248,8 +248,8 @@ public class MainViewController implements UserAwareController {
 
     private void updateXmlFilePath(String xmlFilePath) {
         DAO xmlDAO = AppConfig.getDAOManager().getXmlDAO();
-        if (xmlDAO instanceof XmlDAO) {
-            ((XmlDAO) xmlDAO).setXmlFilePath(xmlFilePath);
+        if (xmlDAO instanceof XmlDAO xmlDAO1) {
+            xmlDAO1.setXmlFilePath(xmlFilePath);
         } else {
             Logger.getLogger(MainViewController.class.getName()).severe("Erreur : DAO obtenu n'est pas une instance de XmlDAO.");
         }
@@ -377,13 +377,8 @@ public class MainViewController implements UserAwareController {
             if (path == null) {
                 throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
             }
-
-            // TODO : Déplacer le chargement du word controller je pense qu'on devrait avoir uniquement le word.addBooks() et le word.addBorrowed books
+            // Déplacement du chargement du word controller
             WordController word = new WordController(path);
-            word.addHeader();
-            word.addFooter();
-            word.addCoverPage();
-            word.addTableOfContent();
             word.addBooks(this.tableView.getItems());
             word.addBorrowedBooks(this.tableView.getItems());
             word.saveDocument();
@@ -434,7 +429,7 @@ public class MainViewController implements UserAwareController {
                 String auteur = textFieldAuteur.getText().strip();
                 int parution = Integer.parseInt(textFieldParution.getText().strip());
 
-                if (!estLivreUnique(titre, auteur, parution, tableView.getItems())) {
+                if (!isBookUnique(titre, auteur, parution, tableView.getItems())) {
                     Common.showAlert(Alert.AlertType.ERROR, "Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                     return;
                 }
@@ -477,7 +472,7 @@ public class MainViewController implements UserAwareController {
         try {
             Livre livre = getUserBook();
 
-            if (!estLivreUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
+            if (!isBookUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
                     tableView.getItems())) {
                 Common.showAlert(Alert.AlertType.ERROR, "Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                 return;
@@ -511,8 +506,7 @@ public class MainViewController implements UserAwareController {
     }
 
     // Méthode pour vérifier si un livre est unique
-    // TODO : Nom de la method en français
-    private boolean estLivreUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
+    private boolean isBookUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
         for (Livre livre : listeLivres) {
             if(livre == this.selectedBook) {
                 continue;

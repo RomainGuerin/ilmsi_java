@@ -9,6 +9,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class ConnectionViewController {
@@ -28,7 +29,8 @@ public class ConnectionViewController {
         String password = passwordField.getText();
 
         User user = new User(email, password);
-        if (UserController.checkValidity(user)) {
+        HashMap<String, String> userValidation = UserController.checkValidity(user);
+        if (userValidation.isEmpty()) {
             User userConnected = userController.getUserByEmailPassword(user);
             if (userConnected != null) {
                 Common.showAlert(Alert.AlertType.INFORMATION, "Connexion réussie", "Bienvenue " + userConnected.getEmail());
@@ -36,6 +38,8 @@ public class ConnectionViewController {
             } else {
                 logger.warning("Échec de la connexion. Veuillez vérifier vos identifiants.");
             }
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, userValidation.get("error"), userValidation.get("message"));
         }
         this.resetFields();
     }

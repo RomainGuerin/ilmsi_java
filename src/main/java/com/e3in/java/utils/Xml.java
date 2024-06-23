@@ -5,6 +5,8 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -34,13 +36,24 @@ public class Xml{
     public static boolean validateXml(String xmlFilePath) {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+            // Configuration sécurisée de la factory
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+            // Chargement du schéma
             Schema schema = factory.newSchema(new File(Xml.xsdFilePath));
             Validator validator = schema.newValidator();
 
+            // Validation du fichier XML
             Source source = new StreamSource(new File(xmlFilePath));
             validator.validate(source);
 
             return true;
+        } catch (SAXNotRecognizedException | SAXNotSupportedException | IllegalArgumentException e) {
+            logger.severe("Erreur de configuration de la SchemaFactory : " + e.getMessage());
+            return false;
         } catch (SAXException | IOException e) {
             logger.severe("Erreur de validation XML : " + e.getMessage());
             return false;

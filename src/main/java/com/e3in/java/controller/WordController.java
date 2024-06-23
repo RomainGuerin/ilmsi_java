@@ -29,7 +29,15 @@ public class WordController {
     public WordController(String path) {
         this.document = new XWPFDocument();
         this.path = path;
-        // TODO : Faire l'initialisation du word (add header, footer, table of content, title, etc)
+        initializeDocument();
+    }
+
+    // Initialisation du document Word
+    private void initializeDocument() {
+        addHeader();
+        addFooter();
+        addCoverPage();
+        addTableOfContent();
     }
 
     public void addHeader() {
@@ -133,7 +141,7 @@ public class WordController {
             } catch (Exception e) {
                 addParagraph("Le lien de la jaquette : " + book.getJaquette());
             }
-            addParagraph("Le livre a été écrit par  " + book.getAuteur()+".");
+            addParagraph("Le livre a été écrit par " + book.getAuteur()+".");
             addParagraph(book.getPresentation());
             addParagraph("Le livre est paru le " + book.getParution()+".");
             addParagraph("Le livre est placé dans la colonne numéro "+book.getColonne()+" de la rangée "+book.getRangee()+".");
@@ -212,7 +220,6 @@ public class WordController {
             document.close();
         } catch (IOException e) {
             logger.severe("Erreur lors de la sauvegarde du document Word. " + e.getMessage());
-            throw new RuntimeException(e);
         }
     }
 

@@ -91,18 +91,20 @@ class LivreTest {
         String livreString = livre1.toString();
         String livretoXml = livre1.toXml();
 
-        assertEquals("<Livre>\n" +
-                "<Titre>Titre_0</Titre>\n" +
-                "<Auteur>\n" +
-                "<nom>Nom</nom>\n" +
-                "<prenom>Prenom</prenom>\n" +
-                "</Auteur>\n" +
-                "<Presentation>Presentation</Presentation>\n" +
-                "<Jaquette>Jaquette</Jaquette>\n" +
-                "<Parution>2000</Parution>\n" +
-                "<Colonne>1</Colonne>\n" +
-                "<Emprunte>true</Emprunte>\n" +
-                "</Livre>\n", livreString);
+        assertEquals("""
+            <Livre>
+            <Titre>Titre_0</Titre>
+            <Auteur>
+            <nom>Nom</nom>
+            <prenom>Prenom</prenom>
+            </Auteur>
+            <Presentation>Presentation</Presentation>
+            <Jaquette>Jaquette</Jaquette>
+            <Parution>2000</Parution>
+            <Colonne>1</Colonne>
+            <Emprunte>true</Emprunte>
+            </Livre>
+            """, livreString);
         assertEquals(livreString, livretoXml);
     }
 

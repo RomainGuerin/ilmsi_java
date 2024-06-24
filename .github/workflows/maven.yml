@@ -32,6 +32,9 @@ jobs:
       - name: Test with Maven
         run: mvn test
 
+      - name: Test JACOCO
+        run: mvn clean verify
+
       - name: Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

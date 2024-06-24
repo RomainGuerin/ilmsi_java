@@ -25,7 +25,7 @@
       **/dao/DAOManager**,
       **/dao/SQLiteDAO**
     </sonar.coverage.exclusions>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencies>
@@ -153,8 +153,7 @@
             </goals>
           </execution>
           <execution>
-            <id>default-report</id>
-            <phase>prepare-package</phase>
+            <id>report</id>
             <goals>
               <goal>report</goal>
             </goals>

@@ -15,6 +15,9 @@
     <sonar.projectKey>RomainGuerin_ilmsi_java</sonar.projectKey>
     <sonar.organization>romainguerin</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.coverage.exclusions>
       src/main/java/**/controller/**,
       **/Main**,
@@ -25,7 +28,6 @@
       **/dao/DAOManager**,
       **/dao/SQLiteDAO**
     </sonar.coverage.exclusions>
-    <sonar.coverage.jacoco.xmlReportPaths>/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencies>
@@ -154,6 +156,7 @@
           </execution>
           <execution>
             <id>report</id>
+            <phase>verify</phase>
             <goals>
               <goal>report</goal>
             </goals>

@@ -169,6 +169,11 @@
                 <exclude>**/dao/DAOManager**</exclude>
                 <exclude>**/dao/SQLiteDAO**</exclude>
               </excludes>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+              <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+              <includes>
+                <include>**/*</include>
+              </includes>
             </configuration>
           </execution>
         </executions>

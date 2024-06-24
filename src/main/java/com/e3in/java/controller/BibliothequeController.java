@@ -15,24 +15,33 @@ public class BibliothequeController {
         return bibliothequeDAO.getAllBibliotheque();
     }
 
-    public void updateBibliotheque(Bibliotheque bibliotheque, boolean isOnline) {
+    public boolean updateBibliotheque(Bibliotheque bibliotheque, boolean removeLivreAvailable) {
         Bibliotheque library = getAllBibliotheque();
+
+        boolean result;
 
         for(Livre livre : bibliotheque.getLivres()) {
             if (!library.contain(livre)) {
-                bibliothequeDAO.addLivreBibliotheque(livre);
+                result = bibliothequeDAO.addLivreBibliotheque(livre);
             } else {
-                bibliothequeDAO.updateLivreBibliotheque(livre);
+                result = bibliothequeDAO.updateLivreBibliotheque(livre);
+            }
+            if (!result) {
+                return false;
             }
         }
 
-        if (isOnline) {
+        if (removeLivreAvailable) {
             for (Livre livre : library.getLivres()) {
                 if (!bibliotheque.contain(livre)) {
-                    bibliothequeDAO.removeLivreBibliotheque(livre);
+                    result = bibliothequeDAO.removeLivreBibliotheque(livre);
+                    if (!result) {
+                        return false;
+                    }
                 }
             }
         }
+        return true;
     }
 
     public boolean addLivreBibliotheque(Livre livre) {

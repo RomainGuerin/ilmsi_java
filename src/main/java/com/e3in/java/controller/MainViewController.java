@@ -302,9 +302,13 @@ public class MainViewController implements UserAwareController {
         saveData(xmlFilePath);
         Bibliotheque xmlBiblio = bibliothequeController.getAllBibliotheque();
         AppConfig.getDAOManager().setOnline(true);
-        bibliothequeController.updateBibliotheque(xmlBiblio, AppConfig.getDAOManager().isOnline());
+        boolean isUpdated = bibliothequeController.updateBibliotheque(xmlBiblio, false);
         AppConfig.getDAOManager().setOnline(false);
-        Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers la BDD", "La synchronisation vers la BDD s'est bien effectuée!");
+        if (isUpdated) {
+            Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers la BDD", "La synchronisation vers la BDD s'est bien effectuée!");
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur - Synchronisation vers la BDD", "Une erreur est survenu lors de la synchronisation vers la BDD.");
+        }
     }
 
     @FXML
@@ -312,9 +316,13 @@ public class MainViewController implements UserAwareController {
         // de BDD vers xml
         Bibliotheque sqlBiblio = bibliothequeController.getAllBibliotheque();
         AppConfig.getDAOManager().setOnline(false);
-        bibliothequeController.updateBibliotheque(sqlBiblio, AppConfig.getDAOManager().isOnline());
+        boolean isUpdated = bibliothequeController.updateBibliotheque(sqlBiblio, true);
         AppConfig.getDAOManager().setOnline(true);
-        Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers XML", "La synchronisation vers le fichier XML s'est bien effectuée!");
+        if (isUpdated) {
+            Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers XML", "La synchronisation vers le fichier XML s'est bien effectuée!");
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur - Synchronisation vers XML", "Une erreur est survenu lors de la synchronisation vers le fichier XML.");
+        }
     }
 
     // Gère l'ajout ou la modification d'un livre.
@@ -538,7 +546,7 @@ public class MainViewController implements UserAwareController {
     // Méthode pour sauvegarder les données dans un fichier XML
     private void saveData(String filePath) {
         updateXmlFilePath(filePath);
-        bibliothequeController.updateBibliotheque(new Bibliotheque(tableView.getItems()), false);
+        bibliothequeController.updateBibliotheque(new Bibliotheque(tableView.getItems()), true);
     }
 
     // Méthode pour choisir l'emplacement de fichier

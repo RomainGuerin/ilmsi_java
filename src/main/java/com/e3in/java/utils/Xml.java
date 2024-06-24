@@ -1,5 +1,6 @@
 package com.e3in.java.utils;
 
+import com.e3in.java.AppConfig;
 import com.e3in.java.model.Bibliotheque;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -16,15 +17,18 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.logging.Logger;
 
 /**
  * Classe utilitaire pour la manipulation d'XML.
  */
-public class Xml{
-    // Chemin vers le fichier XSD utilisé pour la validation XML
-    private static final String xsdFilePath = Objects.requireNonNull(Xml.class.getResource("/Biblio.xsd")).getPath();
+public class Xml {
+    private static final String XSD_NAME = "Biblio.xsd";
+    private static final String XSD_PATH = System.getProperty("user.home") + File.separator + XSD_NAME;
+
     static Logger logger = Logger.getLogger(Xml.class.getName());
 
     /**
@@ -43,7 +47,7 @@ public class Xml{
             factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
             // Chargement du schéma
-            Schema schema = factory.newSchema(new File(Xml.xsdFilePath));
+            Schema schema = factory.newSchema(getBiblioXsd());
             Validator validator = schema.newValidator();
 
             // Validation du fichier XML
@@ -58,6 +62,21 @@ public class Xml{
             logger.severe("Erreur de validation XML : " + e.getMessage());
             return false;
         }
+    }
+
+    private static File getBiblioXsd() {
+        File xsdFile = new File(XSD_PATH);
+        if (!xsdFile.exists()) {
+            try (InputStream xmlInput = AppConfig.class.getResourceAsStream("/" + XSD_NAME)) {
+                if (xmlInput == null) {
+                    throw new IllegalArgumentException("Fichier Biblio.xsd introuvable dans les ressources");
+                }
+                Files.copy(xmlInput, xsdFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException("Erreur lors de la lecture du fichier xmlDAO.xml", e);
+            }
+        }
+        return xsdFile;
     }
 
     /**

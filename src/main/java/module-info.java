@@ -1,5 +1,7 @@
 module com.e3in.java {
+    requires javafx.graphics;
     requires javafx.controls;
+    requires javafx.base;
     requires javafx.fxml;
     requires jakarta.xml.bind;
     requires jakarta.activation;

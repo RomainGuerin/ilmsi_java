@@ -20,16 +20,7 @@ public class BibliothequeController {
 
         boolean result;
 
-        for(Livre livre : bibliotheque.getLivres()) {
-            if (!library.contain(livre)) {
-                result = this.addLivreBibliotheque(livre);
-            } else {
-                result = this.updateLivreBibliotheque(livre);
-            }
-            if (!result) {
-                return false;
-            }
-        }
+        if (synchroBibliotheque(bibliotheque, library)) return false;
 
         if (removeLivreAvailable) {
             for (Livre livre : library.getLivres()) {
@@ -41,7 +32,23 @@ public class BibliothequeController {
                 }
             }
         }
+
         return true;
+    }
+
+    private boolean synchroBibliotheque(Bibliotheque bibliotheque, Bibliotheque library) {
+        boolean result;
+        for(Livre livre : bibliotheque.getLivres()) {
+            if (!library.contain(livre)) {
+                result = this.addLivreBibliotheque(livre);
+            } else {
+                result = this.updateLivreBibliotheque(livre);
+            }
+            if (!result) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean addLivreBibliotheque(Livre livre) {

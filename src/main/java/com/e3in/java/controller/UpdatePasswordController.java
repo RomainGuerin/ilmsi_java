@@ -13,6 +13,10 @@ import javafx.stage.Stage;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * Contrôleur pour la vue de mise à jour du mot de passe.
+ * Gère les interactions utilisateur et les opérations liées à la mise à jour du mot de passe.
+ */
 public class UpdatePasswordController implements UserAwareController {
 
     static Logger logger = Logger.getLogger(UpdatePasswordController.class.getName());
@@ -30,16 +34,30 @@ public class UpdatePasswordController implements UserAwareController {
 
     private User connectedUser;
 
+    /**
+     * Méthode de l'interface UserAwareController.
+     * Permet de définir l'utilisateur connecté à partir d'une autre vue.
+     *
+     * @param user L'utilisateur connecté.
+     */
     @Override
     public void setUser(User user) {
         connectedUser = user;
     }
 
+    /**
+     * Méthode appelée lors du clic sur le bouton pour retourner à la page d'accueil.
+     * Redirige l'utilisateur vers la vue principale (MainView).
+     */
     @FXML
     public void handleSwitchHome() {
         Common.switchScene("MainView", getStage(), connectedUser);
     }
 
+    /**
+     * Méthode appelée lors du clic sur le bouton pour mettre à jour le mot de passe.
+     * Valide les informations et met à jour le mot de passe de l'utilisateur connecté.
+     */
     public void handleUpdatePassword() {
         String email = textFieldLogin.getText();
         String oldPassword = oldPasswordField.getText();
@@ -81,6 +99,9 @@ public class UpdatePasswordController implements UserAwareController {
         this.resetFields();
     }
 
+    /**
+     * Réinitialise les champs de texte du formulaire de mise à jour du mot de passe.
+     */
     public void resetFields() {
         AppConfig.getDAOManager().setOnline(false);
         textFieldLogin.setText("");
@@ -89,19 +110,29 @@ public class UpdatePasswordController implements UserAwareController {
         newPasswordFieldEnsure.setText("");
     }
 
-    // Ferme l'application.
+    /**
+     * Méthode appelée lors du clic sur le bouton pour quitter l'application.
+     * Ferme l'application.
+     */
     @FXML
     private void handleQuitApp() {
         Common.closeApp(getStage());
     }
 
-    // Affiche une fenêtre d'informations sur l'application.
+    /**
+     * Méthode appelée lors du clic sur le bouton pour afficher les informations sur l'application.
+     * Affiche une fenêtre d'informations sur l'application.
+     */
     @FXML
     private void handleInfos() {
         Common.showAboutPopup();
     }
 
-    // Méthode pour récupérer la fenêtre principale
+    /**
+     * Méthode pour récupérer la fenêtre principale (Stage).
+     *
+     * @return La fenêtre principale de l'application.
+     */
     private Stage getStage() {
         return (Stage) textFieldLogin.getScene().getWindow();
     }

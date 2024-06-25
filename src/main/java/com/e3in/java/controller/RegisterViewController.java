@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 
+/**
+ * Contrôleur pour la vue d'inscription.
+ * Gère les interactions utilisateur et les opérations liées à l'inscription.
+ */
 public class RegisterViewController {
 
     static Logger logger = Logger.getLogger(RegisterViewController.class.getName());
@@ -32,11 +36,19 @@ public class RegisterViewController {
     @FXML
     private CheckBox userIsAdmin;
 
+    /**
+     * Méthode appelée lors du clic sur le lien de connexion.
+     * Redirige l'utilisateur vers la vue de connexion.
+     */
     @FXML
     public void handleConnection() {
         Common.switchScene("ConnectionView", getStage());
     }
 
+    /**
+     * Méthode appelée lors du clic sur le bouton d'inscription.
+     * Valide les informations d'inscription et crée un nouvel utilisateur si valide.
+     */
     public void handleRegister() {
         String email = textFieldLogin.getText();
         String password = passwordField.getText();
@@ -64,25 +76,38 @@ public class RegisterViewController {
         this.resetFields();
     }
 
+    /**
+     * Réinitialise les champs de texte du formulaire d'inscription.
+     */
     public void resetFields() {
         textFieldLogin.setText("");
         passwordField.setText("");
         passwordFieldEnsure.setText("");
     }
 
-    // Ferme l'application.
+    /**
+     * Méthode appelée lors du clic sur le bouton pour quitter l'application.
+     * Ferme l'application.
+     */
     @FXML
     private void handleQuitApp() {
         Common.closeApp(getStage());
     }
 
-    // Affiche une fenêtre d'informations sur l'application.
+    /**
+     * Méthode appelée lors du clic sur le bouton pour afficher les informations sur l'application.
+     * Affiche une fenêtre d'informations sur l'application.
+     */
     @FXML
     private void handleInfos() {
         Common.showAboutPopup();
     }
 
-    // Méthode pour récupérer la fenêtre principale
+    /**
+     * Méthode pour récupérer la fenêtre principale (Stage).
+     *
+     * @return La fenêtre principale de l'application.
+     */
     private Stage getStage() {
         return (Stage) textFieldLogin.getScene().getWindow();
     }

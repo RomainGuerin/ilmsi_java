@@ -25,10 +25,17 @@ public class Common {
 
     static Logger logger = Logger.getLogger(Common.class.getName());
 
+    /**
+     * Ferme l'application.
+     * @param stage La fenêtre (Stage) de l'application.
+     */
     public static void closeApp(Stage stage) {
         stage.close();
     }
 
+    /**
+     * Affiche une fenêtre contextuelle "À propos" avec des informations sur l'application.
+     */
     public static void showAboutPopup() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Common.class.getResource("/view/AboutView.fxml"));
@@ -43,10 +50,21 @@ public class Common {
         }
     }
 
+    /**
+     * Change la scène actuelle à une nouvelle scène spécifiée par la page.
+     * @param page La page vers laquelle rediriger.
+     * @param stage La fenêtre (Stage) de l'application.
+     */
     public static void switchScene(String page, Stage stage) {
         switchScene(page, stage, null);
     }
 
+    /**
+     * Change la scène actuelle à une nouvelle scène spécifiée par la page avec un utilisateur.
+     * @param page La page vers laquelle rediriger.
+     * @param stage La fenêtre (Stage) de l'application.
+     * @param user L'utilisateur actuel.
+     */
     public static void switchScene(String page, Stage stage, User user) {
         try {
             FXMLLoader loader = new FXMLLoader(Common.class.getResource("/view/"+page+".fxml"));
@@ -66,8 +84,8 @@ public class Common {
     }
 
     /**
-     * Méthode pour afficher une alerte d'erreur
-     *
+     * Affiche une alerte.
+     * @param alterType Le type d'alerte.
      * @param title Le titre de l'alerte.
      * @param content Le contenu de l'alerte.
      */
@@ -82,6 +100,10 @@ public class Common {
         alert.showAndWait();
     }
 
+    /**
+     * Retourne la date et l'heure actuelles sous forme de chaîne formatée.
+     * @return La date et l'heure actuelles au format "dd/MM/yyyy HH:mm".
+     */
     public static String getCurrentDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return formatter.format(LocalDateTime.now());

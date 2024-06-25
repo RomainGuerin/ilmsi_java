@@ -9,7 +9,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.apache.poi.ss.formula.functions.T;
 import org.sqlite.FileException;
 
 import java.io.File;

@@ -46,14 +46,20 @@ jobs:
       - name: Verify SBOM
         run: mvn verify
 
+      - name: test clean package
+        run: mvn clean package
+
       - name: Upload JAR artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: my-java-app
           path: target/*.jar
 
+      - name: test generate Javadoc
+        run: mvn javadoc:javadoc
+
       - name: Upload Javadoc artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: javadoc
           path: target/site/apidocs/**

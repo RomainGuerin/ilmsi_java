@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main , 'dev/**' ]
+    branches: [ main, 'dev/**' ]
 
 jobs:
   build:
@@ -56,3 +56,6 @@ jobs:
         with:
           name: Package
           path: staging
+
+      - name: Run JavaFX application
+        run: java --module-path /path/to/javafx-sdk-20.0.1/lib --add-modules javafx.controls,javafx.fxml -jar staging/Java-1.0.jar

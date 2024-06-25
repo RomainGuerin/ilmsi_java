@@ -44,8 +44,15 @@ jobs:
         run: mvn verify
 
       - run: mvn --batch-mode --update-snapshots verify
-      - run: mkdir staging && cp target/*.jar staging
-      - uses: actions/upload-artifact@v4
+
+      - name: Copy files to staging directory
+        run: |
+          mkdir staging
+          cp target/*.jar staging
+          cp -r target/site/apidocs staging
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: Package
           path: staging

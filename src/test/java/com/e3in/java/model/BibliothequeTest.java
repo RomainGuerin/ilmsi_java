@@ -34,6 +34,7 @@ class BibliothequeTest {
     @Order(3)
     void testBiblioContainLivre() {
         Livre livre = getLivre(1);
+        assertFalse(bibliotheque.contain(livre));
         bibliotheque.setLivres(List.of(livre));
         assertTrue(bibliotheque.contain(livre));
     }

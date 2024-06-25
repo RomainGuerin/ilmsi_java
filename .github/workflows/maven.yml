@@ -29,11 +29,8 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: List files in target directory
-        run: ls -R target
-
       - name: Test with Maven
-        run: mvn test -X
+        run: mvn test
 
       - name: Analyze with SonarCloud
         env:
@@ -46,20 +43,17 @@ jobs:
       - name: Verify SBOM
         run: mvn verify
 
-      - name: test clean package
-        run: mvn clean package
+      - name: Generate Javadoc
+        run: mvn javadoc:javadoc
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-java-app
+          name: java-jar
           path: target/*.jar
-
-      - name: test generate Javadoc
-        run: mvn javadoc:javadoc
 
       - name: Upload Javadoc artifact
         uses: actions/upload-artifact@v4
         with:
           name: javadoc
-          path: target/site/apidocs/**
+          path: target/site/apidocs

@@ -16,14 +16,17 @@
     <sonar.organization>romainguerin</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.coverage.exclusions>
-      src/main/java/**/controller/**,
-      **/Main**,
+      **/App**,
       **/AppConfig**,
+      **/Main**,
+      **/controller/**,
       **/utils/Common**,
+      **/utils/XmlFileManager**,
       **/dao/BaseDAO**,
       **/dao/DAO**,
       **/dao/DAOManager**,
-      **/dao/SQLiteDAO**
+      **/dao/SQLiteDAO**,
+      **/dao/XmlDAO**
     </sonar.coverage.exclusions>
   </properties>
 

@@ -11,9 +11,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * La classe SQLiteDAO étend BaseDAO et implémente les opérations de base de données 
+ * pour une base de données SQLite. 
+ */
 public class SQLiteDAO extends BaseDAO {
 
-    // Constructeur de SQLiteDAO
+    /**
+     * Constructeur de SQLiteDAO. 
+     * Initialise la connexion à la base de données et désactive l'auto-commit.
+     */
     public SQLiteDAO() {
         try {
             // Obtenez la connexion SQLite et désactivez l'auto-commit
@@ -24,7 +31,14 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
-    // Méthode pour exécuter une requête SQL et retourner un seul résultat
+    /**
+     * Exécute une requête SQL et retourne un seul résultat.
+     * @param query La requête SQL à exécuter.
+     * @param parameters Les paramètres de la requête.
+     * @param columnNames Les colonnes à sélectionner.
+     * @return Un HashMap contenant le résultat.
+     * @throws SQLException En cas d'erreur SQL.
+     */
     private HashMap<String, String> executeQuery(String query, List<Object> parameters, List<String> columnNames) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -47,7 +61,14 @@ public class SQLiteDAO extends BaseDAO {
         return result;
     }
 
-    // Méthode pour exécuter une requête SQL et retourner plusieurs résultats
+    /**
+     * Exécute une requête SQL et retourne plusieurs résultats.
+     * @param query La requête SQL à exécuter.
+     * @param parameters Les paramètres de la requête.
+     * @param columnNames Les colonnes à sélectionner.
+     * @return Une ArrayList contenant les résultats.
+     * @throws SQLException En cas d'erreur SQL.
+     */
     private ArrayList<HashMap<String, String>> executeMultiResultQuery(String query, List<Object> parameters, List<String> columnNames) throws SQLException {
         ArrayList<HashMap<String, String>> results = new ArrayList<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -72,7 +93,13 @@ public class SQLiteDAO extends BaseDAO {
         return results;
     }
 
-    // Méthode pour exécuter une requête de mise à jour (INSERT, UPDATE, DELETE)
+    /**
+     * Exécute une requête de mise à jour (INSERT, UPDATE, DELETE).
+     * @param query La requête SQL à exécuter.
+     * @param parameters Les paramètres de la requête.
+     * @return Un HashMap contenant le statut de l'exécution.
+     * @throws SQLException En cas d'erreur SQL.
+     */
     private HashMap<String, String> executeUpdate(String query, List<Object> parameters) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -94,7 +121,12 @@ public class SQLiteDAO extends BaseDAO {
         return result;
     }
 
-    // Méthode pour obtenir le nombre de lignes affectées par une mise à jour
+    /**
+     * Méthode pour obtenir le nombre de lignes affectées par une mise à jour.
+     * @param query La requête SQL.
+     * @param pstmt Le PreparedStatement à exécuter.
+     * @return Le nombre de lignes affectées.
+     */
     private static int getAffectedRows(String query, PreparedStatement pstmt) {
         int affectedRows = 0;
         try {
@@ -105,7 +137,13 @@ public class SQLiteDAO extends BaseDAO {
         return affectedRows;
     }
 
-    // Méthode pour construire une requête SELECT
+    /**
+     * Méthode pour construire une requête SELECT.
+     * @param tableName Le nom de la table.
+     * @param columnNames Les colonnes à sélectionner.
+     * @param whereClause Les clauses WHERE.
+     * @return La requête SQL construite.
+     */
     private String buildSelectQuery(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         StringBuilder query = new StringBuilder("SELECT");
         query.append(" ").append(String.join(", ", columnNames));
@@ -117,7 +155,13 @@ public class SQLiteDAO extends BaseDAO {
         return query.toString();
     }
 
-    // Méthode pour sélectionner un enregistrement dans la base de données
+    /**
+     * Méthode pour sélectionner un enregistrement dans la base de données.
+     * @param tableName Le nom de la table.
+     * @param columnNames Les colonnes à sélectionner.
+     * @param whereClause Les clauses WHERE.
+     * @return Un HashMap contenant le résultat.
+     */
     @Override
     public HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         String query = buildSelectQuery(tableName, columnNames, whereClause);
@@ -131,7 +175,13 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
-    // Méthode pour sélectionner tous les enregistrements correspondant aux critères dans la base de données
+    /**
+     * Méthode pour sélectionner tous les enregistrements correspondant aux critères dans la base de données.
+     * @param tableName Le nom de la table.
+     * @param columnNames Les colonnes à sélectionner.
+     * @param whereClause Les clauses WHERE.
+     * @return Une ArrayList contenant les résultats.
+     */
     @Override
     public ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         String query = buildSelectQuery(tableName, columnNames, whereClause);
@@ -145,7 +195,12 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
-    // Méthode pour insérer un enregistrement dans la base de données
+    /**
+     * Méthode pour insérer un enregistrement dans la base de données.
+     * @param tableName Le nom de la table.
+     * @param columnAndValue Les colonnes et leurs valeurs.
+     * @return Un HashMap contenant le statut de l'insertion.
+     */
     @Override
     public HashMap<String, String> insert(String tableName, LinkedHashMap<String, String> columnAndValue) {
         StringBuilder query = new StringBuilder("INSERT INTO ");
@@ -163,7 +218,13 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
-    // Méthode pour mettre à jour un enregistrement dans la base de données
+    /**
+     * Méthode pour mettre à jour un enregistrement dans la base de données.
+     * @param tableName Le nom de la table.
+     * @param columnAndValue Les colonnes et leurs valeurs à mettre à jour.
+     * @param whereClause Les clauses WHERE.
+     * @return Un HashMap contenant le statut de la mise à jour.
+     */
     @Override
     public HashMap<String, String> update(String tableName, HashMap<String, String> columnAndValue, HashMap<String, String> whereClause) {
         StringBuilder query = new StringBuilder("UPDATE ");
@@ -182,7 +243,12 @@ public class SQLiteDAO extends BaseDAO {
         }
     }
 
-    // Méthode pour supprimer un enregistrement dans la base de données
+    /**
+     * Méthode pour supprimer un enregistrement dans la base de données.
+     * @param tableName Le nom de la table.
+     * @param whereClause Les clauses WHERE.
+     * @return Un HashMap contenant le statut de la suppression.
+     */
     @Override
     public HashMap<String, String> delete(String tableName, HashMap<String, String> whereClause) {
         StringBuilder query = new StringBuilder("DELETE FROM ");

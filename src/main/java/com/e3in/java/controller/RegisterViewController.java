@@ -67,6 +67,8 @@ public class RegisterViewController {
             } else {
                 System.out.println("Échec d'inscription. Veuillez vérifier les informations.");
             }
+        } else {
+            System.out.println("Informations invalides. Veuillez vérifier les informations.");
         }
         // Réinitialise les champs de texte après tentative d'inscription
         this.resetFields();
@@ -79,6 +81,7 @@ public class RegisterViewController {
         textFieldLogin.setText("");
         passwordField.setText("");
         passwordFieldEnsure.setText("");
+        userIsAdmin.setSelected(false);
     }
 
     /**

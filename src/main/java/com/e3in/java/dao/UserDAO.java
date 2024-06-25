@@ -11,16 +11,26 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * La classe UserDAO gère les opérations CRUD pour les utilisateurs.
+ */
 public class UserDAO {
     // DAOManager pour la gestion des interactions avec la base de données
     private final DAOManager daoManager;
 
-    // Constructeur pour initialiser le DAOManager
+    /**
+     * Constructeur pour initialiser le DAOManager.
+     * @param daoManager L'instance de DAOManager à utiliser.
+     */
     public UserDAO(DAOManager daoManager) {
         this.daoManager = daoManager;
     }
 
-    // Méthode pour obtenir un utilisateur par email et mot de passe
+    /**
+     * Méthode pour obtenir un utilisateur par email et mot de passe.
+     * @param user L'objet User contenant l'email et le mot de passe.
+     * @return Un objet User si les identifiants sont valides, sinon null.
+     */
     public User getUserByEmailPassword(User user) {
         // Création d'une clause WHERE pour la requête SQL
         HashMap<String, String> whereClause = new HashMap<>();
@@ -56,7 +66,11 @@ public class UserDAO {
         return null;
     }
 
-    // Méthode pour créer un nouvel utilisateur
+    /**
+     * Méthode pour créer un nouvel utilisateur.
+     * @param user L'objet User contenant les informations de l'utilisateur à créer.
+     * @return true si l'utilisateur a été créé avec succès, sinon false.
+     */
     public boolean createUser(User user) {
         // Préparation des données utilisateur pour l'insertion
         LinkedHashMap<String, String> userData = new LinkedHashMap<>();
@@ -79,7 +93,11 @@ public class UserDAO {
         return false;
     }
 
-    // Méthode pour mettre à jour le mot de passe de l'utilisateur
+    /**
+     * Méthode pour mettre à jour le mot de passe de l'utilisateur.
+     * @param user L'objet User contenant l'email et le nouveau mot de passe.
+     * @return true si la mise à jour a réussi, sinon false.
+     */
     public boolean updatePassword(User user) {
         // Préparation des données pour la mise à jour
         HashMap<String, String> userData = new HashMap<>();
@@ -90,7 +108,7 @@ public class UserDAO {
         whereClause.put(Constants.EMAIL, user.getEmail());
 
         // Exécution de la requête UPDATE
-        HashMap<String, String> resultQuery =  daoManager.update(Constants.USER, userData, whereClause);
+        HashMap<String, String> resultQuery = daoManager.update(Constants.USER, userData, whereClause);
 
         // Retourne vrai si la mise à jour a réussi, faux sinon
         return !resultQuery.isEmpty();

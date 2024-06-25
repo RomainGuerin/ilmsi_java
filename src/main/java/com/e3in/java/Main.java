@@ -37,8 +37,7 @@ public class Main extends Application {
         primaryStage.setTitle("Java FX Bibliothèque");
         primaryStage.getIcons().add(icon);
         primaryStage.setScene(scene);
-        System.out.println("hello");
-        
+
         // Affichage de la scène principale
         primaryStage.show();
     }

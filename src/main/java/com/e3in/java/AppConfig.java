@@ -1,6 +1,7 @@
 package com.e3in.java;
 
 import com.e3in.java.dao.*;
+import com.e3in.java.utils.Common;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,23 +20,8 @@ public class AppConfig {
 
     public static DAOManager getDAOManager() {
         SQLiteDAO sqliteDAO = new SQLiteDAO();
-        XmlDAO xmlDAO = getXmlDAO();
+        XmlDAO xmlDAO = new XmlDAO(Common.createOrGetFile(XML_NAME, XML_PATH, AppConfig.class).toString());
         return DAOManager.getInstance(sqliteDAO, xmlDAO);
-    }
-
-    private static XmlDAO getXmlDAO() {
-        File xmlFile = new File(XML_PATH);
-        if (!xmlFile.exists()) {
-            try (InputStream xmlInput = AppConfig.class.getResourceAsStream("/" + XML_NAME)) {
-                if (xmlInput == null) {
-                    throw new IllegalArgumentException("Fichier xmlDAO.xml introuvable dans les ressources");
-                }
-                Files.copy(xmlInput, xmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new RuntimeException("Erreur lors de la lecture du fichier xmlDAO.xml", e);
-            }
-        }
-        return new XmlDAO(xmlFile.toString());
     }
 
     public static UserDAO getUserDAO() {

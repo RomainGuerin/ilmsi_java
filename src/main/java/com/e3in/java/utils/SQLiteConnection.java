@@ -35,15 +35,7 @@ public final class SQLiteConnection {
             // Driver JDBC pour SQLite
             Class.forName("org.sqlite.JDBC");
 
-            File dbFile = new File(DB_PATH);
-            if (!dbFile.exists()) {
-                try (InputStream input = SQLiteConnection.class.getResourceAsStream("/" + DB_NAME)) {
-                    if (input == null) {
-                        throw new SQLException("Impossible de trouver le fichier de base de données dans le JAR");
-                    }
-                    Files.copy(input, dbFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                }
-            }
+            File dbFile = Common.createOrGetFile(DB_NAME, DB_PATH, SQLiteConnection.class);
 
             connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH);
             logger.info("Connexion à SQLite établie avec succès. Database path: " + dbFile.getAbsolutePath());

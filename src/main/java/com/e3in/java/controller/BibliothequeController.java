@@ -22,9 +22,9 @@ public class BibliothequeController {
 
         for(Livre livre : bibliotheque.getLivres()) {
             if (!library.contain(livre)) {
-                result = bibliothequeDAO.addLivreBibliotheque(livre);
+                result = this.addLivreBibliotheque(livre);
             } else {
-                result = bibliothequeDAO.updateLivreBibliotheque(livre);
+                result = this.updateLivreBibliotheque(livre);
             }
             if (!result) {
                 return false;
@@ -34,7 +34,7 @@ public class BibliothequeController {
         if (removeLivreAvailable) {
             for (Livre livre : library.getLivres()) {
                 if (!bibliotheque.contain(livre)) {
-                    result = bibliothequeDAO.removeLivreBibliotheque(livre);
+                    result = this.removeLivreBibliotheque(livre);
                     if (!result) {
                         return false;
                     }

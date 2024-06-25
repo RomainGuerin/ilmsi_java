@@ -47,7 +47,7 @@ public class Xml {
             factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
             // Chargement du schéma
-            Schema schema = factory.newSchema(getBiblioXsd());
+            Schema schema = factory.newSchema(Common.createOrGetFile(XSD_NAME, XSD_PATH, Xml.class));
             Validator validator = schema.newValidator();
 
             // Validation du fichier XML
@@ -62,21 +62,6 @@ public class Xml {
             logger.severe("Erreur de validation XML : " + e.getMessage());
             return false;
         }
-    }
-
-    private static File getBiblioXsd() {
-        File xsdFile = new File(XSD_PATH);
-        if (!xsdFile.exists()) {
-            try (InputStream xmlInput = AppConfig.class.getResourceAsStream("/" + XSD_NAME)) {
-                if (xmlInput == null) {
-                    throw new IllegalArgumentException("Fichier Biblio.xsd introuvable dans les ressources");
-                }
-                Files.copy(xmlInput, xsdFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new RuntimeException("Erreur lors de la lecture du fichier xmlDAO.xml", e);
-            }
-        }
-        return xsdFile;
     }
 
     /**

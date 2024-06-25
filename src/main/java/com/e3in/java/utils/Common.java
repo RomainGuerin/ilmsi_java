@@ -9,8 +9,15 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.poi.ss.formula.functions.T;
+import org.sqlite.FileException;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -80,5 +87,20 @@ public class Common {
     public static String getCurrentDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return formatter.format(LocalDateTime.now());
+    }
+
+    public static File createOrGetFile(String fileName, String filePath, Class currentClass) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            try (InputStream input = currentClass.getResourceAsStream("/" + fileName)) {
+                if (input == null) {
+                    throw new FileException("Fichier " + fileName + " introuvable dans les ressources");
+                }
+                Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException | FileException e) {
+                logger.severe("Erreur lors de la lecture du fichier " + fileName + ": " + e.getMessage());
+            }
+        }
+        return file;
     }
 }

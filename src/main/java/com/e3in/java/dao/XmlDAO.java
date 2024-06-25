@@ -22,6 +22,14 @@ public class XmlDAO implements DAO {
         xmlFileManager.setXmlFilePath(xmlFilePath);
     }
 
+    /**
+     * Sélectionne une entrée unique dans le fichier XML.
+     *
+     * @param tableName Le nom de la table à interroger.
+     * @param columnNames Les colonnes à sélectionner.
+     * @param whereClause La clause WHERE pour filtrer les résultats.
+     * @return Une HashMap contenant les valeurs des colonnes sélectionnées.
+     */
     @Override
     public HashMap<String, String> select(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         try {
@@ -38,6 +46,14 @@ public class XmlDAO implements DAO {
         return new HashMap<>();
     }
 
+    /**
+     * Sélectionne plusieurs entrées dans le fichier XML.
+     *
+     * @param tableName Le nom de la table à interroger.
+     * @param columnNames Les colonnes à sélectionner.
+     * @param whereClause La clause WHERE pour filtrer les résultats.
+     * @return Une ArrayList contenant les HashMaps avec les valeurs des colonnes sélectionnées.
+     */
     @Override
     public ArrayList<HashMap<String, String>> selectAll(String tableName, List<String> columnNames, HashMap<String, String> whereClause) {
         ArrayList<HashMap<String, String>> results = new ArrayList<>();
@@ -60,6 +76,13 @@ public class XmlDAO implements DAO {
         return results;
     }
 
+    /**
+     * Insère une nouvelle entrée dans le fichier XML.
+     *
+     * @param tableName Le nom de la table où insérer les données.
+     * @param columnAndValue Les colonnes et leurs valeurs à insérer.
+     * @return Une HashMap contenant le statut de l'insertion.
+     */
     @Override
     public HashMap<String, String> insert(String tableName, LinkedHashMap<String, String> columnAndValue) {
         try {
@@ -77,6 +100,14 @@ public class XmlDAO implements DAO {
         }
     }
 
+    /**
+     * Met à jour une entrée existante dans le fichier XML.
+     *
+     * @param tableName Le nom de la table à mettre à jour.
+     * @param columnAndValue Les colonnes et leurs nouvelles valeurs.
+     * @param whereClause La clause WHERE pour filtrer les résultats.
+     * @return Une HashMap contenant le statut de la mise à jour.
+     */
     @Override
     public HashMap<String, String> update(String tableName, HashMap<String, String> columnAndValue, HashMap<String, String> whereClause) {
         try {
@@ -97,6 +128,13 @@ public class XmlDAO implements DAO {
         }
     }
 
+    /**
+     * Supprime une entrée dans le fichier XML.
+     *
+     * @param tableName Le nom de la table d'où supprimer les données.
+     * @param whereClause La clause WHERE pour filtrer les résultats.
+     * @return Une HashMap contenant le statut de la suppression.
+     */
     @Override
     public HashMap<String, String> delete(String tableName, HashMap<String, String> whereClause) {
         try {

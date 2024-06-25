@@ -20,12 +20,21 @@ import java.util.logging.Logger;
 
 import static com.e3in.java.utils.Common.getCurrentDateTime;
 
+/**
+ * La classe WordController permet de créer et manipuler un document Word.
+ * Elle permet notamment d'ajouter des en-têtes, pieds de page, table des matières, page de couverture, et de lister des livres.
+ */
 public class WordController {
     private final XWPFDocument document;
     private final String path;
 
     static Logger logger = Logger.getLogger(WordController.class.getName());
 
+    /**
+     * Constructeur de la classe WordController.
+     *
+     * @param path Le chemin où le document sera sauvegardé.
+     */
     public WordController(String path) {
         this.document = new XWPFDocument();
         this.path = path;
@@ -40,6 +49,9 @@ public class WordController {
         addTableOfContent();
     }
 
+    /**
+     * Ajoute un en-tête au document avec des informations sur l'exportation de la bibliothèque.
+     */
     public void addHeader() {
         try {
             XWPFHeader header = document.createHeader(HeaderFooterType.DEFAULT);
@@ -55,6 +67,10 @@ public class WordController {
             logger.severe("Erreur lors de l'ajout de l'entête du document Word. " + e.getMessage());
         }
     }
+
+    /**
+     * Ajoute un pied de page au document avec des informations sur les auteurs et la pagination.
+     */
     public void addFooter() {
         try {
             XWPFFooter footer = document.createFooter(HeaderFooterType.DEFAULT);
@@ -82,6 +98,9 @@ public class WordController {
         }
     }
 
+    /**
+     * Ajoute une table des matières au document.
+     */
     public void addTableOfContent() {
         document.createTOC();
         addCustomHeadingStyle(this.document, "heading 1", 1);
@@ -96,6 +115,9 @@ public class WordController {
         document.createParagraph().setPageBreak(true);
     }
 
+    /**
+     * Ajoute une page de couverture au document.
+     */
     public void addCoverPage() {
         try {
             for (int i = 0; i < 5; i++) {
@@ -130,6 +152,11 @@ public class WordController {
         }
     }
 
+    /**
+     * Ajoute une liste de livres au document.
+     *
+     * @param books La liste des livres à ajouter.
+     */
     public void addBooks(List<Livre> books) {
         addTitle("Liste des livres de la bibliothèque");
 
@@ -154,6 +181,11 @@ public class WordController {
         isDataEmpty(books);
     }
 
+    /**
+     * Ajoute une liste des livres empruntés au document.
+     *
+     * @param books La liste des livres à vérifier pour emprunt.
+     */
     public void addBorrowedBooks(List<Livre> books) {
         document.createParagraph().setPageBreak(true);
         addTitle("Livres empruntés");
@@ -166,6 +198,11 @@ public class WordController {
         isDataEmpty(books);
     }
 
+    /**
+     * Ajoute un titre au document.
+     *
+     * @param text Le texte du titre.
+     */
     public void addTitle(String text) {
         XWPFParagraph title = document.createParagraph();
         title.setAlignment(ParagraphAlignment.CENTER);
@@ -178,6 +215,12 @@ public class WordController {
         titleRun.setFontFamily("Courier");
         titleRun.setFontSize(20);
     }
+
+    /**
+     * Ajoute un sous-titre au document.
+     *
+     * @param text Le texte du sous-titre.
+     */
     public void addSubtitle(String text){
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun run = paragraph.createRun();
@@ -190,6 +233,15 @@ public class WordController {
         run.setBold(true);
         paragraph.setStyle("heading 2");
     }
+
+    /**
+     * Ajoute une image au document.
+     *
+     * @param path Le chemin ou l'URL de l'image.
+     * @throws IOException Si une erreur d'entrée/sortie survient.
+     * @throws URISyntaxException Si l'URI est incorrect.
+     * @throws InvalidFormatException Si le format de l'image est invalide.
+     */
     public void addImage(String path) throws IOException, URISyntaxException, InvalidFormatException {
         XWPFParagraph image = document.createParagraph();
         image.setAlignment(ParagraphAlignment.CENTER);
@@ -198,12 +250,24 @@ public class WordController {
         InputStream imageStream = path.startsWith("http") ? new URI(path).toURL().openStream() : new FileInputStream(path);
         imageRun.addPicture(imageStream, XWPFDocument.PICTURE_TYPE_JPEG, "image.jpg", Units.toEMU(175), Units.toEMU(200));
     }
+
+    /**
+     * Ajoute un paragraphe au document.
+     *
+     * @param text Le texte du paragraphe.
+     */
     public void addParagraph(String text){
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun run = paragraph.createRun();
         paragraph.setAlignment(ParagraphAlignment.BOTH);
         run.setText(text);
     }
+
+    /**
+     * Vérifie si la liste des livres est vide et ajoute un message approprié.
+     *
+     * @param books La liste des livres à vérifier.
+     */
     private void isDataEmpty(List<Livre> books) {
         if (books.isEmpty()) {
             XWPFParagraph empty = document.createParagraph();
@@ -212,6 +276,9 @@ public class WordController {
         }
     }
 
+    /**
+     * Sauvegarde le document à l'emplacement spécifié.
+     */
     public void saveDocument() {
         try {
             FileOutputStream file = new FileOutputStream(path);
@@ -223,6 +290,13 @@ public class WordController {
         }
     }
 
+    /**
+     * Ajoute un style de titre personnalisé au document.
+     *
+     * @param document Le document à modifier.
+     * @param strStyleId L'ID du style.
+     * @param headingLevel Le niveau de titre.
+     */
     private static void addCustomHeadingStyle(XWPFDocument document, String strStyleId, int headingLevel) {
         CTStyle ctStyle = CTStyle.Factory.newInstance();
         ctStyle.setStyleId(strStyleId);

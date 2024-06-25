@@ -2,8 +2,9 @@ package com.e3in.java.controller;
 
 import com.e3in.java.dao.UserDAO;
 import com.e3in.java.model.User;
-import com.e3in.java.utils.Common;
-import javafx.scene.control.Alert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Contrôleur pour la gestion des utilisateurs.
@@ -27,18 +28,19 @@ public class UserController {
      * @param user L'utilisateur dont les informations doivent être validées.
      * @return True si les informations sont valides, sinon False.
      */
-    public static boolean checkValidity(User user) {
-        // Vérifie si l'email est valide
-        if (!user.isEmailValid()) {
-            Common.showAlert(Alert.AlertType.ERROR, "Email invalide", "Insérez une adresse email valide.");
-            return false;
+    public static Map<String, String> checkValidity(User user) {
+        Map<String, String> errorMessage = new HashMap<>();
+        if (user.isEmailInvalid()) {
+            errorMessage.put("error", "Email invalide");
+            errorMessage.put("message", "Insérez une adresse email valide.");
+            return errorMessage;
         }
-        // Vérifie si le mot de passe est valide
-        if (!user.isPasswordValid()) {
-            Common.showAlert(Alert.AlertType.ERROR, "Mot de passe invalide", "Le mot de passe ne peut pas être vide.");
-            return false;
+        if (user.isPasswordInvalid()) {
+            errorMessage.put("error", "Mot de passe invalide");
+            errorMessage.put("message", "Le mot de passe ne peut pas être vide.");
+            return errorMessage;
         }
-        return true;
+        return errorMessage;
     }
 
     /**

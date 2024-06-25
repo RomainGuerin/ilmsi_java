@@ -4,12 +4,16 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import java.util.Objects;
+import java.util.logging.Logger;
+
 /**
  * Représente un livre avec ses attributs tels que le titre, l'auteur, la présentation, etc.
  */
 @XmlRootElement(name = "livre")
 @XmlType(propOrder = { "titre", "auteur", "presentation", "jaquette", "parution", "colonne", "rangee", "emprunte"})
 public class Livre {
+    static Logger logger = Logger.getLogger(Livre.class.getName());
     private String titre;
     private Auteur auteur;
     private String presentation;
@@ -23,6 +27,25 @@ public class Livre {
      * Constructeur par défaut du livre.
      */
     public Livre() { }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Livre livre) {
+            return (livre.getTitre().equals(this.getTitre()) && livre.auteur.equals(this.getAuteur()) && this.getParution() == livre.getParution());
+        } else {
+            return super.equals(obj);
+        }
+    }
+
+    /**
+     * Retourne un code de hachage pour cet objet Livre.
+     *
+     * @return un code de hachage pour cet objet Livre.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(titre, auteur, parution);
+    }
 
     /**
      * Constructeur du livre avec ses attributs.
@@ -99,7 +122,7 @@ public class Livre {
             try {
                 throw new Exception("Auteur invalide");
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.severe("Auteur invalide : " + e.getMessage());
             }
         } else if (temp.length > 1) {
             this.auteur.setPrenom(temp[0].strip());

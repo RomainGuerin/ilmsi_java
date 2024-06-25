@@ -47,4 +47,13 @@ public class Bibliotheque {
     public void setLivres(List<Livre> livres) {
         this.livres = livres;
     }
+
+    public boolean contain(Livre livre) {
+        for(Livre actualLivre : this.livres) {
+            if(actualLivre.equals(livre)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

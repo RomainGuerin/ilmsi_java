@@ -5,6 +5,8 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -14,14 +16,16 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Classe utilitaire pour la manipulation d'XML.
  */
-public class Xml{
-    // Chemin vers le fichier XSD utilisé pour la validation XML
-    private static final String xsdFilePath = Objects.requireNonNull(Xml.class.getResource("/Biblio.xsd")).getPath();
+public class Xml {
+    private static final String XSD_NAME = "Biblio.xsd";
+    private static final String XSD_PATH = System.getProperty("user.home") + File.separator + XSD_NAME;
+
+    static Logger logger = Logger.getLogger(Xml.class.getName());
 
     /**
      * Valide un fichier XML par rapport à un schéma XSD.
@@ -32,16 +36,26 @@ public class Xml{
     public static boolean validateXml(String xmlFilePath) {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(new File(Xml.xsdFilePath));
+
+            // Configuration sécurisée de la factory
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+            // Chargement du schéma
+            Schema schema = factory.newSchema(Common.createOrGetFile(XSD_NAME, XSD_PATH, Xml.class));
             Validator validator = schema.newValidator();
 
+            // Validation du fichier XML
             Source source = new StreamSource(new File(xmlFilePath));
             validator.validate(source);
 
             return true;
+        } catch (SAXNotRecognizedException | SAXNotSupportedException | IllegalArgumentException e) {
+            logger.severe("Erreur de configuration de la SchemaFactory : " + e.getMessage());
+            return false;
         } catch (SAXException | IOException e) {
-            System.err.println("Erreur de validation XML : " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Erreur de validation XML : " + e.getMessage());
             return false;
         }
     }

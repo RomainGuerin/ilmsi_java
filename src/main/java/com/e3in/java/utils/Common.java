@@ -9,13 +9,22 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.sqlite.FileException;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class Common {
+
+    static Logger logger = Logger.getLogger(Common.class.getName());
+
     /**
      * Ferme l'application.
      * @param stage La fenêtre (Stage) de l'application.
@@ -37,7 +46,7 @@ public class Common {
             alert.getDialogPane().setContent(content);
             alert.showAndWait();
         } catch (Exception e) {
-            System.err.println("Erreur de chargement de la page About: " + e.getMessage());
+            logger.severe("Erreur de chargement de la page About: " + e.getMessage());
         }
     }
 
@@ -57,9 +66,8 @@ public class Common {
      * @param user L'utilisateur actuel.
      */
     public static void switchScene(String page, Stage stage, User user) {
-        System.out.println("Redirection vers la page " + page);
         try {
-            FXMLLoader loader = new FXMLLoader(Common.class.getResource("/view/" + page + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(Common.class.getResource("/view/"+page+".fxml"));
             Parent registerView = loader.load();
 
             Object controller = loader.getController();
@@ -71,7 +79,7 @@ public class Common {
             stage.setScene(registerScene);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de chargement de la page " + page + ": " + e.getMessage());
         }
     }
 
@@ -99,5 +107,20 @@ public class Common {
     public static String getCurrentDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return formatter.format(LocalDateTime.now());
+    }
+
+    public static File createOrGetFile(String fileName, String filePath, Class currentClass) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            try (InputStream input = currentClass.getResourceAsStream("/" + fileName)) {
+                if (input == null) {
+                    throw new FileException("Fichier " + fileName + " introuvable dans les ressources");
+                }
+                Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException | FileException e) {
+                logger.severe("Erreur lors de la lecture du fichier " + fileName + ": " + e.getMessage());
+            }
+        }
+        return file;
     }
 }

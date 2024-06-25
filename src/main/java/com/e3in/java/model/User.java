@@ -19,34 +19,7 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
-        this.isAdmin = false; // Par défaut, l'utilisateur n'est pas administrateur
-    }
-
-    /**
-     * Constructeur avec id, email et mot de passe
-     * @param id L'identifiant de l'utilisateur
-     * @param email L'email de l'utilisateur
-     * @param password Le mot de passe de l'utilisateur
-     */
-    public User(int id, String email, String password) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.isAdmin = false; // Par défaut, l'utilisateur n'est pas administrateur
-    }
-
-    /**
-     * Constructeur avec id, email, mot de passe et statut d'administrateur
-     * @param id L'identifiant de l'utilisateur
-     * @param email L'email de l'utilisateur
-     * @param password Le mot de passe de l'utilisateur
-     * @param isAdmin Le statut d'administrateur de l'utilisateur
-     */
-    public User(int id, String email, String password, boolean isAdmin) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.isAdmin = isAdmin;
+        this.isAdmin = false;
     }
 
     /**
@@ -104,12 +77,11 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
     /**
      * Vérifie la validité de l'email de l'utilisateur.
      * @return true si l'email est invalide, false sinon.
      */
-    public boolean isEmailValid() {
+    public boolean isEmailInvalid() {
         return this.email == null || this.email.isEmpty() || !this.email.contains("@");
     }
 
@@ -128,23 +100,13 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
     /**
      * Vérifie la validité du mot de passe de l'utilisateur.
      * @return true si le mot de passe est invalide, false sinon.
      */
-    public boolean isPasswordValid() {
+    public boolean isPasswordInvalid() {
         return this.password == null || this.password.isEmpty();
     }
-
-    /**
-     * Définit le statut d'administrateur de l'utilisateur.
-     * @param isAdmin Le statut d'administrateur de l'utilisateur.
-     */
-    public void setAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
-
     /**
      * Obtient le statut d'administrateur de l'utilisateur.
      * @return true si l'utilisateur est administrateur, false sinon.

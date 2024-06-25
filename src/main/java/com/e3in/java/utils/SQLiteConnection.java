@@ -1,10 +1,10 @@
 package com.e3in.java.utils;
 
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 /**
  * Classe Singleton pour gérer la connexion SQLite.
@@ -14,6 +14,10 @@ public final class SQLiteConnection {
     private static SQLiteConnection instance = null;
     // Objet de connexion à la base de données
     private static Connection connection = null;
+    private static final String DB_NAME = "javaLibrary.db";
+    private static final String DB_PATH = System.getProperty("user.home") + File.separator + DB_NAME;
+
+    static Logger logger = Logger.getLogger(SQLiteConnection.class.getName());
 
     // Constructeur privé pour empêcher l'instanciation directe
     private SQLiteConnection() {
@@ -42,27 +46,16 @@ public final class SQLiteConnection {
             // Chargement du driver JDBC pour SQLite
             Class.forName("org.sqlite.JDBC");
 
-            // Chemin de la base de données
-            // TODO passer en argument le nom de la DB
-            URL res = SQLiteConnection.class.getClassLoader().getResource("javaLibrary.db");
-            System.out.println(res);
-            if (res == null) {
-                throw new SQLException("Impossible de trouver le fichier de base de données");
-            }
-            String dbPath = Paths.get(res.toURI()).toString();
+            File dbFile = Common.createOrGetFile(DB_NAME, DB_PATH, SQLiteConnection.class);
 
-            // Connexion à la base de données
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            System.out.println("Connexion à SQLite établie avec succès.");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH);
+            logger.info("Connexion à SQLite établie avec succès. Database path: " + dbFile.getAbsolutePath());
         } catch (ClassNotFoundException e) {
-            System.err.println("Erreur de chargement du driver JDBC pour SQLite.");
-            e.printStackTrace();
+            logger.severe("Erreur de chargement du driver JDBC pour SQLite. " + e.getMessage());
         } catch (SQLException e) {
-            System.err.println("Erreur de connexion à la base de données SQLite.");
-            e.printStackTrace();
+            logger.severe("Erreur de connexion à la base de données SQLite. " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Erreur inattendue.");
-            e.printStackTrace();
+            logger.severe("Erreur inattendue. " + e.getMessage());
         }
     }
 
@@ -89,11 +82,10 @@ public final class SQLiteConnection {
         try {
             if (connection != null) {
                 connection.close();
-                System.out.println("Connexion à SQLite fermée avec succès.");
+                logger.info("Connexion à SQLite fermée avec succès.");
             }
         } catch (SQLException e) {
-            System.err.println("Erreur de fermeture de la connexion à la base de données SQLite.");
-            e.printStackTrace();
+            logger.severe("Erreur de fermeture de la connexion à la base de données SQLite. " + e.getMessage());
         }
     }
 }

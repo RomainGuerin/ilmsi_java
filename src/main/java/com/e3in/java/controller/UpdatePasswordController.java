@@ -10,11 +10,16 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
  * Contrôleur pour la vue de mise à jour du mot de passe.
  * Gère les interactions utilisateur et les opérations liées à la mise à jour du mot de passe.
  */
 public class UpdatePasswordController implements UserAwareController {
+
+    static Logger logger = Logger.getLogger(UpdatePasswordController.class.getName());
 
     private final UserController userController = new UserController(AppConfig.getUserDAO());
 
@@ -59,7 +64,6 @@ public class UpdatePasswordController implements UserAwareController {
         String newPassword = newPasswordField.getText();
         String newPasswordEnsure = newPasswordFieldEnsure.getText();
 
-        // Vérifie que tous les champs sont remplis
         if (email.isEmpty() || oldPassword.isEmpty() || newPassword.isEmpty() || newPasswordEnsure.isEmpty()) {
             Common.showAlert(Alert.AlertType.ERROR, "Champs vides", "Veuillez remplir tous les champs.");
             return;
@@ -74,26 +78,24 @@ public class UpdatePasswordController implements UserAwareController {
             return;
         }
 
-        // Crée les objets User pour l'ancien et le nouveau mot de passe
         User oldUser = new User(email, oldPassword, false);
         User newUser = new User(email, newPassword, false);
-
-        // Vérifie la validité du nouveau mot de passe
-        if (UserController.checkValidity(newUser)) {
-            // Récupère l'utilisateur connecté à partir des identifiants fournis
+        Map<String, String> userValidation = UserController.checkValidity(newUser);
+        if (userValidation.isEmpty()) {
+            AppConfig.getDAOManager().setOnline(true); // Nécessaire pour utiliser UserDAO
             User userConnected = userController.getUserByEmailPassword(oldUser);
             if (userConnected != null) {
-                // Met à jour le mot de passe dans la base de données
                 if(userController.updatePassword(newUser)){
-                    Common.showAlert(Alert.AlertType.INFORMATION, "Mise à jour du mot de passe", "Le mot de passe a bien été mis à jour.");
+                    Common.showAlert(Alert.AlertType.INFORMATION, "Mise à jour du mot de passe", "Le mot de passe à bien été mise à jour.");
                 } else {
-                    Common.showAlert(Alert.AlertType.ERROR, "Erreur - Mise à jour du mot de passe", "Impossible de mettre à jour le mot de passe. Vérifiez les informations.");
+                    Common.showAlert(Alert.AlertType.ERROR, "Erreur - Mise à jour du mot de passe", "Impossible de mettre à jour le mot de passe. Vérifier les informations.");
                 }
             } else {
-                System.out.println("Les identifiants ne correspondent pas. Veuillez réessayer.");
+                logger.warning("Les identifiants ne correspondent pas. Veuillez réessayer.");
             }
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, userValidation.get("error"), userValidation.get("message"));
         }
-        // Réinitialise les champs de texte après la mise à jour du mot de passe
         this.resetFields();
     }
 
@@ -101,6 +103,7 @@ public class UpdatePasswordController implements UserAwareController {
      * Réinitialise les champs de texte du formulaire de mise à jour du mot de passe.
      */
     public void resetFields() {
+        AppConfig.getDAOManager().setOnline(false);
         textFieldLogin.setText("");
         oldPasswordField.setText("");
         newPasswordField.setText("");

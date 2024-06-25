@@ -35,11 +35,42 @@ public class BibliothequeController {
      * Ajoute chaque livre de la bibliothèque à la base de données.
      *
      * @param bibliotheque La bibliothèque à mettre à jour.
+     * @param removeLivreAvailable true si on gère la suppression des livres
      */
-    public void updateBibliotheque(Bibliotheque bibliotheque) {
-        for (Livre livre : bibliotheque.getLivres()) {
-            bibliothequeDAO.addLivreBibliotheque(livre);
+    public boolean updateBibliotheque(Bibliotheque bibliotheque, boolean removeLivreAvailable) {
+        Bibliotheque library = getAllBibliotheque();
+
+        boolean result;
+
+        if (synchroBibliotheque(bibliotheque, library)) return false;
+
+        if (removeLivreAvailable) {
+            for (Livre livre : library.getLivres()) {
+                if (!bibliotheque.contain(livre)) {
+                    result = this.removeLivreBibliotheque(livre);
+                    if (!result) {
+                        return false;
+                    }
+                }
+            }
         }
+
+        return true;
+    }
+
+    private boolean synchroBibliotheque(Bibliotheque bibliotheque, Bibliotheque library) {
+        boolean result;
+        for(Livre livre : bibliotheque.getLivres()) {
+            if (!library.contain(livre)) {
+                result = this.addLivreBibliotheque(livre);
+            } else {
+                result = this.updateLivreBibliotheque(livre);
+            }
+            if (!result) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

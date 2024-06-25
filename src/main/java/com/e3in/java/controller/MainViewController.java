@@ -26,6 +26,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.UnaryOperator;
+import java.util.logging.Logger;
 
 /**
  * Contrôleur de la vue principale de gestion de la bibliothèque
@@ -33,6 +34,8 @@ import java.util.function.UnaryOperator;
  * ainsi que le chargement et la sauvegarde des données depuis/vers un fichier XML.
  */
 public class MainViewController implements UserAwareController {
+
+    static Logger logger = Logger.getLogger(MainViewController.class.getName());
 
     private final BibliothequeController bibliothequeController = new BibliothequeController(AppConfig.getBibliothequeDAO());
 
@@ -54,6 +57,10 @@ public class MainViewController implements UserAwareController {
     private Menu editionMenu;
     @FXML
     private MenuItem unloadFile;
+    @FXML
+    private MenuItem xmlOnlineSync;
+    @FXML
+    private MenuItem bddLocalSync;
 
     @FXML
     private TableView<Livre> tableView;
@@ -237,6 +244,7 @@ public class MainViewController implements UserAwareController {
             return;
         }
 
+        xmlOnlineSync.setVisible(true);
         this.xmlFilePath = currentXmlFilePath;
 
         updateXmlFilePath(currentXmlFilePath);
@@ -245,8 +253,10 @@ public class MainViewController implements UserAwareController {
 
     private void updateXmlFilePath(String xmlFilePath) {
         DAO xmlDAO = AppConfig.getDAOManager().getXmlDAO();
-        if(xmlDAO instanceof XmlDAO xmlDAO1) {
+        if (xmlDAO instanceof XmlDAO xmlDAO1) {
             xmlDAO1.setXmlFilePath(xmlFilePath);
+        } else {
+            Logger.getLogger(MainViewController.class.getName()).severe("Erreur : DAO obtenu n'est pas une instance de XmlDAO.");
         }
     }
 
@@ -254,6 +264,7 @@ public class MainViewController implements UserAwareController {
     private void handleConnectionBDD() {
         handleUnloadFile();
         connectionBDD.setText("Rafraîchir");
+        bddLocalSync.setVisible(true);
         isOnline = true;
         updateStatusBox();
 
@@ -288,10 +299,16 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleOnlineSync() {
         // de xml vers BDD
+        saveData(xmlFilePath);
         Bibliotheque xmlBiblio = bibliothequeController.getAllBibliotheque();
         AppConfig.getDAOManager().setOnline(true);
-        bibliothequeController.updateBibliotheque(xmlBiblio);
+        boolean isUpdated = bibliothequeController.updateBibliotheque(xmlBiblio, false);
         AppConfig.getDAOManager().setOnline(false);
+        if (isUpdated) {
+            Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers la BDD", "La synchronisation vers la BDD s'est bien effectuée!");
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur - Synchronisation vers la BDD", "Une erreur est survenu lors de la synchronisation vers la BDD.");
+        }
     }
 
     @FXML
@@ -299,8 +316,13 @@ public class MainViewController implements UserAwareController {
         // de BDD vers xml
         Bibliotheque sqlBiblio = bibliothequeController.getAllBibliotheque();
         AppConfig.getDAOManager().setOnline(false);
-        bibliothequeController.updateBibliotheque(sqlBiblio);
+        boolean isUpdated = bibliothequeController.updateBibliotheque(sqlBiblio, true);
         AppConfig.getDAOManager().setOnline(true);
+        if (isUpdated) {
+            Common.showAlert(Alert.AlertType.INFORMATION, "Synchronisation vers XML", "La synchronisation vers le fichier XML s'est bien effectuée!");
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, "Erreur - Synchronisation vers XML", "Une erreur est survenu lors de la synchronisation vers le fichier XML.");
+        }
     }
 
     // Gère l'ajout ou la modification d'un livre.
@@ -337,6 +359,8 @@ public class MainViewController implements UserAwareController {
     @FXML
     private void handleUnloadFile() {
         connectionBDD.setText("Connexion");
+        bddLocalSync.setVisible(false);
+        xmlOnlineSync.setVisible(false);
 
         isOnline = false;
         updateStatusBox();
@@ -351,7 +375,11 @@ public class MainViewController implements UserAwareController {
     // Sauvegarde les données dans le fichier XML actuel.
     @FXML
     private void handleSave() {
-        saveData(xmlFilePath);
+        if (!xmlFilePath.isEmpty()) {
+            saveData(xmlFilePath);
+        } else {
+            handleSaveAs();
+        }
     }
 
     // Sauvegarde les données dans un nouveau fichier XML.
@@ -372,20 +400,15 @@ public class MainViewController implements UserAwareController {
             if (path == null) {
                 throw new IllegalArgumentException("Aucun emplacement de sauvegarde sélectionné");
             }
-
-            // TODO : Déplacer le chargement du word controller je pense qu'on devrait avoir uniquement le word.addBooks() et le word.addBorrowed books
+            // Déplacement du chargement du word controller
             WordController word = new WordController(path);
-            word.addHeader();
-            word.addFooter();
-            word.addCoverPage();
-            word.addTableOfContent();
             word.addBooks(this.tableView.getItems());
             word.addBorrowedBooks(this.tableView.getItems());
             word.saveDocument();
+            Common.showAlert(Alert.AlertType.INFORMATION, "Export Word", "L'export du tableau s'est bien effectué!");
         } catch (Exception e) {
             Common.showAlert(Alert.AlertType.ERROR, "Erreur Export", "Erreur lors de l'exportation des données : " + e.getMessage());
-            System.err.println(e);
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'exportation des données : " + e.getMessage());
         }
     }
 
@@ -430,7 +453,7 @@ public class MainViewController implements UserAwareController {
                 String auteur = textFieldAuteur.getText().strip();
                 int parution = Integer.parseInt(textFieldParution.getText().strip());
 
-                if (!estLivreUnique(titre, auteur, parution, tableView.getItems())) {
+                if (!isBookUnique(titre, auteur, parution, tableView.getItems())) {
                     Common.showAlert(Alert.AlertType.ERROR, "Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                     return;
                 }
@@ -473,7 +496,7 @@ public class MainViewController implements UserAwareController {
         try {
             Livre livre = getUserBook();
 
-            if (!estLivreUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
+            if (!isBookUnique(livre.getTitre(), livre.getAuteur().toString(), livre.getParution(),
                     tableView.getItems())) {
                 Common.showAlert(Alert.AlertType.ERROR, "Erreur Unicité", "Un livre avec le meme auteur/titre/parution existe.");
                 return;
@@ -507,8 +530,7 @@ public class MainViewController implements UserAwareController {
     }
 
     // Méthode pour vérifier si un livre est unique
-    // TODO : Nom de la method en français
-    private boolean estLivreUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
+    private boolean isBookUnique(String titre, String auteur, int parution, List<Livre> listeLivres) {
         for (Livre livre : listeLivres) {
             if(livre == this.selectedBook) {
                 continue;
@@ -524,7 +546,7 @@ public class MainViewController implements UserAwareController {
     // Méthode pour sauvegarder les données dans un fichier XML
     private void saveData(String filePath) {
         updateXmlFilePath(filePath);
-        bibliothequeController.updateBibliotheque(new Bibliotheque(tableView.getItems()));
+        bibliothequeController.updateBibliotheque(new Bibliotheque(tableView.getItems()), true);
     }
 
     // Méthode pour choisir l'emplacement de fichier
@@ -553,7 +575,7 @@ public class MainViewController implements UserAwareController {
         Image image = new Image(url, 100, 150, true, true, true);
         image.errorProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && newValue) {
-                System.err.println("Erreur lors du chargement de l'image : " + image.getException().getMessage());
+                logger.warning("Erreur lors du chargement de l'image : " + image.getException().getMessage());
             }
         });
         imageView.setImage(image);

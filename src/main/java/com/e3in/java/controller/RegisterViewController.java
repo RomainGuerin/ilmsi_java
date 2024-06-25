@@ -10,11 +10,17 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
+
 /**
  * Contrôleur pour la vue d'inscription.
  * Gère les interactions utilisateur et les opérations liées à l'inscription.
  */
 public class RegisterViewController {
+
+    static Logger logger = Logger.getLogger(RegisterViewController.class.getName());
 
     private final UserController userController = new UserController(AppConfig.getUserDAO());
 
@@ -47,30 +53,26 @@ public class RegisterViewController {
         String email = textFieldLogin.getText();
         String password = passwordField.getText();
         String passwordEnsure = passwordFieldEnsure.getText();
-        boolean isAdmin = userIsAdmin.isSelected();
+        Boolean isAdmin = userIsAdmin.isSelected();
 
-        // Vérifie que les mots de passe correspondent
-        if (!password.equals(passwordEnsure)) {
+        if(!password.equals(passwordEnsure)) {
             Common.showAlert(Alert.AlertType.ERROR, "Les mots de passe ne correspondent pas", "Les mots de passe doivent être identiques.");
             return;
         }
 
         User user = new User(email, password, isAdmin);
-        
-        // Vérifie la validité des informations d'utilisateur
-        if (UserController.checkValidity(user)) {
+        Map<String, String> userValidation = UserController.checkValidity(user);
+        if (userValidation.isEmpty()) {
             boolean userInserted = userController.createUser(user);
             if (userInserted) {
-                // Affiche un message de réussite et redirige vers la vue de connexion
-                System.out.println("Inscription réussie ! Bienvenue " + user.getEmail());
+                logger.info("Connexion réussie ! Bienvenue " + user.getEmail());
                 Common.switchScene("ConnectionView", getStage());
             } else {
-                System.out.println("Échec d'inscription. Veuillez vérifier les informations.");
+                logger.warning("Échec d'inscription. Veuillez vérifier les informations.");
             }
         } else {
-            System.out.println("Informations invalides. Veuillez vérifier les informations.");
+            Common.showAlert(Alert.AlertType.ERROR, userValidation.get("error"), userValidation.get("message"));
         }
-        // Réinitialise les champs de texte après tentative d'inscription
         this.resetFields();
     }
 
@@ -81,7 +83,6 @@ public class RegisterViewController {
         textFieldLogin.setText("");
         passwordField.setText("");
         passwordFieldEnsure.setText("");
-        userIsAdmin.setSelected(false);
     }
 
     /**

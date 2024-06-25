@@ -10,24 +10,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * La classe SQLiteDAO étend BaseDAO et implémente les opérations de base de données 
- * pour une base de données SQLite. 
+ * La classe SQLiteDAO étend BaseDAO et implémente les opérations de base de données
+ * pour une base de données SQLite.
  */
 public class SQLiteDAO extends BaseDAO {
 
-    /**
-     * Constructeur de SQLiteDAO. 
-     * Initialise la connexion à la base de données et désactive l'auto-commit.
-     */
+    static Logger logger = Logger.getLogger(SQLiteDAO.class.getName());
+
     public SQLiteDAO() {
         try {
-            // Obtenez la connexion SQLite et désactivez l'auto-commit
             this.connection = SQLiteConnection.getInstance().getConnection();
             this.connection.setAutoCommit(false);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de connexion à la base de données SQLite: " + e.getMessage());
         }
     }
 
@@ -42,7 +40,7 @@ public class SQLiteDAO extends BaseDAO {
     private HashMap<String, String> executeQuery(String query, List<Object> parameters, List<String> columnNames) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            beginTransaction(); // Commence la transaction
+            beginTransaction();
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
@@ -53,9 +51,9 @@ public class SQLiteDAO extends BaseDAO {
                     }
                 }
             }
-            commitTransaction(); // Commit la transaction
+            commitTransaction();
         } catch (SQLException e) {
-            rollbackTransaction(); // Rollback en cas d'erreur
+            rollbackTransaction();
             throw e;
         }
         return result;
@@ -72,7 +70,7 @@ public class SQLiteDAO extends BaseDAO {
     private ArrayList<HashMap<String, String>> executeMultiResultQuery(String query, List<Object> parameters, List<String> columnNames) throws SQLException {
         ArrayList<HashMap<String, String>> results = new ArrayList<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            beginTransaction(); // Commence la transaction
+            beginTransaction();
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
@@ -85,9 +83,9 @@ public class SQLiteDAO extends BaseDAO {
                     results.add(row);
                 }
             }
-            commitTransaction(); // Commit la transaction
+            commitTransaction();
         } catch (SQLException e) {
-            rollbackTransaction(); // Rollback en cas d'erreur
+            rollbackTransaction();
             throw e;
         }
         return results;
@@ -103,7 +101,7 @@ public class SQLiteDAO extends BaseDAO {
     private HashMap<String, String> executeUpdate(String query, List<Object> parameters) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            beginTransaction(); // Commence la transaction
+            beginTransaction();
             for (int i = 0; i < parameters.size(); i++) {
                 pstmt.setObject(i + 1, parameters.get(i));
             }
@@ -112,9 +110,9 @@ public class SQLiteDAO extends BaseDAO {
             } else {
                 result.put(Constants.STATUS, Constants.FAILURE);
             }
-            commitTransaction(); // Commit la transaction
+            commitTransaction();
         } catch (SQLException e) {
-            rollbackTransaction(); // Rollback en cas d'erreur
+            rollbackTransaction();
             result.put(Constants.STATUS, Constants.ERROR);
             throw e;
         }
@@ -132,7 +130,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             affectedRows = pstmt.executeUpdate();
         } catch (Exception e) {
-            System.err.println("Une erreur est survenue avec la requête " + query);
+            logger.severe("Une erreur est survenue avec la requete " + query);
         }
         return affectedRows;
     }
@@ -170,7 +168,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeQuery(query, parameters, columnNames);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de récupération des données: " + e.getMessage());
             return new HashMap<>();
         }
     }
@@ -190,7 +188,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeMultiResultQuery(query, parameters, columnNames);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de récupération des données: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -213,7 +211,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeUpdate(query.toString(), parameters);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur d'insertion des données: " + e.getMessage());
             return new HashMap<>();
         }
     }
@@ -238,7 +236,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeUpdate(query.toString(), parameters);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de mise à jour des données: " + e.getMessage());
             return new HashMap<>();
         }
     }
@@ -260,7 +258,7 @@ public class SQLiteDAO extends BaseDAO {
         try {
             return executeUpdate(query.toString(), parameters);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Erreur de suppression des données: " + e.getMessage());
             return new HashMap<>();
         }
     }

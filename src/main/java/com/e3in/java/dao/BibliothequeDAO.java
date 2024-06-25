@@ -15,7 +15,6 @@ import java.util.List;
  * liées à la bibliothèque, telles que l'ajout, la mise à jour, la suppression et la récupération des livres.
  */
 public class BibliothequeDAO {
-    // Instance de DAOManager pour gérer les opérations de base de données
     private final DAOManager daoManager;
 
     /**
@@ -31,7 +30,6 @@ public class BibliothequeDAO {
      * @return Un objet Bibliotheque contenant tous les livres.
      */
     public Bibliotheque getAllBibliotheque() {
-        // Liste des colonnes à sélectionner dans la table des livres
         List<String> columnNames = List.of(
                 Constants.TITRE,
                 Constants.AUTEUR_NOM,
@@ -43,9 +41,7 @@ public class BibliothequeDAO {
                 Constants.RANGEE,
                 Constants.EMPRUNTE
         );
-        // Exécution de la requête pour récupérer tous les livres
         ArrayList<HashMap<String, String>> resultQuery = daoManager.selectAll(Constants.TABLE_LIVRE, columnNames, new HashMap<>());
-        // Conversion du résultat en objet Bibliotheque
         return getBibliotheque(resultQuery);
     }
 
@@ -55,11 +51,9 @@ public class BibliothequeDAO {
      * @return true si l'ajout a réussi, false sinon.
      */
     public boolean addLivreBibliotheque(Livre livre) {
-        // Conversion de l'objet Livre en map pour l'insertion dans la base de données
         LinkedHashMap<String, String> map = getMapLivreComplete(livre);
-        // Exécution de la requête d'insertion
+
         HashMap<String, String> resultQuery = daoManager.insert(Constants.TABLE_LIVRE, map);
-        // Vérification du succès de l'insertion
         return !resultQuery.isEmpty() && resultQuery.get(Constants.STATUS).equals(Constants.SUCCESS);
     }
 
@@ -69,9 +63,7 @@ public class BibliothequeDAO {
      * @return true si la mise à jour a réussi, false sinon.
      */
     public boolean updateLivreBibliotheque(Livre livre) {
-        // Exécution de la requête de mise à jour
         HashMap<String, String> resultQuery = daoManager.update(Constants.TABLE_LIVRE, getMapLivre(livre), getMapLivreUnique(livre));
-        // Vérification du succès de la mise à jour
         return !resultQuery.isEmpty() && resultQuery.get(Constants.STATUS).equals(Constants.SUCCESS);
     }
 
@@ -81,9 +73,7 @@ public class BibliothequeDAO {
      * @return true si la suppression a réussi, false sinon.
      */
     public boolean removeLivreBibliotheque(Livre livre) {
-        // Exécution de la requête de suppression
         HashMap<String, String> resultQuery = daoManager.delete(Constants.TABLE_LIVRE, getMapLivreUnique(livre));
-        // Vérification du succès de la suppression
         return !resultQuery.isEmpty() && resultQuery.get(Constants.STATUS).equals(Constants.SUCCESS);
     }
 
@@ -94,10 +84,8 @@ public class BibliothequeDAO {
      */
     private static Bibliotheque getBibliotheque(ArrayList<HashMap<String, String>> resultQuery) {
         Bibliotheque bibliotheque = new Bibliotheque();
-        // Parcours de chaque enregistrement dans le résultat de la requête
         for (HashMap<String, String> map : resultQuery) {
             Livre livre = new Livre();
-            // Extraction des valeurs de l'enregistrement et création d'un objet Livre
             livre.setTitre(map.get(Constants.TITRE));
             livre.setAuteur(new Auteur(map.get(Constants.AUTEUR_NOM), map.get(Constants.AUTEUR_PRENOM)));
             livre.setPresentation(map.get(Constants.PRESENTATION));
@@ -105,11 +93,14 @@ public class BibliothequeDAO {
             livre.setParution(Integer.parseInt(map.get(Constants.PARUTION)));
             livre.setColonne(Integer.parseInt(map.get(Constants.COLONNE)));
             livre.setRangee(Integer.parseInt(map.get(Constants.RANGEE)));
-            livre.setEmprunte(Boolean.parseBoolean(map.get(Constants.EMPRUNTE)));
-            // Ajout de l'objet Livre à la bibliothèque
+            livre.setEmprunte(parseEmprunte(map.get(Constants.EMPRUNTE)));
             bibliotheque.getLivres().add(livre);
         }
         return bibliotheque;
+    }
+
+    private static boolean parseEmprunte(String value) {
+        return "1".equals(value) || "true".equalsIgnoreCase(value);
     }
 
     /**
@@ -117,7 +108,7 @@ public class BibliothequeDAO {
      * @param livre L'objet Livre à convertir.
      * @return Une LinkedHashMap contenant les colonnes et leurs valeurs.
      */
-    private LinkedHashMap<String, String> getMapLivreComplete(Livre livre) {
+    private LinkedHashMap<String, String> getMapLivreComplete (Livre livre) {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put(Constants.TITRE, livre.getTitre());
         map.put(Constants.AUTEUR_NOM, livre.getAuteur().getNom());

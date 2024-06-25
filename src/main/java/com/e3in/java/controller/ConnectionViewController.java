@@ -9,11 +9,16 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
  * Contrôleur pour la vue de connexion.
  * Gère les interactions utilisateur et les opérations liées à la connexion.
  */
 public class ConnectionViewController {
+
+    static Logger logger = Logger.getLogger(ConnectionViewController.class.getName());
 
     private final UserController userController = new UserController(AppConfig.getUserDAO());
 
@@ -32,19 +37,18 @@ public class ConnectionViewController {
         String password = passwordField.getText();
 
         User user = new User(email, password);
-        
-        // Vérifie la validité des informations de connexion
-        if (UserController.checkValidity(user)) {
+        Map<String, String> userValidation = UserController.checkValidity(user);
+        if (userValidation.isEmpty()) {
             User userConnected = userController.getUserByEmailPassword(user);
             if (userConnected != null) {
-                // Affiche une alerte de connexion réussie et redirige vers la vue principale
                 Common.showAlert(Alert.AlertType.INFORMATION, "Connexion réussie", "Bienvenue " + userConnected.getEmail());
                 Common.switchScene("MainView", getStage(), userConnected);
             } else {
-                System.out.println("Échec de la connexion. Veuillez vérifier vos identifiants.");
+                logger.warning("Échec de la connexion. Veuillez vérifier vos identifiants.");
             }
+        } else {
+            Common.showAlert(Alert.AlertType.ERROR, userValidation.get("error"), userValidation.get("message"));
         }
-        // Réinitialise les champs de texte après tentative de connexion
         this.resetFields();
     }
 

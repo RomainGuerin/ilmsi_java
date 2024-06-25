@@ -42,7 +42,7 @@ public class DAOManager implements DAO {
      */
     public static synchronized DAOManager getInstance() {
         if (instance == null) {
-            instance = new DAOManager(new SQLiteDAO(), new XmlDAO());
+            instance = new DAOManager(new SQLiteDAO(), new XmlDAO(""));
         }
         return instance;
     }
@@ -125,5 +125,9 @@ public class DAOManager implements DAO {
     public void setOnline(boolean isOnline) {
         this.isOnline = isOnline;
         this.actualDAO = this.isOnline ? this.sqliteDAO : this.xmlDAO;
+    }
+
+    public boolean isOnline() {
+        return this.isOnline;
     }
 }

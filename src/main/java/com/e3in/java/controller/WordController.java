@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static com.e3in.java.utils.Common.getCurrentDateTime;
 
@@ -27,6 +28,8 @@ public class WordController {
     private final XWPFDocument document;
     private final String path;
 
+    static Logger logger = Logger.getLogger(WordController.class.getName());
+
     /**
      * Constructeur de la classe WordController.
      *
@@ -35,7 +38,15 @@ public class WordController {
     public WordController(String path) {
         this.document = new XWPFDocument();
         this.path = path;
-        // TODO : Faire l'initialisation du word (add header, footer, table of content, title, etc)
+        initializeDocument();
+    }
+
+    // Initialisation du document Word
+    private void initializeDocument() {
+        addHeader();
+        addFooter();
+        addCoverPage();
+        addTableOfContent();
     }
 
     /**
@@ -53,7 +64,7 @@ public class WordController {
             String headerText = "Export Bibliothèque - Fichier : " + pathName + " - " + date;
             headerRun.setText(headerText);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'ajout de l'entête du document Word. " + e.getMessage());
         }
     }
 
@@ -83,7 +94,7 @@ public class WordController {
 
             pageNumberParagraph.getCTP().addNewFldSimple().setInstr("NUMPAGES \\* MERGEFORMAT");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'ajout du pied de page du document Word. " + e.getMessage());
         }
     }
 
@@ -137,7 +148,7 @@ public class WordController {
 
             document.createParagraph().setPageBreak(true);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Erreur lors de l'ajout de la page de couverture du document Word. " + e.getMessage());
         }
     }
 
@@ -157,7 +168,7 @@ public class WordController {
             } catch (Exception e) {
                 addParagraph("Le lien de la jaquette : " + book.getJaquette());
             }
-            addParagraph("Le livre a été écrit par  " + book.getAuteur()+".");
+            addParagraph("Le livre a été écrit par " + book.getAuteur()+".");
             addParagraph(book.getPresentation());
             addParagraph("Le livre est paru le " + book.getParution()+".");
             addParagraph("Le livre est placé dans la colonne numéro "+book.getColonne()+" de la rangée "+book.getRangee()+".");
@@ -275,8 +286,7 @@ public class WordController {
             file.close();
             document.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            logger.severe("Erreur lors de la sauvegarde du document Word. " + e.getMessage());
         }
     }
 

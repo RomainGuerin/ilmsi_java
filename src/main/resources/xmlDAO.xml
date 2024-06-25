@@ -10,28 +10,28 @@
         <parution>2000</parution>
         <colonne>5</colonne>
         <rangee>2</rangee>
-        <emprunte>true</emprunte>
+        <emprunte>1</emprunte>
     </livre>
     <livre>
         <titre>HarryPotter</titre>
         <auteurNom>Rowling</auteurNom>
         <auteurPrenom>JK</auteurPrenom>
-        <presentation>Ce livre est une introduction au schema XSD</presentation>
+        <presentation>Ce livre est une introduction a HarryPotter</presentation>
         <jaquette>https://s3-us-west-2.amazonaws.com/files.geekgirlauthority.com/wp-content/uploads/2016/11/harry-potterbooks.jpg</jaquette>
         <parution>1996</parution>
-        <colonne>5</colonne>
-        <rangee>2</rangee>
-        <emprunte>false</emprunte>
+        <colonne>4</colonne>
+        <rangee>1</rangee>
+        <emprunte>0</emprunte>
     </livre>
     <livre>
         <titre>Eragon</titre>
         <auteurNom>Paolini</auteurNom>
         <auteurPrenom>Christopher</auteurPrenom>
-        <presentation>Ce livre est une introduction au schema XSD</presentation>
+        <presentation>Ce livre est une introduction a Eragon</presentation>
         <jaquette>https://products-images.di-static.com/image/christopher-paolini-eragon-tome-1-eragon/9791036313691-475x500-1.jpg</jaquette>
         <parution>2001</parution>
-        <colonne>5</colonne>
-        <rangee>2</rangee>
-        <emprunte>false</emprunte>
+        <colonne>3</colonne>
+        <rangee>3</rangee>
+        <emprunte>0</emprunte>
     </livre>
 </bibliotheque>

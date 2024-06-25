@@ -16,15 +16,15 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
  * Classe utilitaire pour la manipulation d'XML.
  */
-public class Xml{
-    // Chemin vers le fichier XSD utilisé pour la validation XML
-    private static final String xsdFilePath = Objects.requireNonNull(Xml.class.getResource("/Biblio.xsd")).getPath();
+public class Xml {
+    private static final String XSD_NAME = "Biblio.xsd";
+    private static final String XSD_PATH = System.getProperty("user.home") + File.separator + XSD_NAME;
+
     static Logger logger = Logger.getLogger(Xml.class.getName());
 
     /**
@@ -43,7 +43,7 @@ public class Xml{
             factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
             // Chargement du schéma
-            Schema schema = factory.newSchema(new File(Xml.xsdFilePath));
+            Schema schema = factory.newSchema(Common.createOrGetFile(XSD_NAME, XSD_PATH, Xml.class));
             Validator validator = schema.newValidator();
 
             // Validation du fichier XML

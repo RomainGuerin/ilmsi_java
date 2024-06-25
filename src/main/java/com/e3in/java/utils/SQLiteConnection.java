@@ -1,7 +1,6 @@
 package com.e3in.java.utils;
 
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,6 +9,8 @@ import java.util.logging.Logger;
 public final class SQLiteConnection {
     private static SQLiteConnection instance = null;
     private static Connection connection = null;
+    private static final String DB_NAME = "javaLibrary.db";
+    private static final String DB_PATH = System.getProperty("user.home") + File.separator + DB_NAME;
 
     static Logger logger = Logger.getLogger(SQLiteConnection.class.getName());
 
@@ -31,16 +32,10 @@ public final class SQLiteConnection {
             // Driver JDBC pour SQLite
             Class.forName("org.sqlite.JDBC");
 
-            // Chemin de la base de données
-            URL res = SQLiteConnection.class.getClassLoader().getResource("javaLibrary.db");
-            if (res == null) {
-                throw new SQLException("Impossible de trouver le fichier de base de données");
-            }
-            String dbPath = Paths.get(res.toURI()).toString();
+            File dbFile = Common.createOrGetFile(DB_NAME, DB_PATH, SQLiteConnection.class);
 
-            // Connexion à la base de données
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            logger.info("Connexion à SQLite établie avec succès.");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH);
+            logger.info("Connexion à SQLite établie avec succès. Database path: " + dbFile.getAbsolutePath());
         } catch (ClassNotFoundException e) {
             logger.severe("Erreur de chargement du driver JDBC pour SQLite. " + e.getMessage());
         } catch (SQLException e) {

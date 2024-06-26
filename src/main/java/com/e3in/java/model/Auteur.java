@@ -3,6 +3,8 @@ package com.e3in.java.model;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import java.util.Objects;
+
 /**
  * Représente un auteur d'un livre.
  */
@@ -15,6 +17,25 @@ public class Auteur {
      * Constructeur par défaut de l'auteur.
      */
     public Auteur() { }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Auteur auteur) {
+            return (auteur.getNom().equals(this.getNom()) && auteur.getPrenom().equals(this.getPrenom()));
+        } else {
+            return super.equals(obj);
+        }
+    }
+
+    /**
+     * Retourne un code de hachage pour cet objet Auteur.
+     *
+     * @return un code de hachage pour cet objet Auteur.
+    */
+    @Override
+    public int hashCode() {
+        return Objects.hash(nom, prenom);
+    }
 
     /**
      * Constructeur de l'auteur avec son nom et son prénom.

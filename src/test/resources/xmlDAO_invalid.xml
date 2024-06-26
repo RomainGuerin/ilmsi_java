@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- fichier livre.xml -->
+<bibliotheque>
+    <livre>
+        <titre>XSD pour les nuls</titre>
+    </livre>
+</bibliotheque>

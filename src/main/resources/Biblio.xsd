@@ -4,18 +4,12 @@
   <xs:element name="bibliotheque">
     <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" name="livre">
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="livre">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="titre" type="xs:string" />
-              <xs:element name="auteur">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="nom" type="xs:string" />
-                    <xs:element name="prenom" type="xs:string" />
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
+              <xs:element name="auteurNom" type="xs:string" />
+              <xs:element name="auteurPrenom" type="xs:string" />
               <xs:element name="presentation" type="xs:string" />
               <xs:element name="jaquette" type="xs:string" />
               <xs:element name="parution" type="xs:unsignedShort" />

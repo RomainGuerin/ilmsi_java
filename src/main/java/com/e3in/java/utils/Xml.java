@@ -1,32 +1,31 @@
 package com.e3in.java.utils;
 
+import com.e3in.java.model.Bibliotheque;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-
-import com.e3in.java.model.Bibliotheque;
-import com.e3in.java.model.Livre;
-
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import org.xml.sax.SAXException;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Classe utilitaire pour la manipulation d'XML.
  */
-public class Xml{
-    // Chemin vers le fichier XSD utilisé pour la validation XML
-    private static final String xsdFilePath = Objects.requireNonNull(Xml.class.getResource("/Biblio.xsd")).getPath();
+public class Xml {
+    private static final String XSD_NAME = "Biblio.xsd";
+    private static final String XSD_PATH = System.getProperty("user.home") + File.separator + XSD_NAME;
+
+    static Logger logger = Logger.getLogger(Xml.class.getName());
 
     /**
      * Valide un fichier XML par rapport à un schéma XSD.
@@ -37,16 +36,26 @@ public class Xml{
     public static boolean validateXml(String xmlFilePath) {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(new File(Xml.xsdFilePath));
+
+            // Configuration sécurisée de la factory
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+            // Chargement du schéma
+            Schema schema = factory.newSchema(Common.createOrGetFile(XSD_NAME, XSD_PATH, Xml.class));
             Validator validator = schema.newValidator();
 
+            // Validation du fichier XML
             Source source = new StreamSource(new File(xmlFilePath));
             validator.validate(source);
 
             return true;
+        } catch (SAXNotRecognizedException | SAXNotSupportedException | IllegalArgumentException e) {
+            logger.severe("Erreur de configuration de la SchemaFactory : " + e.getMessage());
+            return false;
         } catch (SAXException | IOException e) {
-            System.err.println("Erreur de validation XML : " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Erreur de validation XML : " + e.getMessage());
             return false;
         }
     }
@@ -67,27 +76,6 @@ public class Xml{
         } catch (JAXBException e) {
             System.err.println("Erreur de chargement du XML : " + e.getMessage());
             return null;
-        }
-    }
-
-    /**
-     * Enregistre une liste de livres dans un fichier XML.
-     *
-     * @param livres   Liste des livres à enregistrer.
-     * @param filePath Chemin vers le fichier XML de sortie.
-     */
-    public static void saveLibraryToXml(List<Livre> livres, String filePath) {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Bibliotheque.class);
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            Bibliotheque library = new Bibliotheque();
-            library.setLivres(livres);
-
-            marshaller.marshal(library, new File(filePath));
-        } catch (JAXBException e) {
-            System.err.println("Erreur d'enregistrement du XML : " + e.getMessage());
         }
     }
 }

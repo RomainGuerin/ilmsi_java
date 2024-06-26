@@ -3,20 +3,28 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-
-<?import javafx.scene.Group?>
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.e3in.java.controller.MainViewController" stylesheets="styles.css">
     <top>
         <MenuBar>
             <Menu text="Fichier">
-                <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
-                <MenuItem onAction="#handleExport" text="Exporter"/>
-                <MenuItem onAction="#handleUnloadFile" text="Décharger le fichier"/>
-                <MenuItem onAction="#handleQuitApp" text="Quitter"/>
+                <Menu fx:id="xmlMenu" text="XML">
+                    <MenuItem onAction="#handleLoadFile" text="Ouvrir"/>
+                    <MenuItem fx:id="xmlOnlineSync" visible="false" onAction="#handleOnlineSync" text="Synchro XML vers BDD"/>
+                </Menu>
+                <Menu fx:id="bddMenu" text="BDD">
+                    <MenuItem fx:id="connectionBDD" onAction="#handleConnectionBDD" text="Connexion"/>
+                    <MenuItem fx:id="bddLocalSync" visible="false" onAction="#handleLocalSync" text="Synchro BDD vers XML"/>
+                </Menu>
+                <MenuItem onAction="#handleExport" text="Exporter le tableau"/>
+                <MenuItem fx:id="unloadFile" onAction="#handleUnloadFile" text="Décharger le tableau"/>
+                <MenuItem onAction="#handleQuitApp" text="Quitter l'application"/>
             </Menu>
-            <Menu text="Édition">
+            <Menu fx:id="editionMenu" text="Édition">
                 <MenuItem onAction="#handleSave" text="Sauvegarder"/>
                 <MenuItem onAction="#handleSaveAs" text="Sauvegarder sous..."/>
+            </Menu>
+            <Menu text="Profil">
+                <MenuItem onAction="#handleUpdatePassword" text="Mettre à jour son mot de passe" />
             </Menu>
             <Menu text="À propos">
                 <MenuItem onAction="#handleInfos" text="Informations" />
@@ -71,35 +79,35 @@
                <HBox alignment="CENTER" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Titre" />
-                     <TextField fx:id="textFieldTitre" />
+                     <TextField fx:id="textFieldTitre" promptText="Titre" />
                   </children>
                </HBox>
                <Separator prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="27.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
-                     <Label prefHeight="17.0" prefWidth="82.0" text="Auteur" />
-                     <TextField fx:id="textFieldAuteur" />
+                      <Label prefHeight="17.0" prefWidth="82.0" text="Auteur" />
+                      <TextField fx:id="textFieldAuteur" promptText="Prénom Nom"/>
                   </children>
                </HBox>
                <Separator layoutX="10.0" layoutY="78.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="81.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Présentation" />
-                     <TextField fx:id="textFieldPresentation" />
+                     <TextField fx:id="textFieldPresentation" promptText="Présentation" />
                   </children>
                </HBox>
                 <Separator layoutX="10.0" layoutY="78.0" prefWidth="200.0" />
                 <HBox alignment="CENTER" layoutX="10.0" layoutY="81.0" prefHeight="51.0" prefWidth="250.0">
                     <children>
                         <Label prefHeight="17.0" prefWidth="82.0" text="Jaquette" />
-                        <TextField fx:id="textFieldJaquette" />
+                        <TextField fx:id="textFieldJaquette" promptText="URL Jaquette" />
                     </children>
                 </HBox>
                <Separator layoutX="10.0" layoutY="132.0" prefWidth="200.0" />
                <HBox alignment="CENTER" layoutX="10.0" layoutY="135.0" prefHeight="51.0" prefWidth="250.0">
                   <children>
                      <Label prefHeight="17.0" prefWidth="82.0" text="Parution" />
-                     <TextField fx:id="textFieldParution" />
+                     <TextField fx:id="textFieldParution" promptText="Date de parution" />
                   </children>
                </HBox>
                <Separator layoutX="10.0" layoutY="186.0" prefWidth="200.0" />
@@ -127,7 +135,7 @@
                     </children>
                 </HBox>
                <Separator layoutX="10.0" layoutY="294.0" prefWidth="200.0" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <HBox fx:id="containerEditionLivre" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                 <children>
                     <Button layoutX="100.0" layoutY="50.0" onAction="#handleCancel" text="Annuler" />
                     <Button fx:id="buttonRemove" layoutX="125.0" layoutY="75.0" onAction="#handleRemove" text="Supprimer" />
@@ -137,4 +145,11 @@
             </children>
          </VBox>
    </right>
+    <bottom>
+        <HBox spacing="10" alignment="BOTTOM_LEFT" styleClass="chip-container">
+            <Label fx:id="userTypeChip" styleClass="chip"/>
+            <Label fx:id="connectionTypeChip" styleClass="chip"/>
+            <Label fx:id="lastEditDateChip" styleClass="chip"/>
+        </HBox>
+    </bottom>
 </BorderPane>
